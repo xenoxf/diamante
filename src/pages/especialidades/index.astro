@@ -1,0 +1,75 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import { especialidades } from '../../data/especialidades';
+import '../../styles/global.css';
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Oferta académica" title="Especialidades" />
+    <div class="container">
+      <p class="lead">
+        La Institución Educativa El Diamante ofrece formación en distintas
+        especialidades de la educación media, orientadas a la continuidad
+        educativa y a la vinculación al mundo productivo.
+      </p>
+      <div class="grid">
+        {especialidades.map((esp) => (
+          <article class="card">
+            <h2>{esp.nombre}</h2>
+            <p>{esp.descripcion}</p>
+            <a class="link" href={`/especialidades/${esp.slug}`}>Ver especialidad</a>
+          </article>
+        ))}
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .page {
+    background: #ffffff;
+    color: #1a1d21;
+    padding-bottom: 4rem;
+  }
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 0;
+  }
+  .lead {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    margin-bottom: 2rem;
+    max-width: 800px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+  .card {
+    border: 1px solid #dfe3e8;
+    border-top: 4px solid #07b9d5;
+    padding: 1.5rem;
+  }
+  .card h2 {
+    font-size: 1.15rem;
+    margin-bottom: 0.6rem;
+  }
+  .card p {
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+  .link {
+    font-weight: 700;
+    color: #06788a;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

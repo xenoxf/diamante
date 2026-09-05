@@ -1,0 +1,72 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import '../../styles/global.css';
+
+export async function getStaticPaths() {
+  const { noticias } = await import('../../data/noticias');
+  return noticias.map((n) => ({ params: { slug: n.slug }, props: { noticia: n } }));
+}
+
+const { noticia } = Astro.props;
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker={noticia.categoria} title={noticia.titulo} />
+    <div class="container">
+      <p class="meta">{noticia.fecha} · {noticia.categoria}</p>
+      <p class="lead">{noticia.resumen}</p>
+      <p>
+        La Institución Educativa El Diamante invita a la comunidad a mantenerse
+        informada a través de los canales oficiales. Los detalles de esta
+        publicación se amplían en cada sede y en las comunicaciones dirigidas a
+        estudiantes y acudientes.
+      </p>
+      <p>
+        Para mayor información, las personas interesadas pueden acercarse a la
+        secretaría de la sede correspondiente en el horario de atención
+        establecido.
+      </p>
+      <p class="back"><a href="/noticias">Volver a todas las noticias</a></p>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .page {
+    background: #ffffff;
+    color: #1a1d21;
+    padding-bottom: 4rem;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 0;
+  }
+  .meta {
+    font-size: 0.9rem;
+    color: #5a636c;
+    margin-bottom: 1rem;
+  }
+  .lead {
+    font-size: 1.1rem;
+    line-height: 1.75;
+    margin-bottom: 1.25rem;
+    font-weight: 600;
+  }
+  .container p {
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+  .back a {
+    font-weight: 700;
+    color: #06788a;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

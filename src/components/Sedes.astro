@@ -1,0 +1,43 @@
+---
+import { sedes } from '../data/sedes';
+import styles from '../styles/sedes.module.css';
+---
+<section id="sedes" class={styles.section} aria-labelledby="sedes-titulo">
+  <div class={styles.container}>
+    <p class={styles.kicker}>Sedes</p>
+    
+
+    <div class={styles["container-dirs"]}>
+      
+
+    <div class={styles.grid}>
+      <figure class={styles.heroFigure}>
+        <h2 id="sedes-titulo" class={styles.title}>Nuestras Sedes</h2>
+      <img
+        class={styles.heroImage}
+        src="/niña_apunta.png"
+        alt="Estudiante señalando la ubicación de las sedes"
+        loading="lazy"
+      />
+    </figure>
+      {sedes.map((sede) => (
+        <article class={styles.card} aria-labelledby={`sede-${sede.slug}`}>
+          <div class={styles.cardBody}>
+            <img class={styles.imgSede} src={sede.imgPath} alt={'imagen de '+sede.nombre}>
+            
+          </div>
+          <iframe
+            class={styles.map}
+            src={`https://www.google.com/maps?q=${encodeURIComponent(sede.mapQuery)}&output=embed`}
+            title={`Mapa de ${sede.nombre}`}
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+        </article>
+      ))}
+    </div>
+    </div>
+    
+  </div>
+</section>

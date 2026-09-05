@@ -1,0 +1,76 @@
+---
+import { sedes } from '../data/sedes';
+import styles from '../styles/footer.module.css';
+---
+<footer id="contacto" class={styles.footer}>
+  <div class={styles.container}>
+    <div class={styles.grid}>
+      <div class={styles.column}>
+        <h2 class={styles.heading}>Instituci&oacute;n</h2>
+        <p class={styles.name}>Instituci&oacute;n Educativa El Diamante</p>
+        <p class={styles.text}>Santiago de Cali, Colombia</p>
+        <a class={styles.link} href="mailto:ie.eldiamante@cali.edu.co">ie.eldiamante@cali.edu.co</a>
+        <p class={styles.text}>Rector&iacute;a Institucional</p>
+      </div>
+
+      <div class={styles.column}>
+        <h2 class={styles.heading}>Sedes</h2>
+        <ul class={styles.list}>
+          {sedes.map((sede) => (
+            <li class={styles.listItem}>
+              <span class={styles.sedeName}>{sede.nombre}</span>
+              <a
+                class={styles.link}
+                href={`tel:${sede.telefono.replace(/\s+/g, '')}`}
+              >
+                {sede.telefono}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class={styles.column}>
+        <h2 class={styles.heading}>Gobierno</h2>
+        <ul class={styles.list}>
+          <li class={styles.listItem}>
+            <a
+              class={styles.link}
+              href="https://transparencia.cali.gov.co/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Transparencia
+            </a>
+          </li>
+          <li class={styles.listItem}>
+            <a
+              class={styles.link}
+              href="https://www.cali.gov.co/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Alcald&iacute;a de Cali
+            </a>
+          </li>
+          <li class={styles.listItem}>
+            <a
+              class={styles.link}
+              href="https://www.cali.gov.co/educacion/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Secretar&iacute;a de Educaci&oacute;n
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class={styles.bottomBar}>
+    <div class={styles.bottomInner}>
+      <p class={styles.legal}>&copy; 2026 Instituci&oacute;n Educativa El Diamante &middot; Santiago de Cali</p>
+    </div>
+  </div>
+</footer>

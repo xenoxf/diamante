@@ -1,0 +1,38 @@
+---
+import { noticias } from '../data/noticias';
+import styles from '../styles/noticias.module.css';
+
+const destacadas = noticias.slice(0, 4);
+---
+<section id="noticias" class={styles.section} aria-labelledby="noticias-titulo">
+  <div class={styles.container}>
+    <p class={styles.kicker}>Actualidad</p>
+    <h2 id="noticias-titulo" class={styles.title}>Noticias</h2>
+    <p class={styles.intro}>
+      Informaci&oacute;n oficial sobre actividades acad&eacute;micas, culturales y administrativas
+      de la Instituci&oacute;n Educativa El Diamante.
+    </p>
+
+    <div class={styles.grid}>
+      {destacadas.map((noticia) => (
+        <article class={styles.card} aria-labelledby={`noticia-${noticia.slug}`}>
+          <div class={styles.imagePlaceholder} role="img" aria-label={`Imagen de ${noticia.titulo}`}>
+            <span class={styles.category}>{noticia.categoria}</span>
+          </div>
+          <div class={styles.cardBody}>
+            <time class={styles.date} datetime={noticia.fecha}>{noticia.fecha}</time>
+            <h3 id={`noticia-${noticia.slug}`} class={styles.cardTitle}>{noticia.titulo}</h3>
+            <p class={styles.summary}>{noticia.resumen}</p>
+            <a class={styles.readMore} href={`/noticias/${noticia.slug}`}>
+              Leer m&aacute;s
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div class={styles.footer}>
+      <a class={styles.viewAll} href="/noticias">Ver todas las noticias</a>
+    </div>
+  </div>
+</section>

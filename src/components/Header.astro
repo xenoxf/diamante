@@ -1,0 +1,133 @@
+---
+import styles from '../styles/header.module.css';
+
+interface SubLink {
+	label: string;
+	href: string;
+}
+
+interface NavItem {
+	label: string;
+	href: string;
+	children?: SubLink[];
+}
+
+/* Maqueta: réplica de la navegación del sitio original. El CMS proveerá los enlaces finales. */
+const nav: NavItem[] = [
+	{ label: 'Inicio', href: '/' },
+	{
+		label: 'Identidad',
+		href: '/#identidad',
+		children: [
+			{ label: 'Misión', href: '/mision' },
+			{ label: 'Visión', href: '/vision' },
+			{ label: 'Valores Institucionales', href: '/valores-institucionales' },
+			{ label: 'P.E.I.', href: '/pei' },
+			{ label: 'Manual de Convivencia', href: '/manual-convivencia' },
+			{ label: 'Nuestras Sedes', href: '/sedes' },
+		],
+	},
+	{ label: 'Sedes', href: '/#sedes' },
+	{ label: 'Especialidades', href: '/#especialidades' },
+	{ label: 'Noticias', href: '/#noticias' },
+	{ label: 'Contratación', href: '/contratacion' },
+	{ label: 'Organismo', href: '/organismo' },
+];
+---
+
+<header id="site-header" class={styles.header} data-scrolled="false" data-open="false">
+	
+
+	<div class={styles.mainbar}>
+		<div class={styles.mainbarInner}>
+			<a href="/" class={styles.brand} aria-label="Institución Educativa El Diamante - inicio">
+				<img
+					class={styles.logo}
+					src="/logo_diamante.png"
+					alt="Escudo de la Institución Educativa El Diamante"
+					width="56"
+					height="56"
+				/>
+				<span class={styles.name}>
+					Institucion Educativa <br> El Diamante
+				</span>
+			</a>
+
+			<nav class={styles.nav} aria-label="Navegación principal">
+				{nav.map((item) =>
+					item.children ? (
+						<div class={styles.dropdown}>
+							<a href={item.href} class={styles.link} aria-haspopup="true">
+								{item.label}
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<path d="m6 9 6 6 6-6" />
+								</svg>
+							</a>
+							<div class={styles.menu} role="menu">
+								{item.children.map((sub) => (
+									<a role="menuitem" class={styles.subLink} href={sub.href}>
+										{sub.label}
+									</a>
+								))}
+							</div>
+						</div>
+					) : (
+						<a class={styles.link} href={item.href}>
+							{item.label}
+						</a>
+					),
+				)}
+			</nav>
+
+			<div class={styles.actions}>
+				<button
+					id="menu-button"
+					class={styles.menuButton}
+					type="button"
+					aria-label="Abrir menú"
+					aria-expanded="false"
+					aria-controls="site-header"
+				>
+					<svg class={styles.iconOpen} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+						<path d="M4 7h16M4 12h16M4 17h16" />
+					</svg>
+					<svg class={styles.iconClose} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+						<path d="M6 6l12 12M18 6L6 18" />
+					</svg>
+				</button>
+			</div>
+		</div>
+	</div>
+</header>
+
+<script>
+	const header = document.getElementById('site-header');
+	const menuButton = document.getElementById('menu-button');
+
+	const syncScrolled = () => {
+		if (!header) return;
+		header.dataset.scrolled = String(window.scrollY > 8);
+	};
+
+	const setOpen = (open: boolean) => {
+		if (!header || !menuButton) return;
+		header.dataset.open = String(open);
+		menuButton.setAttribute('aria-expanded', String(open));
+		menuButton.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+	};
+
+	menuButton?.addEventListener('click', () => {
+		setOpen(header?.dataset.open !== 'true');
+	});
+
+	header?.querySelectorAll('nav a').forEach((anchor) => {
+		anchor.addEventListener('click', () => setOpen(false));
+	});
+
+	document.addEventListener('keydown', (event) => {
+		if (event.key === 'Escape') setOpen(false);
+	});
+
+	syncScrolled();
+	window.addEventListener('scroll', syncScrolled, { passive: true });
+</script>

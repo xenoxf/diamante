@@ -1,0 +1,18 @@
+---
+import styles from '../styles/pageHero.module.css';
+
+interface Props {
+  kicker: string;
+  title: string;
+}
+
+const { kicker, title } = Astro.props;
+---
+
+<section class={styles.hero}>
+  <div class={styles.inner}>
+    <p class={styles.kicker}>{kicker}</p>
+    <h1 class={styles.title}>{title}</h1>
+    <span class={styles.rule} aria-hidden="true"></span>
+  </div>
+</section>

@@ -1,0 +1,94 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import { noticias } from '../data/noticias';
+import '../styles/global.css';
+
+const procesos = noticias.filter((n) => n.categoria === 'Contratación');
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Transparencia" title="Contratación" />
+    <div class="container">
+      <p class="lead">
+        En esta sección se publican los avisos y procesos de contratación de la
+        Institución Educativa El Diamante, en cumplimiento de los principios de
+        transparencia y acceso a la información pública.
+      </p>
+      {procesos.length === 0 ? (
+        <p class="empty">
+          Actualmente no hay procesos de contratación publicados. Se invita a la
+          ciudadanía a consultar esta sección periódicamente.
+        </p>
+      ) : (
+        <ul class="list">
+          {procesos.map((item) => (
+            <li>
+              <p class="meta">{item.fecha} · {item.categoria}</p>
+              <a class="link" href={`/noticias/${item.slug}`}>{item.titulo}</a>
+              <p class="summary">{item.resumen}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .page {
+    background: #ffffff;
+    color: #1a1d21;
+    padding-bottom: 4rem;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 0;
+  }
+  .lead {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    margin-bottom: 2rem;
+  }
+  .empty {
+    background: #f4f6f8;
+    border: 1px solid #dfe3e8;
+    padding: 1.25rem;
+    line-height: 1.7;
+  }
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  .list li {
+    border: 1px solid #dfe3e8;
+    border-left: 4px solid #07b9d5;
+    padding: 1.1rem 1.25rem;
+  }
+  .meta {
+    font-size: 0.85rem;
+    color: #5a636c;
+    margin-bottom: 0.4rem;
+  }
+  .link {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #111418;
+    text-decoration: underline;
+    text-decoration-color: #07b9d5;
+    text-underline-offset: 3px;
+  }
+  .summary {
+    margin-top: 0.5rem;
+    line-height: 1.7;
+  }
+</style>

@@ -1,0 +1,66 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import '../styles/global.css';
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Organización" title="Organigrama" />
+    <div class="container">
+      <p>
+        La estructura organizacional de la Institución Educativa El Diamante
+        define los niveles de dirección, participación y apoyo que sostienen el
+        funcionamiento articulado de sus sedes.
+      </p>
+      <p>
+        El gobierno escolar garantiza la participación democrática de todos los
+        estamentos, conforme a lo establecido por la Ley General de Educación y
+        sus decretos reglamentarios.
+      </p>
+      <ul class="points">
+        <li><strong>Rectoría:</strong> dirección general de la institución.</li>
+        <li><strong>Consejo Directivo:</strong> máxima instancia de participación y decisión.</li>
+        <li><strong>Consejo Académico:</strong> orientación pedagógica y curricular.</li>
+        <li><strong>Coordinaciones de sede:</strong> gestión académica y de convivencia.</li>
+        <li><strong>Personal docente y administrativo:</strong> ejecución del servicio educativo.</li>
+        <li><strong>Consejo Estudiantil y Personería:</strong> representación de los estudiantes.</li>
+        <li><strong>Consejo de Padres de Familia:</strong> participación de los acudientes.</li>
+      </ul>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .page {
+    background: #ffffff;
+    color: #1a1d21;
+    padding-bottom: 4rem;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 0;
+  }
+  .container p {
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+  .points {
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .points li {
+    border: 1px solid #dfe3e8;
+    border-left: 4px solid #07b9d5;
+    padding: 0.9rem 1.1rem;
+    line-height: 1.7;
+  }
+</style>

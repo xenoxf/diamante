@@ -1,0 +1,68 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import '../styles/global.css';
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Identidad institucional" title="Visión" />
+    <div class="container">
+      <p>
+        La Institución Educativa El Diamante se proyecta como una institución
+        reconocida en Santiago de Cali por la calidad de su servicio educativo,
+        la solidez de sus procesos pedagógicos y el compromiso de su comunidad
+        con la convivencia y el bien común.
+      </p>
+      <p>
+        Aspiramos a consolidar una oferta educativa articulada entre sus sedes,
+        con ambientes de aprendizaje seguros, dotación adecuada y uso pertinente
+        de los recursos pedagógicos y tecnológicos disponibles.
+      </p>
+      <p>
+        Nos proponemos formar egresados capaces de continuar su trayectoria
+        educativa, vincularse al mundo productivo y participar activamente en la
+        vida democrática de su comunidad.
+      </p>
+      <ul class="points">
+        <li>Reconocimiento por la calidad y la permanencia escolar.</li>
+        <li>Articulación efectiva entre las sedes de la institución.</li>
+        <li>Egresados preparados para la educación superior y el trabajo.</li>
+      </ul>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .page {
+    background: #ffffff;
+    color: #1a1d21;
+    padding-bottom: 4rem;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 0;
+  }
+  .container p {
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+  .points {
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .points li {
+    border: 1px solid #dfe3e8;
+    border-left: 4px solid #07b9d5;
+    padding: 0.9rem 1.1rem;
+    line-height: 1.7;
+  }
+</style>

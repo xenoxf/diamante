@@ -1,0 +1,86 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import '../styles/global.css';
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Admisiones" title="Inscripciones" />
+    <div class="container">
+      <p class="lead">
+        La Institución Educativa El Diamante informa a las familias el procedimiento
+        general de inscripción y matrícula para el año lectivo. El trámite es
+        presencial y se realiza en cada sede, de acuerdo con el calendario
+        establecido por la Secretaría de Educación de Santiago de Cali.
+      </p>
+      <ol class="steps">
+        <li>
+          <strong>1. Consulta requisitos.</strong>
+          Verifique los documentos exigidos según el grado al que aspira el estudiante
+          (documento de identidad, certificados de estudio y datos del acudiente).
+        </li>
+        <li>
+          <strong>2. Diligencia formulario.</strong>
+          Complete el formulario de inscripción con información veraz y actualizada
+          del estudiante y de su acudiente responsable.
+        </li>
+        <li>
+          <strong>3. Entrega documentos en sede.</strong>
+          Presente los documentos en la secretaría de la sede correspondiente,
+          dentro de las fechas publicadas para cada periodo.
+        </li>
+        <li>
+          <strong>4. Confirmación de matrícula.</strong>
+          La institución confirma la asignación del cupo y formaliza la matrícula
+          una vez verificada la documentación.
+        </li>
+      </ol>
+      <p class="note">
+        Nota: los requisitos y fechas pueden variar cada año. Se recomienda
+        consultar directamente en la sede antes de iniciar el trámite.
+      </p>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .page {
+    background: #ffffff;
+    color: #1a1d21;
+    padding-bottom: 4rem;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 0;
+  }
+  .lead {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    margin-bottom: 2rem;
+  }
+  .steps {
+    list-style: none;
+    margin: 0 0 2rem;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+  .steps li {
+    border: 1px solid #dfe3e8;
+    border-left: 4px solid #07b9d5;
+    padding: 1.1rem 1.25rem;
+    line-height: 1.7;
+  }
+  .note {
+    background: #f4f6f8;
+    border: 1px solid #dfe3e8;
+    padding: 1rem 1.25rem;
+    line-height: 1.7;
+  }
+</style>
