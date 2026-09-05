@@ -1,0 +1,323 @@
+/* ===== Header institucional serio ===== */
+
+.header {
+	position: sticky;
+	inset: 0;
+	z-index: 50;
+	background: #ffffff;
+	transition: box-shadow 0.25s ease;
+}
+
+.header[data-scrolled="true"] {
+	box-shadow: 0 4px 18px rgba(0, 34, 51, 0.16);
+}
+
+/* --- Barra superior utilitaria (estilo gobierno) --- */
+.topbar {
+	background: var(--primary);
+	color: var(--primary-foreground);
+	font-size: 12px;
+}
+
+.topbarInner {
+	max-width: var(--max-width);
+	height: 36px;
+	margin: 0 auto;
+	padding: 0 1.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+.topbarLabel {
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	font-weight: 600;
+	color: rgba(255, 255, 255, 0.92);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.topbarLinks {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	flex-shrink: 0;
+}
+
+.topbarLinks a {
+	padding: 0 0.8rem;
+	color: rgba(255, 255, 255, 0.85);
+	font-weight: 600;
+	border-left: 1px solid rgba(255, 255, 255, 0.25);
+	white-space: nowrap;
+	transition: color 0.2s ease;
+}
+
+.topbarLinks a:first-child {
+	border-left: 0;
+}
+
+.topbarLinks a:last-child {
+	padding-right: 0;
+}
+
+.topbarLinks a:hover {
+	color: #ffffff;
+	text-decoration: underline;
+}
+
+/* --- Barra principal --- */
+.mainbar {
+	height: 76px;
+}
+
+.mainbarInner {
+	max-width: var(--max-width);
+	height: 100%;
+	margin: 0 auto;
+	padding: 0 1.5rem;
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+}
+
+.brand {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	flex-shrink: 0;
+}
+
+.logo {
+	width: 56px;
+	height: 56px;
+	object-fit: contain;
+}
+
+.name {
+	font-size: 15px;
+	line-height: 1.25;
+	font-weight: 800;
+	color: var(--foreground);
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+	white-space: nowrap;
+}
+
+.name small {
+	display: block;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	color: var(--muted-foreground);
+}
+
+/* Links centrados */
+.nav {
+	flex: 1;
+	display: flex;
+	align-items: stretch;
+	justify-content: center;
+	height: 100%;
+}
+
+.link {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	padding: 0 1rem;
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--foreground);
+	border-bottom: 3px solid transparent;
+	transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.link:hover {
+	text-decoration: underline;
+}
+
+.link:focus-visible,
+.subLink:focus-visible,
+.cta:focus-visible,
+.menuButton:focus-visible,
+.topbarLinks a:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
+}
+
+.link svg {
+	width: 14px;
+	height: 14px;
+}
+
+/* Dropdown institucional */
+.dropdown {
+	position: relative;
+	display: flex;
+	align-items: stretch;
+}
+
+.menu {
+	position: absolute;
+	top: 80%;
+	left: 50%;
+	transform: translate(-50%, 6px);
+	min-width: 260px;
+	background: #ffffff;
+	border: 1px solid var(--border);
+	border-top: 3px solid var(--primary);
+	box-shadow: 0 16px 32px rgba(0, 34, 51, 0.18);
+	padding: 0.4rem 0;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s;
+}
+
+.dropdown:hover .menu,
+.dropdown:focus-within .menu {
+	opacity: 1;
+	visibility: visible;
+	transform: translate(-50%, 0);
+	transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.subLink {
+	display: block;
+	padding: 0.7rem 1.25rem;
+	font-size: 13.5px;
+	font-weight: 600;
+	color: var(--foreground);
+	border-left: 3px solid transparent;
+	transition: background-color 0.15s ease, border-color 0.15s ease;
+	white-space: nowrap;
+}
+
+.subLink:hover {
+	background: var(--background);
+	border-left-color: var(--primary);
+}
+
+/* Acción derecha */
+.actions {
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+}
+
+.cta {
+	font-size: 13px;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--primary-foreground);
+	background: var(--primary);
+	padding: 0.75rem 1.4rem;
+	border-radius: 4px;
+	white-space: nowrap;
+	transition: background-color 0.2s ease;
+}
+
+.cta:hover {
+	background: #06a5be;
+}
+
+.menuButton {
+	display: none;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border: 1px solid var(--border);
+	border-radius: 4px;
+	background: #ffffff;
+	cursor: pointer;
+	color: var(--foreground);
+}
+
+.menuButton svg {
+	width: 22px;
+	height: 22px;
+}
+
+.iconClose {
+	display: none;
+}
+
+.header[data-open="true"] .iconClose {
+	display: block;
+}
+
+.header[data-open="true"] .iconOpen {
+	display: none;
+}
+
+/* --- Móvil --- */
+@media (max-width: 960px) {
+	.topbar {
+		display: none;
+	}
+
+	.name {
+		font-size: 13px;
+	}
+
+	.logo {
+		width: 46px;
+		height: 46px;
+	}
+
+	.menuButton {
+		display: inline-flex;
+	}
+
+	.actions .cta {
+		display: none;
+	}
+
+	.nav {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		display: none;
+		flex-direction: column;
+		align-items: stretch;
+		height: auto;
+		background: #ffffff;
+		border-bottom: 3px solid var(--primary);
+		box-shadow: 0 16px 28px rgba(0, 34, 51, 0.16);
+		padding: 0.5rem 0 1rem;
+	}
+
+	.header[data-open="true"] .nav {
+		display: flex;
+	}
+
+	.link {
+		padding: 0.9rem 1.5rem;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.dropdown {
+		flex-direction: column;
+	}
+
+	.menu {
+		position: static;
+		transform: none;
+		opacity: 1;
+		visibility: visible;
+		box-shadow: none;
+		border: 0;
+		border-left: 3px solid var(--primary);
+		margin: 0 1.5rem;
+		padding: 0;
+		background: var(--background);
+	}
+}

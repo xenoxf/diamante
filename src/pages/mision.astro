@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import '../styles/global.css';
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Identidad institucional" title="Misión" />
+    <div class="container">
+      <p>
+        La Institución Educativa El Diamante, establecimiento oficial del municipio
+        de Santiago de Cali, tiene como misión brindar una educación pública de
+        calidad, inclusiva y pertinente, que garantice el acceso, la permanencia y
+        la promoción de los estudiantes en todos los niveles ofrecidos.
+      </p>
+      <p>
+        Orientamos la formación integral de niños, niñas, jóvenes y adultos a
+        través de procesos pedagógicos rigurosos, el fortalecimiento de las
+        competencias básicas y ciudadanas, y el acompañamiento permanente de las
+        familias como corresponsables del proceso educativo.
+      </p>
+      <p>
+        Trabajamos por una comunidad educativa respetuosa de la diversidad, la
+        convivencia pacífica y el cuidado del entorno, comprometida con el
+        desarrollo social y cultural de su territorio.
+      </p>
+      <ul class="points">
+        <li>Educación oficial, gratuita e inclusiva.</li>
+        <li>Formación integral y en valores ciudadanos.</li>
+        <li>Corresponsabilidad entre escuela, familia y comunidad.</li>
+      </ul>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .page {
+    background: #ffffff;
+    color: #1a1d21;
+    padding-bottom: 4rem;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 0;
+  }
+  .container p {
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+  .points {
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .points li {
+    border: 1px solid #dfe3e8;
+    border-left: 4px solid #07b9d5;
+    padding: 0.9rem 1.1rem;
+    line-height: 1.7;
+  }
+</style>

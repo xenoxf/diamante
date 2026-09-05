@@ -1,0 +1,64 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import '../styles/global.css';
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Identidad institucional" title="Valores institucionales" />
+    <div class="container">
+      <p>
+        Los valores institucionales orientan la conducta de estudiantes, docentes,
+        directivos, personal administrativo y familias. Constituyen el fundamento
+        de la convivencia escolar y del Proyecto Educativo Institucional.
+      </p>
+      <p>
+        Su vivencia cotidiana se promueve en el aula, en los espacios comunes y en
+        las actividades culturales, deportivas y académicas de cada sede.
+      </p>
+      <ul class="points">
+        <li><strong>Respeto:</strong> reconocimiento de la dignidad de cada persona y de la diversidad.</li>
+        <li><strong>Responsabilidad:</strong> cumplimiento de los deberes académicos y de convivencia.</li>
+        <li><strong>Honestidad:</strong> actuación transparente y coherente en todos los espacios.</li>
+        <li><strong>Solidaridad:</strong> apoyo mutuo y trabajo colaborativo en la comunidad.</li>
+        <li><strong>Tolerancia:</strong> diálogo y resolución pacífica de los conflictos.</li>
+        <li><strong>Compromiso ambiental:</strong> cuidado de los recursos y del entorno escolar.</li>
+      </ul>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .page {
+    background: #ffffff;
+    color: #1a1d21;
+    padding-bottom: 4rem;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 0;
+  }
+  .container p {
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+  .points {
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .points li {
+    border: 1px solid #dfe3e8;
+    border-left: 4px solid #07b9d5;
+    padding: 0.9rem 1.1rem;
+    line-height: 1.7;
+  }
+</style>

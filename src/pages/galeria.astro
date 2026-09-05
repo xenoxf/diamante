@@ -1,0 +1,58 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import { galeria } from '../data/galeria';
+import styles from '../styles/galeria.module.css';
+import '../styles/global.css';
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Galería" title="Galería institucional" />
+    <div class="container">
+      <p class="intro">
+        Registro fotográfico de las actividades académicas, culturales y deportivas
+        de la Institución Educativa El Diamante.
+      </p>
+      <ul class={styles.grid}>
+        {galeria.map((item) => (
+          <li>
+            <article class={styles.card}>
+              <div class={styles.thumb}>
+                {/* CMS: reemplazar placeholder por <img> */}
+                <span aria-hidden="true">Fotografía</span>
+              </div>
+              <div class={styles.cardBody}>
+                <h2 class={styles.cardTitle}>{item.titulo}</h2>
+                <span class={styles.badge}>{item.categoria}</span>
+              </div>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .page {
+    background: #ffffff;
+    color: #1a1d21;
+    padding-bottom: 4rem;
+  }
+  .container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 0;
+  }
+  .intro {
+    max-width: 62ch;
+    line-height: 1.7;
+    color: #5b6470;
+    margin-bottom: 2rem;
+  }
+</style>

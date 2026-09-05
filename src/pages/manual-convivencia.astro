@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import '../styles/global.css';
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Convivencia escolar" title="Manual de convivencia" />
+    <div class="container">
+      <p>
+        El Manual de Convivencia regula los derechos, deberes, estímulos y
+        procedimientos de la comunidad educativa de la Institución Educativa El
+        Diamante. Su propósito es garantizar un ambiente escolar seguro,
+        respetuoso y propicio para el aprendizaje.
+      </p>
+      <p>
+        Este documento es de conocimiento obligatorio para estudiantes, acudientes,
+        docentes y directivos, y se socializa al inicio de cada año lectivo en
+        todas las sedes.
+      </p>
+      <p>
+        Los procedimientos allí descritos se aplican con observancia del debido
+        proceso y en concordancia con la normatividad nacional sobre convivencia
+        escolar.
+      </p>
+      <ul class="points">
+        <li>Derechos y deberes de los estudiantes y acudientes.</li>
+        <li>Normas de comportamiento dentro y fuera del aula.</li>
+        <li>Ruta de atención integral para la convivencia escolar.</li>
+        <li>Estímulos, correctivos y debido proceso.</li>
+      </ul>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .page {
+    background: #ffffff;
+    color: #1a1d21;
+    padding-bottom: 4rem;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 0;
+  }
+  .container p {
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+  .points {
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .points li {
+    border: 1px solid #dfe3e8;
+    border-left: 4px solid #07b9d5;
+    padding: 0.9rem 1.1rem;
+    line-height: 1.7;
+  }
+</style>

@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import '../styles/global.css';
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Identidad institucional" title="Proyecto Educativo Institucional" />
+    <div class="container">
+      <p>
+        El Proyecto Educativo Institucional (P.E.I.) es la carta de navegación de
+        la Institución Educativa El Diamante. En él se definen los principios,
+        fines, recursos y estrategias pedagógicas que orientan la vida escolar en
+        todas sus sedes.
+      </p>
+      <p>
+        El P.E.I. se construye y actualiza con la participación de los estamentos
+        de la comunidad educativa, en concordancia con la normatividad vigente del
+        sector educativo nacional y territorial.
+      </p>
+      <p>
+        Sus componentes articulan la gestión directiva, académica, administrativa
+        y comunitaria, con el propósito de garantizar una educación pertinente y
+        de calidad para la población atendida.
+      </p>
+      <ul class="points">
+        <li>Componente conceptual: principios, misión, visión y valores.</li>
+        <li>Componente pedagógico: modelo, planes de estudio y evaluación.</li>
+        <li>Componente administrativo: organización, recursos y sedes.</li>
+        <li>Componente comunitario: participación y proyección social.</li>
+      </ul>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .page {
+    background: #ffffff;
+    color: #1a1d21;
+    padding-bottom: 4rem;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 0;
+  }
+  .container p {
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+  .points {
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .points li {
+    border: 1px solid #dfe3e8;
+    border-left: 4px solid #07b9d5;
+    padding: 0.9rem 1.1rem;
+    line-height: 1.7;
+  }
+</style>

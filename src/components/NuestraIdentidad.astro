@@ -1,0 +1,20 @@
+---
+import styles from '../styles/nuestraIdentidad.module.css';
+import { identidadCards } from '../data/identidad';
+---
+
+<section id="identidad" class={styles.section} aria-labelledby="identidad-titulo">
+  <div class={styles.inner}>
+    <p class={styles.kicker}>Institución</p>
+    <h2 id="identidad-titulo" class={styles.title}>Nuestra Identidad</h2>
+    <div class={styles.rule} aria-hidden="true"></div>
+   
+    <ul class={styles.grid}>
+      {identidadCards.map((card) => (
+        <a href={card.href} >
+           <img class={styles["cardImg"]} src={card.imgPath} alt={"imagen de "+card.titulo}/>
+        </a>
+      ))}
+    </ul>
+  </div>
+</section>

@@ -1,0 +1,73 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import '../../styles/global.css';
+
+export async function getStaticPaths() {
+  const { especialidades } = await import('../../data/especialidades');
+  return especialidades.map((e) => ({ params: { slug: e.slug }, props: { especialidad: e } }));
+}
+
+const { especialidad } = Astro.props;
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Oferta académica" title={especialidad.nombre} />
+    <div class="container">
+      <p class="lead">{especialidad.descripcion}</p>
+      <h2>Aspectos destacados</h2>
+      <ul class="points">
+        {especialidad.puntos.map((punto) => (
+          <li>{punto}</li>
+        ))}
+      </ul>
+      <p class="back"><a href="/especialidades">Volver a todas las especialidades</a></p>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .page {
+    background: #ffffff;
+    color: #1a1d21;
+    padding-bottom: 4rem;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 0;
+  }
+  .lead {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+  }
+  h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+  .points {
+    margin: 0 0 1.5rem;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .points li {
+    border: 1px solid #dfe3e8;
+    border-left: 4px solid #07b9d5;
+    padding: 0.9rem 1.1rem;
+    line-height: 1.7;
+  }
+  .back a {
+    font-weight: 700;
+    color: #06788a;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>
