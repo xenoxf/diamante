@@ -8,15 +8,17 @@ import { institucionalService } from '../services/institucional.service';
 import '../styles/global.css';
 import '../styles/page.css';
 
-const manualPdf = institucionalService.getDocumentoById('manual-convivencia')?.url ?? '#';
+const doc = institucionalService.getDocumentoById('proyecto-ambiental');
 ---
 
 <Layout>
   <Header />
   <main class="page">
-    <PageHero kicker="Convivencia escolar" title="Manual de convivencia" />
+    <PageHero kicker="Medio ambiente" title="Proyecto ambiental" />
     <div class="container">
-      <FileViewer src={manualPdf} title="Manual de Convivencia — IE El Diamante" format="PDF" />
+      {doc && (
+        <FileViewer src={doc.url} title="Proyecto Ambiental Escolar (PRAE)" format="PDF" />
+      )}
     </div>
   </main>
   <Footer />

@@ -8,15 +8,21 @@ import { institucionalService } from '../services/institucional.service';
 import '../styles/global.css';
 import '../styles/page.css';
 
-const manualPdf = institucionalService.getDocumentoById('manual-convivencia')?.url ?? '#';
+const ficha = institucionalService.getDocumentoById('ficha-inscripcion');
 ---
 
 <Layout>
   <Header />
   <main class="page">
-    <PageHero kicker="Convivencia escolar" title="Manual de convivencia" />
+    <PageHero kicker="Transparencia" title="Resolución del proceso de matrícula" />
     <div class="container">
-      <FileViewer src={manualPdf} title="Manual de Convivencia — IE El Diamante" format="PDF" />
+
+      {ficha && (
+        <>
+          <h2 style="margin-top:2rem">Formulario de inscripción</h2>
+          <FileViewer src={ficha.url} title={ficha.titulo} format="PDF" />
+        </>
+      )}
     </div>
   </main>
   <Footer />
