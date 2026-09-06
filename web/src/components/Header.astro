@@ -1,9 +1,11 @@
 ---
 import styles from '../styles/header.module.css';
+import { configuracionService } from '../services/configuracion.service';
 
 interface SubLink {
 	label: string;
 	href: string;
+	external?: boolean;
 }
 
 interface NavItem {
@@ -12,7 +14,28 @@ interface NavItem {
 	children?: SubLink[];
 }
 
-/* Maqueta: réplica de la navegación del sitio original. El CMS proveerá los enlaces finales. */
+// Intentar consumir configuracion-general.enlacesGobierno para el dropdown "Organismo".
+// Si Strapi no está disponible, se mantiene hardcode pero documentado.
+// Este fetch ocurre en frontmatter (SSR) y hace fallback a null si falla.
+let dinamicosEnlacesGobierno: SubLink[] | null = null;
+try {
+	const cfg = await configuracionService.getConfiguracion();
+	if (cfg.enlacesGobierno && cfg.enlacesGobierno.length > 0) {
+		dinamicosEnlacesGobierno = cfg.enlacesGobierno.map((e) => ({
+			label: e.label,
+			href: e.url,
+			external: e.externo || e.abrirEnNuevaPestana,
+		}));
+	}
+} catch {
+	// Silenciar: fallback hardcode abajo. En dev sin Strapi es esperado.
+}
+
+/* Navegación hardcodeada como fallback estable (66 links originales condensados en dropdowns).
+   Si Strapi proporciona enlacesGobierno, se usan dinámicos para el ítem "Organismo".
+   Para migración completa a CMS, reemplazar este array por un fetch a un Single Type "navegacion-principal"
+   o usar directamente cfg.enlacesGobierno + navegación estructurada.
+*/
 const nav: NavItem[] = [
 	{ label: 'Inicio', href: '/' },
 	{
@@ -55,8 +78,8 @@ const nav: NavItem[] = [
 	},
 	{
 		label: 'Organismo',
-		href: 'https://www.cali.gov.co/educacion/',
-		children: [
+		href: dinamicosEnlacesGobierno?.[0]?.href ?? 'https://www.cali.gov.co/educacion/',
+		children: dinamicosEnlacesGobierno ?? [
 			{ label: 'Educación', href: 'https://www.cali.gov.co/educacion/' },
 			{ label: 'Deporte y Recreación', href: 'https://www.cali.gov.co/deporte/' },
 			{ label: 'Paz y Cultura Ciudadana', href: 'https://www.cali.gov.co/pazycultura/' },
@@ -95,11 +118,20 @@ const nav: NavItem[] = [
 								</svg>
 							</a>
 							<div class={styles.menu} role="menu">
-								{item.children.map((sub) => (
-									<a role="menuitem" class={styles.subLink} href={sub.href}>
-										{sub.label}
-									</a>
-								))}
+								{item.children.map((sub) => {
+									const isExternal = (sub as any).external || sub.href.startsWith('http');
+									return (
+										<a
+											role="menuitem"
+											class={styles.subLink}
+											href={sub.href}
+											target={isExternal ? '_blank' : undefined}
+											rel={isExternal ? 'noopener noreferrer' : undefined}
+										>
+											{sub.label}
+										</a>
+									);
+								})}
 							</div>
 						</div>
 					) : (

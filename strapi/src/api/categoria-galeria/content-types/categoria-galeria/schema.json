@@ -1,0 +1,26 @@
+{
+  "kind": "collectionType",
+  "collectionName": "categorias_galeria",
+  "info": {
+    "singularName": "categoria-galeria",
+    "pluralName": "categorias-galeria",
+    "displayName": "Categoría Galería",
+    "description": "Categorías para galería"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "nombre": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "nombre",
+      "required": true
+    }
+  }
+}

@@ -8,7 +8,26 @@ import { institucionalService } from '../services/institucional.service';
 import '../styles/global.css';
 import '../styles/page.css';
 
-const ficha = institucionalService.getDocumentoById('ficha-inscripcion');
+let doc: any = null;
+try {
+  doc = await institucionalService.getDocumentoBySlug('resolucion-matricula');
+} catch (err) {
+  console.warn('[resolucion-matricula] Strapi fallback', err);
+}
+if (!doc) {
+  try {
+    doc = await institucionalService.getDocumentoById('resolucion-matricula');
+  } catch {}
+}
+
+// Fallback legacy: ficha-inscripcion para no romper si resolucion-matricula no existe en seed local
+let ficha: any = null;
+if (!doc) {
+  try {
+    ficha = await institucionalService.getDocumentoBySlug('ficha-inscripcion');
+  } catch {}
+}
+const displayDoc = doc ?? ficha;
 ---
 
 <Layout>
@@ -16,12 +35,21 @@ const ficha = institucionalService.getDocumentoById('ficha-inscripcion');
   <main class="page">
     <PageHero kicker="Transparencia" title="Resolución del proceso de matrícula" />
     <div class="container">
-
-      {ficha && (
+      {displayDoc ? (
         <>
-          <h2 style="margin-top:2rem">Formulario de inscripción</h2>
-          <FileViewer src={ficha.url} title={ficha.titulo} format="PDF" />
+          <h2 style="margin-top:2rem">{displayDoc.titulo}</h2>
+          {displayDoc.descripcion && <p class="intro">{displayDoc.descripcion}</p>}
+          {displayDoc.formato === 'Enlace' ? (
+            <p>
+              <a href={displayDoc.url} target="_blank" rel="noopener noreferrer" class="link">
+                Abrir {displayDoc.titulo}
+              </a>
+            </p>
+          ) : null}
+          <FileViewer src={displayDoc.url} title={displayDoc.titulo} format={displayDoc.formato} />
         </>
+      ) : (
+        <p class="empty">Documento no disponible por el momento.</p>
       )}
     </div>
   </main>

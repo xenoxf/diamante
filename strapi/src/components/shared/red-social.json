@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_shared_red_socials",
+  "info": {
+    "displayName": "Red Social",
+    "icon": "share-alt"
+  },
+  "options": {},
+  "attributes": {
+    "plataforma": {
+      "type": "enumeration",
+      "enum": ["facebook", "instagram", "youtube", "twitter", "tiktok"],
+      "required": true
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

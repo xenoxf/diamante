@@ -1,0 +1,60 @@
+{
+  "kind": "collectionType",
+  "collectionName": "documentos_institucionales",
+  "info": {
+    "singularName": "documento-institucional",
+    "pluralName": "documentos-institucionales",
+    "displayName": "Documento Institucional",
+    "description": "Documentos como PEI, Manual de Convivencia, PRAE, etc."
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "titulo": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "titulo",
+      "required": true
+    },
+    "descripcion": {
+      "type": "text",
+      "required": true
+    },
+    "categoria": {
+      "type": "enumeration",
+      "enum": ["PEI", "Convivencia", "Ambiental", "Admisiones", "Organizacion", "Otro"],
+      "required": true
+    },
+    "archivo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images", "files", "videos", "audios"]
+    },
+    "urlExterna": {
+      "type": "string"
+    },
+    "formato": {
+      "type": "enumeration",
+      "enum": ["PDF", "Imagen", "Enlace"],
+      "required": true,
+      "default": "PDF"
+    },
+    "fechaActualizacion": {
+      "type": "date"
+    },
+    "version": {
+      "type": "string"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

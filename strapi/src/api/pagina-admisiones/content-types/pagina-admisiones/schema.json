@@ -1,0 +1,36 @@
+{
+  "kind": "singleType",
+  "collectionName": "pagina_admisiones",
+  "info": {
+    "singularName": "pagina-admisiones",
+    "pluralName": "paginas-admisiones",
+    "displayName": "Página Admisiones",
+    "description": "Inscripciones, lista útiles, resolución matrícula"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "introduccion": {
+      "type": "richtext",
+      "required": true
+    },
+    "requisitos": {
+      "type": "richtext"
+    },
+    "notaAclaratoria": {
+      "type": "text"
+    },
+    "listasUtiles": {
+      "type": "component",
+      "repeatable": true,
+      "component": "academico.lista-utiles-item"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

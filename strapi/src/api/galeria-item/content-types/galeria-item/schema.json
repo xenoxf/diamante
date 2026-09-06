@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "galeria_items",
+  "info": {
+    "singularName": "galeria-item",
+    "pluralName": "galeria-items",
+    "displayName": "Galería Item",
+    "description": "Fotos de galería institucional"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "titulo": {
+      "type": "string",
+      "required": true
+    },
+    "descripcion": {
+      "type": "text"
+    },
+    "imagen": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "categoria": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::categoria-galeria.categoria-galeria"
+    },
+    "fechaEvento": {
+      "type": "date"
+    },
+    "sede": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sede.sede"
+    },
+    "destacadoHome": {
+      "type": "boolean",
+      "default": false
+    },
+    "orden": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

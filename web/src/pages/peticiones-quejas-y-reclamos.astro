@@ -3,12 +3,20 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PageHero from '../components/PageHero.astro';
-import { EMAIL_INSTITUCIONAL } from '../services/ciudadania.service';
+import PqrsfForm from '../components/pqrsform.tsx';
+import { configuracionService } from '../services/configuracion.service';
+import { ciudadaniaService } from '../services/ciudadania.service';
 import '../styles/global.css';
 import '../styles/page.css';
+
+const config = await configuracionService.getConfiguracion();
+const paginaContacto = await ciudadaniaService.getPaginaContacto().catch(() => null);
+const seo = paginaContacto?.seo ?? config.seoDefault ?? null;
+const pageTitle = `Peticiones, quejas y reclamos — ${config.nombreInstitucion}`;
+const description = 'Radique PQRSF (peticiones, quejas, reclamos, sugerencias y felicitaciones) ante la IE El Diamante. Respuesta en términos de ley.';
 ---
 
-<Layout>
+<Layout title={pageTitle} description={description} seo={seo}>
   <Header />
   <main class="page">
     <PageHero kicker="Servicios a la ciudadanía" title="Peticiones, quejas y reclamos" />
@@ -18,6 +26,39 @@ import '../styles/page.css';
         (PQRSF) ante la Institución Educativa El Diamante. Toda solicitud
         recibe respuesta en los términos establecidos por la ley.
       </p>
+
+      <div class="note" style="margin-bottom: 1.5rem;">
+        <p style="margin: 0; line-height: 1.7;">
+          <strong>Aviso de privacidad:</strong> sus datos serán tratados conforme a la Ley 1581 de 2012 y usados exclusivamente para gestionar y responder su PQRSF en los términos de la Ley 1755 de 2015. No se comparten con terceros sin autorización. Puede ejercer sus derechos escribiendo a
+          <a href={`mailto:${config.emailInstitucional}`} style="color: var(--primary-dark); text-decoration: underline;"> {config.emailInstitucional}</a>.
+        </p>
+      </div>
+
+      <section aria-label="Formulario PQRSF">
+        <h2>Formulario PQRSF</h2>
+        <p>Seleccione el tipo de solicitud y diligencie los campos. Los campos con * son obligatorios.</p>
+        <PqrsfForm client:load />
+        <noscript>
+          <div class="note" role="alert">
+            Este formulario requiere JavaScript para validación y envío seguro a Strapi (<code>POST /api/solicitudes-pqrsf</code>). Sin JavaScript, escriba a
+            <a href={`mailto:${config.emailInstitucional}`}>{config.emailInstitucional}</a> indicando tipo, asunto y descripción.
+          </div>
+        </noscript>
+      </section>
+
+      <section aria-label="Información adicional" style="margin-top: 2rem;">
+        <h2>Términos de respuesta</h2>
+        <ul class="list" role="list">
+          <li>Peticiones de interés general o particular: 15 días hábiles.</li>
+          <li>Peticiones de documentos o información: 10 días hábiles.</li>
+          <li>Consultas: 30 días hábiles.</li>
+          <li>Quejas, reclamos y sugerencias: se tramitan con prioridad y se informa el avance.</li>
+        </ul>
+        <p style="margin-top: 1rem; line-height: 1.7; color: var(--muted-foreground);">
+          Si prefiere radicar de forma presencial, acérquese a la secretaría de cualquiera de nuestras sedes en horario de atención. También puede escribir directamente a
+          <a href={`mailto:${config.emailInstitucional}`} style="color: var(--primary-dark); text-decoration: underline;"> {config.emailInstitucional}</a>.
+        </p>
+      </section>
     </div>
   </main>
   <Footer />

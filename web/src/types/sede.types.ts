@@ -8,4 +8,6 @@ export interface Sede {
   mapQuery: string;
   imgPath: string;
   bannerUrl?: string;
+  horarioAtencion?: string | null;
+  imagenCardUrl?: string | null;
 }

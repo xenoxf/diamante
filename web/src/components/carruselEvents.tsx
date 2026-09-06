@@ -1,25 +1,35 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { carruselService } from '../services/carrusel.service';
-import type { CarruselSlide } from '../types/carrusel.types';
+import type { CarruselSlide, CarruselConfig } from '../types/carrusel.types';
 import styles from '../styles/carruselEvents.module.css';
 
 interface Props {
   limit?: number;
+  slides?: CarruselSlide[];
+  config?: CarruselConfig;
 }
 
-export function CarruselEvents({ limit = 8 }: Props) {
-  const [slides, setSlides] = useState<CarruselSlide[]>([]);
+export function CarruselEvents({ limit = 8, slides: initialSlides, config }: Props) {
+  const [slides, setSlides] = useState<CarruselSlide[]>(initialSlides ?? []);
   const [index, setIndex] = useState(0);
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(!!initialSlides && initialSlides.length > 0);
   const [failed, setFailed] = useState<ReadonlySet<string>>(new Set());
   const timer = useRef<number | null>(null);
   const paused = useRef(false);
   const touchX = useRef<number | null>(null);
 
+  // Si config viene por prop (SSR desde pagina-inicio.carruselConfig), sincronizar con servicio
+  useEffect(() => {
+    if (config?.autoplayMs) carruselService.carruselConfig.autoplayMs = config.autoplayMs;
+    if (config?.transitionMs) carruselService.carruselConfig.transitionMs = config.transitionMs;
+  }, [config]);
+
   const list = slides.filter((s) => !failed.has(s.id));
   const safeIndex = list.length > 0 ? index % list.length : 0;
 
   useEffect(() => {
+    // Si ya vienen slides por prop (SSR), no hacer fetch client
+    if (initialSlides && initialSlides.length > 0) return;
     const controller = new AbortController();
     carruselService.getCarruselSlides(limit, controller.signal).then((data) => {
       if (controller.signal.aborted) return;
@@ -27,7 +37,7 @@ export function CarruselEvents({ limit = 8 }: Props) {
       setReady(true);
     });
     return () => controller.abort();
-  }, [limit]);
+  }, [limit, initialSlides]);
 
   const stop = useCallback(() => {
     if (timer.current !== null) {
@@ -39,10 +49,11 @@ export function CarruselEvents({ limit = 8 }: Props) {
   const start = useCallback(() => {
     if (list.length < 2 || paused.current) return;
     stop();
+    const ms = config?.autoplayMs ?? carruselService.carruselConfig.autoplayMs;
     timer.current = window.setInterval(() => {
       setIndex((i) => (i + 1) % list.length);
-    }, carruselService.carruselConfig.autoplayMs);
-  }, [list.length, stop]);
+    }, ms);
+  }, [list.length, stop, config?.autoplayMs]);
 
   useEffect(() => {
     if (!ready) return;
@@ -116,7 +127,7 @@ export function CarruselEvents({ limit = 8 }: Props) {
               src={slide.src}
               srcSet={slide.srcSet}
               sizes={slide.sizes}
-              alt=""
+              alt={slide.alt || ''}
               draggable={false}
               loading={i === 0 ? 'eager' : 'lazy'}
               decoding="async"

@@ -3,11 +3,24 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PageHero from '../components/PageHero.astro';
-import { institucionalService } from '../services/institucional.service';
+import { identidadService } from '../services/identidad.service';
+import { getStrapiMediaUrl } from '../lib/strapi';
 import '../styles/global.css';
 import '../styles/page.css';
 
-const organigramaSrc = institucionalService.getDocumentoById('organigrama')?.url ?? '';
+let organigramaSrc: string | null = null;
+let organigramaDescripcion: string | null = null;
+
+try {
+  const identidad = await identidadService.getIdentidad();
+  organigramaSrc = getStrapiMediaUrl((identidad as any)?.organigrama);
+  organigramaDescripcion = (identidad as any)?.organigramaDescripcion ?? null;
+} catch (err) {
+  console.warn('[organigrama] Strapi fallback', err);
+}
+
+const fallbackSrc = 'https://www.ie-eldiamantecali.edu.co/wp-content/uploads/2024/09/Organigrama-el-diamante-2-1024x683.png';
+const src = organigramaSrc ?? fallbackSrc;
 ---
 
 <Layout>
@@ -15,10 +28,11 @@ const organigramaSrc = institucionalService.getDocumentoById('organigrama')?.url
   <main class="page">
     <PageHero kicker="Organización" title="Organigrama" />
     <div class="container">
+      {organigramaDescripcion && <p>{organigramaDescripcion}</p>}
       <p>
         <img
           class="figure-img"
-          src={organigramaSrc}
+          src={src}
           alt="Organigrama institucional de la IE El Diamante"
           loading="lazy"
           decoding="async"

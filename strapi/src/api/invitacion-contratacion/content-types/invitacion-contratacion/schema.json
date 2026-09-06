@@ -1,0 +1,60 @@
+{
+  "kind": "collectionType",
+  "collectionName": "invitaciones_contratacion",
+  "info": {
+    "singularName": "invitacion-contratacion",
+    "pluralName": "invitaciones-contratacion",
+    "displayName": "Invitación Contratación",
+    "description": "Invitaciones públicas de contratación < 20 SMLMV"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "numero": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "numero",
+      "required": true
+    },
+    "objeto": {
+      "type": "text",
+      "required": true
+    },
+    "fechaPublicacion": {
+      "type": "date",
+      "required": true
+    },
+    "fechaCierre": {
+      "type": "date"
+    },
+    "montoEstimado": {
+      "type": "decimal"
+    },
+    "estado": {
+      "type": "enumeration",
+      "enum": ["abierta", "cerrada", "adjudicada", "desierta"],
+      "default": "abierta",
+      "required": true
+    },
+    "documento": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images", "files", "videos", "audios"]
+    },
+    "documentoUrl": {
+      "type": "string"
+    },
+    "enlacesExternos": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.enlace"
+    }
+  }
+}

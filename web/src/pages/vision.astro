@@ -3,8 +3,20 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PageHero from '../components/PageHero.astro';
+import { identidadService } from '../services/identidad.service';
 import '../styles/global.css';
 import '../styles/page.css';
+
+let visionHtml: string | null = null;
+try {
+  const identidad = await identidadService.getIdentidad();
+  visionHtml = (identidad as any)?.vision ?? null;
+} catch (err) {
+  console.warn('[vision] Strapi fallback', err);
+}
+
+const fallbackVision = `<p>La <strong>Institución Educativa El Diamante</strong>, al 2030, será reconocida como una institución pluriétnica y multicultural, modelo de excelencia en la educación media técnica en la comuna 13 de Santiago de Cali y referente para el desarrollo social de la comunidad.</p>`;
+const html = visionHtml ?? fallbackVision;
 ---
 
 <Layout>
@@ -12,12 +24,7 @@ import '../styles/page.css';
   <main class="page">
     <PageHero kicker="Identidad institucional" title="Visión" />
     <div class="container">
-      <p>
-        La <strong>Institución Educativa El Diamante</strong>, al 2017, será
-        reconocida como una institución pluriétnica y multicultural, modelo de
-        excelencia en la educación media técnica en la comuna 13 de Santiago de
-        Cali y referente para el desarrollo social de la comunidad.
-      </p>
+      <div set:html={html}></div>
     </div>
   </main>
   <Footer />

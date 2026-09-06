@@ -1,6 +1,16 @@
 ---
 import styles from "../styles/especialidades.module.css";
-import { especialidades } from "../data/especialidades";
+import { especialidadesService } from "../services/especialidades.service";
+import { getStrapiMediaUrl } from "../lib/strapi";
+
+let especialidades: Awaited<ReturnType<typeof especialidadesService.getEspecialidades>> = [];
+try {
+  especialidades = await especialidadesService.getEspecialidades();
+} catch (err) {
+  console.warn('[Especialidades.astro] fallback:', err);
+  const { especialidades: fallback } = await import("../data/especialidades");
+  especialidades = fallback;
+}
 ---
 
 <section
@@ -15,25 +25,30 @@ import { especialidades } from "../data/especialidades";
     <div class={styles.rule} aria-hidden="true"></div>
     <ul class={styles.grid}>
       {
-        especialidades.map((item) => (
-          <li>
-            <a
-              href={`/especialidades/${item.slug}`}
-              class={styles.cardLink}
-            >
-              <article class={styles.card}>
-                <img
-                  class={styles.cardImage}
-                  src={item.images[0]}
-                  alt={`imagen de la técnica de ${item.nombre}`}
-                />
-                <div class={styles.cardBody}>
-                  <p class={styles.cardTitle}>{item.nombre}</p>
-                </div>
-              </article>
-            </a>
-          </li>
-        ))
+        especialidades.map((item) => {
+          const imgSrc = item.images?.[0] ?? getStrapiMediaUrl((item as any).imagenes) ?? `/tecnica/${item.slug}/${item.slug}_1.jpeg`;
+          return (
+            <li>
+              <a
+                href={`/especialidades/${item.slug}`}
+                class={styles.cardLink}
+              >
+                <article class={styles.card}>
+                  <img
+                    class={styles.cardImage}
+                    src={imgSrc}
+                    alt={`imagen de la técnica de ${item.nombre}`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <div class={styles.cardBody}>
+                    <p class={styles.cardTitle}>{item.nombre}</p>
+                  </div>
+                </article>
+              </a>
+            </li>
+          );
+        })
       }
     </ul>
   </div>

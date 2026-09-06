@@ -3,12 +3,21 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PageHero from '../components/PageHero.astro';
-import { EMAIL_INSTITUCIONAL, TRANSPARENCIA_URL } from '../services/ciudadania.service';
+import DenunciaForm from '../components/DenunciaForm.tsx';
+import { configuracionService } from '../services/configuracion.service';
+import { ciudadaniaService } from '../services/ciudadania.service';
+import { TRANSPARENCIA_URL } from '../services/ciudadania.service';
 import '../styles/global.css';
 import '../styles/page.css';
+
+const config = await configuracionService.getConfiguracion();
+const paginaContacto = await ciudadaniaService.getPaginaContacto().catch(() => null);
+const seo = paginaContacto?.seo ?? config.seoDefault ?? null;
+const pageTitle = `Denuncias por hechos de corrupción — ${config.nombreInstitucion}`;
+const description = 'Canal confidencial para denunciar presuntos hechos de corrupción en la IE El Diamante. Denuncia anónima con reserva de identidad.';
 ---
 
-<Layout>
+<Layout title={pageTitle} description={description} seo={seo}>
   <Header />
   <main class="page">
     <PageHero kicker="Servicios a la ciudadanía" title="Denuncias por hechos de corrupción" />
@@ -24,6 +33,40 @@ import '../styles/page.css';
         previstas en la ley. Este canal no reemplaza las denuncias penales,
         que deben interponerse ante la Fiscalía General de la Nación.
       </p>
+
+      <div class="note" style="margin-bottom: 1.5rem; border-left-color: var(--destructive);">
+        <p style="margin: 0; line-height: 1.7;">
+          <strong>Confidencialidad:</strong> solo personal autorizado accederá a su denuncia. Si elige denuncia anónima, no se solicitará ningún dato identificable. Puede adjuntar evidencias (documentos, imágenes) que serán tratadas con reserva. Para más información sobre transparencia, visite
+          <a href={TRANSPARENCIA_URL} target="_blank" rel="noopener noreferrer" style="color: var(--primary-dark); text-decoration: underline;"> transparencia.cali.gov.co</a>.
+        </p>
+      </div>
+
+      <section aria-label="Formulario de denuncia">
+        <h2>Formulario de denuncia</h2>
+        <p>Describa los hechos con el mayor detalle posible. Puede hacerlo de forma anónima.</p>
+        <DenunciaForm client:load />
+        <noscript>
+          <div class="note" role="alert">
+            Este formulario requiere JavaScript para validación y envío seguro a Strapi (<code>POST /api/denuncias-corrupcion</code>). Sin JavaScript, escriba a
+            <a href={`mailto:${config.emailInstitucional}`}>{config.emailInstitucional}</a> con asunto "Denuncia por hechos de corrupción" o use el canal presencial con reserva de identidad.
+          </div>
+        </noscript>
+      </section>
+
+      <section aria-label="Canales alternos" style="margin-top: 2rem;">
+        <h2>Canales alternos</h2>
+        <ul class="list" role="list">
+          <li>
+            Correo institucional: <a href={`mailto:${config.emailInstitucional}`} style="color: var(--primary-dark); text-decoration: underline;">{config.emailInstitucional}</a> (asunto: Denuncia - reserva de identidad)
+          </li>
+          <li>
+            Presencial: secretaría de cualquiera de nuestras sedes, solicitando reserva de identidad. Horario: <span set:html={config.horarioAtencion ?? 'Lunes a viernes 7:00 - 15:00'} />
+          </li>
+          <li>
+            Entes externos: <a href="https://www.fiscalia.gov.co/" target="_blank" rel="noopener noreferrer" style="color: var(--primary-dark); text-decoration: underline;">Fiscalía General de la Nación</a> para denuncias penales.
+          </li>
+        </ul>
+      </section>
     </div>
   </main>
   <Footer />

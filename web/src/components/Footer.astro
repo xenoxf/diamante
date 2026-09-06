@@ -1,16 +1,40 @@
 ---
-import { sedes } from '../data/sedes';
+import { sedes as sedesFallback } from '../data/sedes';
+import { configuracionService } from '../services/configuracion.service';
+import { sedesService } from '../services/sedes.service';
 import styles from '../styles/footer.module.css';
+
+// Consumir Strapi para footer dinámico: emailInstitucional, telefonoPrincipal, enlacesGobierno, avisoLegalFooter y sedes.
+// Fallback a datos locales si Strapi no está disponible (build sin CMS o error de red).
+const config = await configuracionService.getConfiguracion().catch(() => configuracionService.fallback);
+const sedes = await sedesService.getSedes().catch(() => sedesFallback);
+
+const enlacesGobierno = config.enlacesGobierno && config.enlacesGobierno.length > 0
+  ? config.enlacesGobierno
+  : [
+      { label: 'Transparencia', url: 'https://transparencia.cali.gov.co/', externo: true },
+      { label: 'Alcaldía de Cali', url: 'https://www.cali.gov.co/', externo: true },
+      { label: 'Secretaría de Educación', url: 'https://www.cali.gov.co/educacion/', externo: true },
+    ];
+
+const emailInstitucional = config.emailInstitucional ?? 'ie.eldiamante@cali.edu.co';
+const avisoLegal = config.avisoLegalFooter ?? '© 2026 Institución Educativa El Diamante · Santiago de Cali';
 ---
 <footer id="contacto" class={styles.footer}>
   <div class={styles.container}>
     <div class={styles.grid}>
       <div class={styles.column}>
         <h2 class={styles.heading}>Instituci&oacute;n</h2>
-        <p class={styles.name}>Instituci&oacute;n Educativa El Diamante</p>
-        <p class={styles.text}>Santiago de Cali, Colombia</p>
-        <a class={styles.link} href="mailto:ie.eldiamante@cali.edu.co">ie.eldiamante@cali.edu.co</a>
-        <p class={styles.text}>Rector&iacute;a Institucional</p>
+        <p class={styles.name}>{config.nombreInstitucion}</p>
+        <p class={styles.text}>{config.direccionPrincipal ?? 'Santiago de Cali, Colombia'}</p>
+        <a class={styles.link} href={`mailto:${emailInstitucional}`}>{emailInstitucional}</a>
+        {config.telefonoPrincipal && (
+          <a class={styles.link} href={`tel:${config.telefonoPrincipal.replace(/\s+/g, '')}`}>{config.telefonoPrincipal}</a>
+        )}
+        {config.horarioAtencion && (
+          <p class={styles.text} set:html={config.horarioAtencion} />
+        )}
+        <p class={styles.text}>Rectoría Institucional</p>
       </div>
 
       <div class={styles.column}>
@@ -33,36 +57,21 @@ import styles from '../styles/footer.module.css';
       <div class={styles.column}>
         <h2 class={styles.heading}>Gobierno</h2>
         <ul class={styles.list}>
-          <li class={styles.listItem}>
-            <a
-              class={styles.link}
-              href="https://transparencia.cali.gov.co/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Transparencia
-            </a>
-          </li>
-          <li class={styles.listItem}>
-            <a
-              class={styles.link}
-              href="https://www.cali.gov.co/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Alcald&iacute;a de Cali
-            </a>
-          </li>
-          <li class={styles.listItem}>
-            <a
-              class={styles.link}
-              href="https://www.cali.gov.co/educacion/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Secretar&iacute;a de Educaci&oacute;n
-            </a>
-          </li>
+          {enlacesGobierno.map((enlace) => {
+            const isExternal = (enlace as any).externo || (enlace as any).abrirEnNuevaPestana || enlace.url.startsWith('http');
+            return (
+              <li class={styles.listItem}>
+                <a
+                  class={styles.link}
+                  href={enlace.url}
+                  target={isExternal ? '_blank' : undefined}
+                  rel={isExternal ? 'noopener noreferrer' : undefined}
+                >
+                  {enlace.label}
+                </a>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>
@@ -70,7 +79,7 @@ import styles from '../styles/footer.module.css';
 
   <div class={styles.bottomBar}>
     <div class={styles.bottomInner}>
-      <p class={styles.legal}>&copy; 2026 Instituci&oacute;n Educativa El Diamante &middot; Santiago de Cali</p>
+      <p class={styles.legal}>{avisoLegal}</p>
     </div>
   </div>
 </footer>

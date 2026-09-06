@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_shared_enlaces",
+  "info": {
+    "displayName": "Enlace",
+    "icon": "link"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    },
+    "externo": {
+      "type": "boolean",
+      "default": false
+    },
+    "abrirEnNuevaPestana": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

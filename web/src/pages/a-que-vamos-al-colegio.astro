@@ -8,7 +8,17 @@ import { institucionalService } from '../services/institucional.service';
 import '../styles/global.css';
 import '../styles/page.css';
 
-const doc = institucionalService.getDocumentoById('a-que-vamos-al-colegio');
+let doc: any = null;
+try {
+  doc = await institucionalService.getDocumentoBySlug('a-que-vamos-al-colegio');
+} catch (err) {
+  console.warn('[a-que-vamos-al-colegio] Strapi fallback', err);
+}
+if (!doc) {
+  try {
+    doc = await institucionalService.getDocumentoById('a-que-vamos-al-colegio');
+  } catch {}
+}
 ---
 
 <Layout>
@@ -16,8 +26,10 @@ const doc = institucionalService.getDocumentoById('a-que-vamos-al-colegio');
   <main class="page">
     <PageHero kicker="Permanencia escolar" title="¿A qué vamos al colegio?" />
     <div class="container">
-      {doc && (
-        <FileViewer src={doc.url} title="¿A qué vamos al colegio?" format="PDF" />
+      {doc ? (
+        <FileViewer src={doc.url} title={doc.titulo ?? '¿A qué vamos al colegio?'} format={doc.formato ?? 'PDF'} />
+      ) : (
+        <p class="empty">Documento no disponible por el momento.</p>
       )}
     </div>
   </main>

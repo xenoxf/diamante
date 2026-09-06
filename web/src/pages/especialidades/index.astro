@@ -1,13 +1,23 @@
 ---
+export const prerender = true;
+
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import PageHero from '../../components/PageHero.astro';
 import { especialidadesService } from '../../services/especialidades.service';
+import { getStrapiMediaUrl } from '../../lib/strapi';
 import '../../styles/global.css';
 import '../../styles/page.css';
 
-const especialidades = especialidadesService.getEspecialidades();
+let especialidades: Awaited<ReturnType<typeof especialidadesService.getEspecialidades>> = [];
+try {
+  especialidades = await especialidadesService.getEspecialidades();
+} catch (err) {
+  console.warn('[especialidades/index] fallback:', err);
+  const { especialidades: fallback } = await import('../../data/especialidades');
+  especialidades = fallback;
+}
 ---
 
 <Layout>
@@ -21,13 +31,32 @@ const especialidades = especialidadesService.getEspecialidades();
         educativa y a la vinculación al mundo productivo.
       </p>
       <div class="grid">
-        {especialidades.map((esp) => (
-          <article class="card">
-            <h2>{esp.nombre}</h2>
-            <p>{esp.descripcion}</p>
-            <a class="link" href={`/especialidades/${esp.slug}`}>Ver especialidad</a>
-          </article>
-        ))}
+        {especialidades.map((esp) => {
+          const thumb = esp.images?.[0] ?? getStrapiMediaUrl((esp as any).imagenes) ?? `/tecnica/${esp.slug}/${esp.slug}_1.jpeg`;
+          return (
+            <article class="card">
+              {thumb && (
+                <img
+                  src={thumb}
+                  alt={`Imagen de ${esp.nombre}`}
+                  loading="lazy"
+                  decoding="async"
+                  style="width:100%;height:180px;object-fit:cover;border-radius:6px;margin-bottom:1rem;display:block;"
+                />
+              )}
+              <h2>{esp.nombre}</h2>
+              <p>{esp.descripcion}</p>
+              {esp.puntos && esp.puntos.length > 0 && (
+                <ul style="margin:0.75rem 0 1rem 1.25rem;line-height:1.6;">
+                  {esp.puntos.slice(0, 3).map((p) => (
+                    <li>{p}</li>
+                  ))}
+                </ul>
+              )}
+              <a class="link" href={`/especialidades/${esp.slug}`}>Ver especialidad</a>
+            </article>
+          );
+        })}
       </div>
     </div>
   </main>

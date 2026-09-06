@@ -8,7 +8,20 @@ import { institucionalService } from '../services/institucional.service';
 import '../styles/global.css';
 import '../styles/page.css';
 
-const manualPdf = institucionalService.getDocumentoById('manual-convivencia')?.url ?? '#';
+let manualDoc: any = null;
+try {
+  manualDoc = await institucionalService.getDocumentoBySlug('manual-convivencia');
+} catch (err) {
+  console.warn('[manual-convivencia] Strapi fallback', err);
+}
+if (!manualDoc) {
+  try {
+    manualDoc = await institucionalService.getDocumentoById('manual-convivencia');
+  } catch {}
+}
+const manualPdf = manualDoc?.url ?? '#';
+const manualTitle = manualDoc?.titulo ?? 'Manual de Convivencia — IE El Diamante';
+const manualFormat = manualDoc?.formato ?? 'PDF';
 ---
 
 <Layout>
@@ -16,7 +29,11 @@ const manualPdf = institucionalService.getDocumentoById('manual-convivencia')?.u
   <main class="page">
     <PageHero kicker="Convivencia escolar" title="Manual de convivencia" />
     <div class="container">
-      <FileViewer src={manualPdf} title="Manual de Convivencia — IE El Diamante" format="PDF" />
+      {manualDoc ? (
+        <FileViewer src={manualPdf} title={manualTitle} format={manualFormat} />
+      ) : (
+        <p class="empty">Documento no disponible por el momento.</p>
+      )}
     </div>
   </main>
   <Footer />

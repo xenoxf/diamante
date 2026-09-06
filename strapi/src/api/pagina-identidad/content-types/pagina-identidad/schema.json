@@ -1,0 +1,64 @@
+{
+  "kind": "singleType",
+  "collectionName": "pagina_identidad",
+  "info": {
+    "singularName": "pagina-identidad",
+    "pluralName": "paginas-identidad",
+    "displayName": "Página Identidad",
+    "description": "Misión, visión, valores y organigrama"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "mision": {
+      "type": "richtext",
+      "required": true
+    },
+    "misionImagen": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "vision": {
+      "type": "richtext",
+      "required": true
+    },
+    "visionImagen": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "valoresIntroduccion": {
+      "type": "text"
+    },
+    "valoresImagen": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "valores": {
+      "type": "component",
+      "repeatable": true,
+      "component": "identidad.valor-institucional"
+    },
+    "organigrama": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images", "files"]
+    },
+    "organigramaDescripcion": {
+      "type": "text"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

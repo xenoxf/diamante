@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "categorias_noticia",
+  "info": {
+    "singularName": "categoria-noticia",
+    "pluralName": "categorias-noticia",
+    "displayName": "Categoría Noticia",
+    "description": "Categorías para noticias (Institucional, Académico, Contratación...)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "nombre": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "nombre",
+      "required": true
+    },
+    "descripcion": {
+      "type": "text"
+    },
+    "color": {
+      "type": "string"
+    }
+  }
+}

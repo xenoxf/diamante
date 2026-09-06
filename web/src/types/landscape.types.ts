@@ -29,4 +29,6 @@ export interface GalleryImage {
   height: number;
   alt: string;
   href: string;
+  titulo?: string;
+  categoria?: string;
 }

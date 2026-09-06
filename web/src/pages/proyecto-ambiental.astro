@@ -8,7 +8,17 @@ import { institucionalService } from '../services/institucional.service';
 import '../styles/global.css';
 import '../styles/page.css';
 
-const doc = institucionalService.getDocumentoById('proyecto-ambiental');
+let doc: any = null;
+try {
+  doc = await institucionalService.getDocumentoBySlug('proyecto-ambiental');
+} catch (err) {
+  console.warn('[proyecto-ambiental] Strapi fallback', err);
+}
+if (!doc) {
+  try {
+    doc = await institucionalService.getDocumentoById('proyecto-ambiental');
+  } catch {}
+}
 ---
 
 <Layout>
@@ -16,8 +26,10 @@ const doc = institucionalService.getDocumentoById('proyecto-ambiental');
   <main class="page">
     <PageHero kicker="Medio ambiente" title="Proyecto ambiental" />
     <div class="container">
-      {doc && (
-        <FileViewer src={doc.url} title="Proyecto Ambiental Escolar (PRAE)" format="PDF" />
+      {doc ? (
+        <FileViewer src={doc.url} title={doc.titulo ?? 'Proyecto Ambiental Escolar (PRAE)'} format={doc.formato ?? 'PDF'} />
+      ) : (
+        <p class="empty">Documento no disponible por el momento.</p>
       )}
     </div>
   </main>

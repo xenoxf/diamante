@@ -1,65 +1,145 @@
 ---
+export const prerender = true;
+
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import PageHero from '../../components/PageHero.astro';
 import { sedesService } from '../../services/sedes.service';
+import { getStrapiMediaUrl } from '../../lib/strapi';
 import '../../styles/global.css';
 import '../../styles/page.css';
 
 export async function getStaticPaths() {
-  return sedesService.getSedes().map((s) => ({ params: { sede: s.slug }, props: { sede: s } }));
+  try {
+    const sedes = await sedesService.getSedes();
+    return sedes.map((s) => ({ params: { sede: s.slug }, props: { sede: s } }));
+  } catch (err) {
+    console.warn('[sedes/[sede] getStaticPaths] fallback:', err);
+    const { sedes: fallback } = await import('../../data/sedes');
+    return fallback.map((s) => ({ params: { sede: s.slug }, props: { sede: s } }));
+  }
 }
 
-const { sede } = Astro.props;
-const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(sede.mapQuery)}&output=embed`;
+let sede: any = (Astro.props as any)?.sede;
+const slugParam = Astro.params.sede as string;
+if (!sede || sede.slug !== slugParam) {
+  try {
+    const fetched = await sedesService.getSedeBySlug(String(slugParam));
+    if (fetched) sede = fetched;
+  } catch (err) {
+    console.warn('[sedes/[sede]] getSedeBySlug fallback:', err);
+  }
+}
+
+if (!sede) {
+  // fallback to 404 message; Astro will still render
+}
+
+const imagenCardUrl: string | null =
+  (sede as any)?.imagenCardUrl ??
+  getStrapiMediaUrl((sede as any)?.imagenCard) ??
+  sede?.imgPath ??
+  null;
+
+const bannerUrl: string | null =
+  sede?.bannerUrl ??
+  getStrapiMediaUrl((sede as any)?.banner) ??
+  null;
+
+const mapSrc = sede ? `https://www.google.com/maps?q=${encodeURIComponent(sede.mapQuery)}&output=embed` : '';
 ---
 
 <Layout>
   <Header />
   <main class="page">
-    <PageHero kicker="Nuestras sedes" title={sede.nombre} />
-    <div class="container">
-      {sede.bannerUrl && (
-        <p>
-          <img
-            class="figure-img"
-            src={sede.bannerUrl}
-            alt={`Banner de ${sede.nombre}`}
+    {sede ? (
+      <>
+        <PageHero kicker="Nuestras sedes" title={sede.nombre} />
+        <div class="container">
+          {bannerUrl && (
+            <p>
+              <img
+                class="figure-img"
+                src={bannerUrl}
+                alt={`Banner de ${sede.nombre}`}
+                loading="lazy"
+                decoding="async"
+              />
+            </p>
+          )}
+          {imagenCardUrl && imagenCardUrl !== bannerUrl && (
+            <p>
+              <img
+                class="figure-img"
+                src={imagenCardUrl}
+                alt={`Imagen de ${sede.nombre}`}
+                loading="lazy"
+                decoding="async"
+              />
+            </p>
+          )}
+
+          <div class="data">
+            <div>
+              <h4>Barrio</h4>
+              <p>{sede.barrio}</p>
+            </div>
+            <div>
+              <h4>Dirección</h4>
+              <p>{sede.direccion}</p>
+            </div>
+            <div>
+              <h4>Teléfono</h4>
+              <p><a href={`tel:${sede.telefono}`}>{sede.telefono}</a></p>
+            </div>
+            <div>
+              <h4>Correo</h4>
+              <p><a href={`mailto:${sede.email}`}>{sede.email}</a></p>
+            </div>
+            <div>
+              <h4>Mapa</h4>
+              <p>{sede.mapQuery}</p>
+            </div>
+            {sede.horarioAtencion && (
+              <div>
+                <h4>Horario de atención</h4>
+                <p>{sede.horarioAtencion}</p>
+              </div>
+            )}
+            {imagenCardUrl && (
+              <div>
+                <h4>Imagen Card</h4>
+                <p class="meta" style="word-break:break-all;">{imagenCardUrl}</p>
+              </div>
+            )}
+            {bannerUrl && (
+              <div>
+                <h4>Banner</h4>
+                <p class="meta" style="word-break:break-all;">{bannerUrl}</p>
+              </div>
+            )}
+          </div>
+
+          <h2>Ubicación</h2>
+          <iframe
+            class="map"
+            title={`Mapa de ubicación de ${sede.nombre}`}
+            src={mapSrc}
             loading="lazy"
-            decoding="async"
-          />
-        </p>
-      )}
-      <div class="data">
-        
-          <h4>Barrio</h4>
-          <p>{sede.barrio}</p>
-        
-        
-          <h4>Dirección</h4>
-          <p>{sede.direccion}</p>
-        
-        
-          <h4>Teléfono</h4>
-          <p>{sede.telefono}</p>
-        
-        
-          <h4>Correo</h4>
-          <p><a href={`mailto:${sede.email}`}>{sede.email}</a></p>
-        
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+          <p class="back"><a href="/sedes">Volver a todas las sedes</a></p>
+        </div>
+      </>
+    ) : (
+      <div class="container">
+        <h1>Sede no encontrada</h1>
+        <p>La sede solicitada no existe.</p>
+        <p class="back"><a href="/sedes">Volver a todas las sedes</a></p>
       </div>
-      <h2>Ubicación</h2>
-      <iframe
-        class="map"
-        title={`Mapa de ubicación de ${sede.nombre}`}
-        src={mapSrc}
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-        allowfullscreen
-      ></iframe>
-      <p class="back"><a href="/sedes">Volver a todas las sedes</a></p>
-    </div>
+    )}
   </main>
   <Footer />
 </Layout>

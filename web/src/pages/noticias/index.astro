@@ -1,13 +1,50 @@
 ---
+export const prerender = true;
+
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import PageHero from '../../components/PageHero.astro';
 import { noticiasService } from '../../services/noticias.service';
+import { getStrapiMediaUrl } from '../../lib/strapi';
 import '../../styles/global.css';
 import '../../styles/page.css';
 
-const noticias = noticiasService.getNoticias();
+// Soporte ?page query param con paginación Strapi meta
+const url = Astro.url;
+const rawPage = url.searchParams.get('page');
+let page = parseInt(rawPage ?? '1', 10);
+if (isNaN(page) || page < 1) page = 1;
+const pageSize = 6;
+
+let noticias: Awaited<ReturnType<typeof noticiasService.getNoticias>> = [];
+let pagination: { page: number; pageSize: number; pageCount: number; total: number } | null = null;
+
+try {
+  const result = await noticiasService.getNoticiasPaginated({ page, pageSize });
+  noticias = result.data;
+  pagination = result.pagination;
+} catch (err) {
+  console.warn('[noticias/index] fallback paginado:', err);
+  try {
+    const todas = await noticiasService.getNoticias();
+    const total = todas.length;
+    const pageCount = Math.max(1, Math.ceil(total / pageSize));
+    const safePage = Math.min(page, pageCount);
+    const start = (safePage - 1) * pageSize;
+    noticias = todas.slice(start, start + pageSize);
+    pagination = { page: safePage, pageSize, pageCount, total };
+    page = safePage;
+  } catch {
+    noticias = [];
+    pagination = { page: 1, pageSize, pageCount: 1, total: 0 };
+  }
+}
+
+// Fallback si page fuera de rango (Strapi puede devolver pageCount menor)
+if (pagination && page > pagination.pageCount) {
+  page = pagination.pageCount;
+}
 ---
 
 <Layout>
@@ -19,16 +56,58 @@ const noticias = noticiasService.getNoticias();
         Información oficial sobre actividades académicas, culturales y
         administrativas de la Institución Educativa El Diamante.
       </p>
-      <div class="grid">
-        {noticias.map((noticia) => (
-          <article class="card">
-            <p class="meta">{noticia.fecha} · {noticia.categoria}</p>
-            <h2>{noticia.titulo}</h2>
-            <p class="summary">{noticia.resumen}</p>
-            <a class="link" href={`/noticias/${noticia.slug}`}>Leer noticia</a>
-          </article>
-        ))}
-      </div>
+
+      {noticias.length === 0 ? (
+        <p class="empty">No hay noticias disponibles en este momento.</p>
+      ) : (
+        <div class="grid">
+          {noticias.map((noticia) => {
+            const portadaUrl = (noticia as any).portadaUrl ?? getStrapiMediaUrl((noticia as any).portada) ?? null;
+            return (
+              <article class="card">
+                {portadaUrl ? (
+                  <img
+                    src={portadaUrl}
+                    alt={`Portada de ${noticia.titulo}`}
+                    loading="lazy"
+                    decoding="async"
+                    style="width:100%;height:180px;object-fit:cover;border-radius:6px;margin-bottom:1rem;display:block;"
+                  />
+                ) : (
+                  <div
+                    aria-hidden="true"
+                    style="width:100%;height:180px;background:var(--wash);border:1px solid var(--line);border-radius:6px;margin-bottom:1rem;"
+                  />
+                )}
+                <p class="meta">{noticia.fecha} · {noticia.categoria}</p>
+                <h2>{noticia.titulo}</h2>
+                <p class="summary">{noticia.resumen}</p>
+                <a class="link" href={`/noticias/${noticia.slug}`}>Leer noticia</a>
+              </article>
+            );
+          })}
+        </div>
+      )}
+
+      {pagination && (
+        <nav class="pagination" aria-label="Paginación de noticias" style="margin-top:2.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+          <p class="meta" style="margin:0;">
+            Página {pagination.page} de {pagination.pageCount} — Total {pagination.total} noticias
+          </p>
+          <div style="display:flex;gap:0.75rem;">
+            {pagination.page > 1 ? (
+              <a class="link" href={`/noticias${pagination.page - 1 === 1 ? '' : `?page=${pagination.page - 1}`}`}>← Anterior</a>
+            ) : (
+              <span class="meta" style="opacity:0.5;">← Anterior</span>
+            )}
+            {pagination.page < pagination.pageCount ? (
+              <a class="link" href={`/noticias?page=${pagination.page + 1}`}>Siguiente →</a>
+            ) : (
+              <span class="meta" style="opacity:0.5;">Siguiente →</span>
+            )}
+          </div>
+        </nav>
+      )}
     </div>
   </main>
   <Footer />

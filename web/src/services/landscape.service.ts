@@ -1,31 +1,28 @@
-import type { GalleryImage, LandscapeSlide } from '../types/landscape.types';
+/**
+ * @deprecated - Este servicio existía para cargar paisajes desde Wikimedia Commons / Picsum.
+ * Ahora está deprecado: internamente delega a Strapi (slides-carrusel y galeria-items)
+ * y mantiene el fallback a Picsum/Commons para compatibilidad.
+ *
+ * Páginas y componentes deben migrar a:
+ *  - carruselService.getCarruselSlides() para carrusel
+ *  - galeriaService.getGaleriaImages() para galería
+ *
+ * Se mantiene export para no romper imports existentes.
+ */
 
-const COMMONS_API = 'https://commons.wikimedia.org/w/api.php';
+import type { GalleryImage, LandscapeSlide } from '../types/landscape.types';
+import { fetchStrapi } from '../lib/strapi';
+import {
+  mapStrapiGaleriaToGalleryImages,
+  mapStrapiSlidesToLandscape,
+} from '../lib/mappers';
+import type { StrapiCollectionResponse } from '../lib/strapi-types';
+
 const TARGET_HREF = '/galeria';
 const SIZES = '(max-width: 640px) 640px, (max-width: 1024px) 1024px, (max-width: 1600px) 1600px, 1920px';
 
-const CAROUSEL_QUERY = 'mountain lake valley national park filetype:bitmap';
-const GALLERY_QUERIES = [
-  'forest waterfall nature filetype:bitmap',
-  'tropical beach coast filetype:bitmap',
-  'mountain lake valley national park filetype:bitmap',
-];
-
 /** IDs de Picsum verificados como paisajes/naturaleza. Solo fallback sin red. */
 const FALLBACK_IDS = ['1015', '1016', '1018', '1019', '1036', '1039', '10', '28'];
-
-interface CommonsInfo {
-  thumburl?: string;
-  url?: string;
-  width?: number;
-  height?: number;
-}
-
-interface CommonsPage {
-  pageid: number;
-  title: string;
-  imageinfo?: CommonsInfo[];
-}
 
 function picsumSrc(id: string, w: number, h: number): string {
   return `https://picsum.photos/id/${id}/${w}/${h}`;
@@ -78,114 +75,60 @@ function picsumGalleryFallback(count: number): GalleryImage[] {
   });
 }
 
-async function searchCommons(
-  query: string,
-  thumbWidth: number,
-  limit: number,
-  signal?: AbortSignal,
-): Promise<GalleryImage[]> {
-  const params = new URLSearchParams({
-    action: 'query',
-    format: 'json',
-    formatversion: '2',
-    generator: 'search',
-    gsrsearch: query,
-    gsrnamespace: '6',
-    gsrlimit: String(limit),
-    prop: 'imageinfo',
-    iiprop: 'url|size',
-    iiurlwidth: String(thumbWidth),
-    origin: '*',
-  });
-  const res = await fetch(`${COMMONS_API}?${params.toString()}`, {
-    signal,
-    headers: { Accept: 'application/json' },
-  });
-  if (!res.ok) throw new Error(`Commons respondió ${res.status}`);
-  const data = await res.json();
-  const pages = (data?.query?.pages ?? []) as CommonsPage[];
-  const out: GalleryImage[] = [];
-  for (const page of pages) {
-    const info = page.imageinfo?.[0];
-    const src = info?.thumburl ?? info?.url;
-    if (!src || !info?.width || !info?.height) continue;
-    out.push({
-      id: `commons-${page.pageid}`,
-      src,
-      width: info.width,
-      height: info.height,
-      alt: '',
-      href: TARGET_HREF,
-    });
-  }
-  return out;
-}
+// ---------------------------------------------------------------------------
+// Intentar Strapi primero, fallback a Picsum (sin Commons para evitar dependencia externa)
+// Commons se mantiene comentado como referencia, pero Strapi es prioritario.
+// ---------------------------------------------------------------------------
 
-function toSlide(img: GalleryImage): LandscapeSlide {
-  return {
-    id: img.id,
-    image: {
-      src: img.src,
-      srcSet: `${img.src} ${Math.min(img.width, 1920)}w`,
-      sizes: SIZES,
-      width: img.width,
-      height: img.height,
-    },
-    alt: '',
-    href: img.href,
-  };
-}
-
-let carouselCache: LandscapeSlide[] | null = null;
-let galleryCache: GalleryImage[] | null = null;
-
-async function getLandscapeSlides(
-  limit = 8,
-  signal?: AbortSignal,
-): Promise<LandscapeSlide[]> {
-  if (carouselCache) return carouselCache.slice(0, limit);
+async function getLandscapeSlides(limit = 8, signal?: AbortSignal): Promise<LandscapeSlide[]> {
   try {
-    const found = await searchCommons(CAROUSEL_QUERY, 1920, 12, signal);
-    const landscapes = found.filter((img) => img.width >= img.height).slice(0, limit);
-    if (landscapes.length >= 2) {
-      carouselCache = landscapes.map(toSlide);
-      return carouselCache.slice(0, limit);
-    }
-    throw new Error('Sin suficientes paisajes');
-  } catch {
-    if (signal?.aborted) return [];
+    const res = await fetchStrapi<StrapiCollectionResponse<any>>('/slides-carrusel', {
+      params: {
+        filters: { activo: { $eq: true } },
+        sort: ['orden:asc'],
+        pagination: { pageSize: limit },
+        populate: { imagen: { fields: ['url', 'width', 'height', 'formats', 'alternativeText'] } },
+        status: 'published',
+      },
+      fetchOptions: { signal } as any,
+    });
+    const data: any[] = (res as any).data ?? [];
+    const slides = mapStrapiSlidesToLandscape(data).slice(0, limit);
+    if (slides.length >= 2) return slides;
+    if (slides.length > 0) return [...slides, ...picsumFallback(limit - slides.length)].slice(0, limit);
+    throw new Error('Sin slides Strapi');
+  } catch (err) {
+    if ((signal as any)?.aborted) return [];
+    console.warn('[landscapeService.getLandscapeSlides] Deprecado: Strapi falla, fallback Picsum:', err);
     return picsumFallback(limit);
   }
 }
 
-async function getGalleryImages(
-  count = 16,
-  signal?: AbortSignal,
-): Promise<GalleryImage[]> {
-  if (galleryCache) return galleryCache.slice(0, count);
+async function getGalleryImages(count = 16, signal?: AbortSignal): Promise<GalleryImage[]> {
   try {
-    const perQuery = Math.ceil(count / GALLERY_QUERIES.length) + 2;
-    const batches = await Promise.all(
-      GALLERY_QUERIES.map((q) => searchCommons(q, 800, perQuery, signal)),
-    );
-    const merged: GalleryImage[] = [];
-    const seen = new Set<string>();
-    for (let i = 0; i < perQuery; i++) {
-      for (const batch of batches) {
-        const img = batch[i];
-        if (img && !seen.has(img.id)) {
-          seen.add(img.id);
-          merged.push(img);
-        }
-      }
+    const res = await fetchStrapi<StrapiCollectionResponse<any>>('/galeria-items', {
+      params: {
+        populate: {
+          imagen: { fields: ['url', 'width', 'height', 'formats', 'alternativeText'] },
+          categoria: { fields: ['nombre'] },
+        },
+        sort: ['orden:asc', 'createdAt:desc'],
+        pagination: { pageSize: count },
+        status: 'published',
+      },
+      fetchOptions: { signal } as any,
+    });
+    const data: any[] = (res as any).data ?? [];
+    const images = mapStrapiGaleriaToGalleryImages(data).slice(0, count);
+    if (images.length >= Math.min(6, count)) return images;
+    if (images.length > 0) {
+      const missing = count - images.length;
+      return [...images, ...picsumGalleryFallback(missing)];
     }
-    if (merged.length >= 6) {
-      galleryCache = merged;
-      return merged.slice(0, count);
-    }
-    throw new Error('Sin suficientes imágenes');
-  } catch {
-    if (signal?.aborted) return [];
+    throw new Error('Sin imágenes Strapi');
+  } catch (err) {
+    if ((signal as any)?.aborted) return [];
+    console.warn('[landscapeService.getGalleryImages] Deprecado: fallback Picsum:', err);
     return picsumGalleryFallback(count);
   }
 }
@@ -194,4 +137,3 @@ export const landscapeService = {
   getLandscapeSlides,
   getGalleryImages,
 };
-

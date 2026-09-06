@@ -4,4 +4,7 @@ export interface Especialidad {
   descripcion: string;
   puntos: string[];
   images: string[];
+  duracion?: string | null;
+  planEstudioUrl?: string | null;
+  orden?: number;
 }

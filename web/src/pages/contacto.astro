@@ -3,50 +3,76 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PageHero from '../components/PageHero.astro';
-import { sedes } from '../data/sedes';
+import ContactForm from '../components/ContactForm.tsx';
+import { ciudadaniaService } from '../services/ciudadania.service';
+import { configuracionService } from '../services/configuracion.service';
 import '../styles/global.css';
 import '../styles/page.css';
+
+const paginaContacto = await ciudadaniaService.getPaginaContacto();
+const config = await configuracionService.getConfiguracion();
+
+// Derivar título y SEO con fallback a paginaContacto.seo / config seoDefault
+const seo = paginaContacto.seo ?? config.seoDefault ?? null;
+const pageTitle = (paginaContacto.titulo ? `${paginaContacto.titulo} — ${config.nombreInstitucion}` : `Contacto — ${config.nombreInstitucion}`);
+const description = paginaContacto.introduccion
+  ? paginaContacto.introduccion.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 160)
+  : 'Canales de atención y formulario de contacto de la Institución Educativa El Diamante.';
 ---
 
-<Layout>
+<Layout title={pageTitle} description={description} seo={seo}>
   <Header />
   <main class="page">
-    <PageHero kicker="Atención a la comunidad" title="Contacto" />
+    <PageHero kicker="Atención a la comunidad" title={paginaContacto.titulo ?? 'Contacto'} />
     <div class="container">
-      <p class="lead">
-        Para consultas académicas, administrativas o de convivencia, la comunidad
-        puede comunicarse por los siguientes canales institucionales. La atención
-        presencial se presta en el horario establecido por cada sede.
-      </p>
+      {paginaContacto.introduccion ? (
+        <div class="lead" set:html={paginaContacto.introduccion} />
+      ) : (
+        <p class="lead">
+          Para consultas académicas, administrativas o de convivencia, la comunidad
+          puede comunicarse por los siguientes canales institucionales. La atención
+          presencial se presta en el horario establecido por cada sede.
+        </p>
+      )}
+
       <section aria-label="Datos de contacto">
         <h2>Canales institucionales</h2>
+        <p style="color: var(--muted-foreground); line-height: 1.6; margin-bottom: 1rem;">
+          Datos visibles y actualizados desde Strapi <code>pagina-contacto.canales</code> (fallback a datos locales).
+        </p>
+        <ul class="data" role="list">
+          {paginaContacto.canales.map((canal) => (
+            <li>
+              <strong>{canal.nombre}</strong>
+              <span style="display: block; margin-top: 0.25rem; line-height: 1.6; color: var(--ink-soft);">{canal.detalle}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="meta" style="margin-top: 1rem;">
+          También puede escribir a <a href={`mailto:${config.emailInstitucional}`} style="color: var(--primary-dark); text-decoration: underline;">{config.emailInstitucional}</a>
+          {config.telefonoPrincipal && <> · Tel. <a href={`tel:${config.telefonoPrincipal.replace(/\s+/g, '')}`} style="color: var(--primary-dark); text-decoration: underline;">{config.telefonoPrincipal}</a></>}
+        </p>
       </section>
+
       <section aria-label="Formulario de contacto">
         <h2>Formulario de contacto</h2>
         <p>
           Diligencie el siguiente formulario. Un miembro del equipo administrativo
           dará respuesta a través del correo electrónico indicado.
         </p>
-        {/* Maqueta visual: el CMS o backend conectará el envío del formulario. */}
-        <form class="form" action="#" method="post">
-          <div class="field">
-            <label for="nombre">Nombre completo</label>
-            <input id="nombre" name="nombre" type="text" required autocomplete="name" />
+        {paginaContacto.formularioActivo ? (
+          <ContactForm client:load />
+        ) : (
+          <div class="note" role="status">
+            El formulario de contacto está temporalmente deshabilitado desde Strapi (<code>pagina-contacto.formularioActivo = false</code>). Por favor, use los canales institucionales listados arriba.
           </div>
-          <div class="field">
-            <label for="email">Correo electrónico</label>
-            <input id="email" name="email" type="email" required autocomplete="email" />
+        )}
+        <noscript>
+          <div class="note" role="alert">
+            Este formulario requiere JavaScript habilitado para envío seguro (validación, honeypot y protección CORS). Si no puede habilitar JavaScript, por favor escriba a
+            <a href={`mailto:${config.emailInstitucional}`}>{config.emailInstitucional}</a>.
           </div>
-          <div class="field">
-            <label for="asunto">Asunto</label>
-            <input id="asunto" name="asunto" type="text" required />
-          </div>
-          <div class="field">
-            <label for="mensaje">Mensaje</label>
-            <textarea id="mensaje" name="mensaje" rows="6" required></textarea>
-          </div>
-          <button class="submit" type="submit">Enviar</button>
-        </form>
+        </noscript>
       </section>
     </div>
   </main>

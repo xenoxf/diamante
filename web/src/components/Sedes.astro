@@ -1,42 +1,54 @@
 ---
-import { sedes } from '../data/sedes';
+import { sedesService } from '../services/sedes.service';
+import { getStrapiMediaUrl } from '../lib/strapi';
 import styles from '../styles/sedes.module.css';
+
+let sedes: Awaited<ReturnType<typeof sedesService.getSedes>> = [];
+try {
+  sedes = await sedesService.getSedes();
+} catch (err) {
+  console.warn('[Sedes.astro] fallback:', err);
+  const { sedes: fallback } = await import('../data/sedes');
+  sedes = fallback as any;
+}
 ---
 <section id="sedes" class={styles.section} aria-labelledby="sedes-titulo">
   <div class={styles.container}>
-    
-
     <div class={styles["container-dirs"]}>
-      
-
-    <div class={styles.grid}>
-      <figure class={styles.heroFigure}>
-        <h2 id="sedes-titulo" class={styles.title}>Nuestras Sedes</h2>
-      <img
-        class={styles.heroImage}
-        src="/niña_apunta.png"
-        alt="Estudiante señalando la ubicación de las sedes"
-        loading="lazy"
-      />
-    </figure>
-      {sedes.map((sede) => (
-        <article class={styles.card} aria-labelledby={`sede-${sede.slug}`}>
-          <div class={styles.cardBody}>
-            <img class={styles.imgSede} src={sede.imgPath} alt={'imagen de '+sede.nombre}>
-            
-          </div>
-          <iframe
-            class={styles.map}
-            src={`https://www.google.com/maps?q=${encodeURIComponent(sede.mapQuery)}&output=embed`}
-            title={`Mapa de ${sede.nombre}`}
+      <div class={styles.grid}>
+        <figure class={styles.heroFigure}>
+          <h2 id="sedes-titulo" class={styles.title}>Nuestras Sedes</h2>
+          <img
+            class={styles.heroImage}
+            src="/niña_apunta.png"
+            alt="Estudiante señalando la ubicación de las sedes"
             loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            allowfullscreen
-          ></iframe>
-        </article>
-      ))}
+          />
+        </figure>
+        {sedes.map((sede) => {
+          const imgSrc = (sede as any).imagenCardUrl ?? getStrapiMediaUrl((sede as any).imagenCard) ?? sede.imgPath ?? '/sedes/sede_principal.png';
+          // fallback to local placeholder if media missing
+          const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(sede.mapQuery)}&output=embed`;
+          return (
+            <article class={styles.card} aria-labelledby={`sede-${sede.slug}`}>
+              <div class={styles.cardBody}>
+                <img class={styles.imgSede} src={imgSrc} alt={'imagen de ' + sede.nombre} loading="lazy" decoding="async" />
+                <h3 id={`sede-${sede.slug}`} class={styles.cardTitle} style="padding:1rem;">{sede.nombre}</h3>
+                <p class={styles.barrio} style="padding:0 1rem;">{sede.barrio}</p>
+                <p class={styles.address} style="padding:0 1rem 1rem;">{sede.direccion}</p>
+              </div>
+              <iframe
+                class={styles.map}
+                src={mapSrc}
+                title={`Mapa de ${sede.nombre}`}
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                allowfullscreen
+              ></iframe>
+            </article>
+          );
+        })}
+      </div>
     </div>
-    </div>
-    
   </div>
 </section>

@@ -24,7 +24,8 @@ function Track({ images, extraClass }: { images: GalleryImage[]; extraClass: str
             <img
               className={styles.shot}
               src={img.src}
-              alt=""
+              alt={img.alt || img.titulo || ''}
+              title={img.titulo ?? undefined}
               loading="lazy"
               decoding="async"
               draggable={false}
@@ -36,16 +37,22 @@ function Track({ images, extraClass }: { images: GalleryImage[]; extraClass: str
   );
 }
 
-export function Galeria() {
-  const [images, setImages] = useState<GalleryImage[]>([]);
+interface Props {
+  images?: GalleryImage[];
+  count?: number;
+}
+
+export function Galeria({ images: initialImages, count = COUNT }: Props) {
+  const [images, setImages] = useState<GalleryImage[]>(initialImages ?? []);
 
   useEffect(() => {
+    if (initialImages && initialImages.length > 0) return;
     const controller = new AbortController();
-    galeriaService.getGaleriaImages(COUNT, controller.signal).then((data) => {
+    galeriaService.getGaleriaImages(count, controller.signal, { destacadoHome: true }).then((data) => {
       if (!controller.signal.aborted) setImages(data);
     });
     return () => controller.abort();
-  }, []);
+  }, [count, initialImages]);
 
   const half = Math.ceil(images.length / 2);
   const rowA = images.slice(0, half);
