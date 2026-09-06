@@ -1,4 +1,4 @@
-import type { IdentidadCard } from './types';
+import type { IdentidadCard } from '../types/identidad.types';
 
 export const identidadCards: IdentidadCard[] = [
   {
@@ -6,7 +6,7 @@ export const identidadCards: IdentidadCard[] = [
     titulo: 'Misión',
     imgPath: '/identidad/mision.png',
     texto:
-      'La Institución Educativa El Diamante forma estudiantes íntegros, responsables y comprometidos con su comunidad, mediante una educación pública de calidad que promueve el conocimiento, la convivencia y el respeto por la diversidad.',
+      'La INSTITUCIÓN EDUCATIVA EL DIAMANTE se reconoce pluriétnica y multicultural que forma estudiantes con calidad humana y competencias técnicas, a través de la participación de los actores educativos con el apoyo de diferentes instituciones educativas a nivel local, regional, nacional y del entorno de la comuna 13; lo que permite a los estudiantes la construcción de relaciones sociales dinámicas y prósperas para el desarrollo de competencias que faciliten el acceso al campo laboral o a la educación superior.',
     href: '/mision',
   },
   {
@@ -14,7 +14,7 @@ export const identidadCards: IdentidadCard[] = [
     titulo: 'Visión',
     imgPath: '/identidad/vision.png',
     texto:
-      'Ser reconocida como una institución pública líder en formación académica y técnica, caracterizada por la excelencia pedagógica, la sana convivencia y el compromiso con el desarrollo social del Distrito de Cali.',
+      'La Institución Educativa El Diamante, al 2017, será reconocida como una institución pluriétnica y multicultural, modelo de excelencia en la educación media técnica en la comuna 13 de Santiago de Cali y referente para el desarrollo social de la comunidad.',
     href: '/vision',
   },
   {
@@ -22,7 +22,7 @@ export const identidadCards: IdentidadCard[] = [
     titulo: 'Valores Institucionales',
     imgPath: '/identidad/valores.png',
     texto:
-      'La vida institucional se orienta por el respeto, la responsabilidad, la honestidad y la solidaridad. Estos valores guían la convivencia escolar y el trabajo diario de estudiantes, docentes y familias.',
+      'Pensamiento crítico, identidad y pertenencia, trabajo en equipo, creatividad e inclusión social: los valores que identifican al educando diamantino.',
     href: '/valores-institucionales',
   },
   {

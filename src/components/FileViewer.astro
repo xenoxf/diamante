@@ -1,0 +1,186 @@
+---
+interface Props {
+  src: string;
+  title?: string;
+  /** PDF | Imagen | Enlace — si no se pasa, se infiere por extensión */
+  format?: 'PDF' | 'Imagen' | 'Enlace';
+  /** alto del visor, ej "520px" o "70vh" */
+  height?: string;
+}
+
+const { src, title = 'Documento', format: formatProp, height = '840px' } = Astro.props;
+
+const isImage = formatProp === 'Imagen' || /\.(png|jpe?g|webp|gif|svg)(\?|$)/i.test(src);
+const isPdf = formatProp === 'PDF' || /\.pdf(\?|#|$)/i.test(src);
+const viewerSrc = isPdf ? `${src}#view=FitH` : src;
+---
+
+<div class="fv" style={`--fv-h:${height}`}>
+  <div class="fv__toolbar">
+    <div class="fv__meta">
+      <span class="fv__title">{title}</span>
+      {isPdf && <span class="fv__badge">PDF</span>}
+      {isImage && <span class="fv__badge">Imagen</span>}
+    </div>
+    <div class="fv__actions">
+      <a class="fv__btn fv__btn--ghost" href={src} target="_blank" rel="noopener noreferrer">
+        Abrir en pestaña nueva
+      </a>
+      <a class="fv__btn fv__btn--primary" href={src} download>
+        Descargar
+      </a>
+    </div>
+  </div>
+
+  <div class="fv__frameWrap">
+    {isImage ? (
+      <img class="fv__img" src={src} alt={title} loading="lazy" decoding="async" />
+    ) : (
+      <iframe
+        class="fv__frame"
+        src={viewerSrc}
+        title={title}
+        loading="lazy"
+        allow="fullscreen"
+      ></iframe>
+    )}
+  </div>
+
+  <p class="fv__fallback">
+    Si no ves el documento aquí, <a href={src} target="_blank" rel="noopener noreferrer">ábrelo en otra pestaña</a> o usa el botón Descargar.
+  </p>
+</div>
+
+<style>
+  .fv {
+    border: 1px solid var(--line);
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .fv__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--wash);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .fv__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+
+  .fv__title {
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .fv__badge {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--primary-dark);
+    background: var(--primary-wash);
+    border: 1px solid var(--primary-pale);
+    padding: 0.15rem 0.4rem;
+    border-radius: 999px;
+    flex-shrink: 0;
+  }
+
+  .fv__actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .fv__btn {
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .fv__btn--ghost {
+    color: var(--ink);
+    background: var(--surface);
+    border-color: var(--line);
+  }
+
+  .fv__btn--ghost:hover {
+    border-color: var(--ink-faint);
+  }
+
+  .fv__btn--primary {
+    color: var(--on-dark);
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+
+  .fv__btn--primary:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+  }
+
+  .fv__frameWrap {
+    background: var(--skeleton);
+    height: var(--fv-h);
+    max-height: 78vh;
+  }
+
+  .fv__frame {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+    background: var(--surface);
+  }
+
+  .fv__img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: var(--surface);
+    display: block;
+  }
+
+  .fv__fallback {
+    font-size: 0.82rem;
+    color: var(--ink-faint);
+    padding: 0.7rem 1rem;
+    margin: 0;
+    line-height: 1.5;
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+  }
+
+  .fv__fallback a {
+    color: var(--primary-dark);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    font-weight: 700;
+  }
+
+  @media (max-width: 640px) {
+    .fv__frameWrap {
+      height: 520px;
+    }
+    .fv__toolbar {
+      padding: 0.65rem 0.85rem;
+    }
+  }
+</style>

@@ -1,4 +1,4 @@
-import type { Noticia } from './types';
+import type { Noticia } from '../types/noticia.types';
 
 export const noticias: Noticia[] = [
   {
@@ -27,7 +27,8 @@ export const noticias: Noticia[] = [
     titulo: 'Celebración del Día de la Afrocolombianidad',
     fecha: '4 de agosto de 2026',
     categoria: 'Institucional',
-    resumen: 'Jornada institucional de reconocimiento a la historia, la cultura y los aportes de la comunidad afrocolombiana.',
+    resumen:
+      'Jornada institucional de reconocimiento a la historia, la cultura y los aportes de la comunidad afrocolombiana.',
   },
   {
     slug: 'lista-de-utiles-escolares-2026',
