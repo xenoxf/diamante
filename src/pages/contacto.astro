@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import PageHero from '../components/PageHero.astro';
 import { sedes } from '../data/sedes';
 import '../styles/global.css';
+import '../styles/page.css';
 ---
 
 <Layout>
@@ -19,17 +20,6 @@ import '../styles/global.css';
       </p>
       <section aria-label="Datos de contacto">
         <h2>Canales institucionales</h2>
-        <ul class="data">
-          <li>
-            <strong>Correo institucional:</strong>
-            <a href="mailto:ie.eldiamante@cali.edu.co">ie.eldiamante@cali.edu.co</a>
-          </li>
-          {sedes.map((sede) => (
-            <li>
-              <strong>{sede.nombre}:</strong> {sede.telefono} · {sede.direccion}
-            </li>
-          ))}
-        </ul>
       </section>
       <section aria-label="Formulario de contacto">
         <h2>Formulario de contacto</h2>
@@ -62,78 +52,3 @@ import '../styles/global.css';
   </main>
   <Footer />
 </Layout>
-
-<style>
-  .page {
-    background: #ffffff;
-    color: #1a1d21;
-    padding-bottom: 4rem;
-  }
-  .container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 2.5rem 1.5rem 0;
-  }
-  .lead {
-    font-size: 1.05rem;
-    line-height: 1.75;
-    margin-bottom: 2rem;
-  }
-  h2 {
-    font-size: 1.3rem;
-    margin: 2rem 0 1rem;
-  }
-  p {
-    line-height: 1.75;
-    margin-bottom: 1rem;
-  }
-  .data {
-    list-style: none;
-    margin: 0 0 1rem;
-    padding: 0;
-    display: grid;
-    gap: 0.75rem;
-  }
-  .data li {
-    border: 1px solid #dfe3e8;
-    border-left: 4px solid #07b9d5;
-    padding: 0.9rem 1.1rem;
-    line-height: 1.7;
-  }
-  .data a {
-    color: #06788a;
-    text-decoration: underline;
-  }
-  .form {
-    display: grid;
-    gap: 1rem;
-    margin-top: 1.25rem;
-    border: 1px solid #dfe3e8;
-    padding: 1.5rem;
-  }
-  .field {
-    display: grid;
-    gap: 0.4rem;
-  }
-  .field label {
-    font-weight: 700;
-    font-size: 0.95rem;
-  }
-  .field input,
-  .field textarea {
-    font: inherit;
-    border: 1px solid #c6cdd4;
-    padding: 0.7rem 0.8rem;
-    width: 100%;
-  }
-  .submit {
-    justify-self: start;
-    font: inherit;
-    font-weight: 700;
-    color: #ffffff;
-    background: #07b9d5;
-    border: 0;
-    padding: 0.8rem 2rem;
-    cursor: pointer;
-  }
-</style>

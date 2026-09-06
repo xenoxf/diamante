@@ -1,0 +1,24 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import { EMAIL_INSTITUCIONAL } from '../services/ciudadania.service';
+import '../styles/global.css';
+import '../styles/page.css';
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Servicios a la ciudadanía" title="Peticiones, quejas y reclamos" />
+    <div class="container">
+      <p class="lead">
+        Radique sus peticiones, quejas, reclamos, sugerencias y felicitaciones
+        (PQRSF) ante la Institución Educativa El Diamante. Toda solicitud
+        recibe respuesta en los términos establecidos por la ley.
+      </p>
+    </div>
+  </main>
+  <Footer />
+</Layout>

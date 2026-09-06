@@ -1,8 +1,8 @@
 /* Footer institucional sobrio: fondo oscuro, texto blanco. */
 
 .footer {
-  background: #111418;
-  color: #ffffff;
+  background: var(--foreground);
+  color: var(--on-dark);
 }
 
 .container {
@@ -28,10 +28,10 @@
   font-weight: 800;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #ffffff;
+  color: var(--on-dark);
   margin: 0 0 0.6rem;
   padding-bottom: 0.6rem;
-  border-bottom: 2px solid #07b9d5;
+  border-bottom: 2px solid var(--primary);
   width: fit-content;
   min-width: 120px;
 }
@@ -40,35 +40,35 @@
   font-size: 1rem;
   font-weight: 750;
   line-height: 1.45;
-  color: #ffffff;
+  color: var(--on-dark);
   margin: 0;
 }
 
 .text {
   font-size: 0.92rem;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--on-dark-soft);
   margin: 0;
 }
 
 .link {
   font-size: 0.92rem;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--on-dark-bright);
   text-decoration: underline;
-  text-decoration-color: rgba(255, 255, 255, 0.35);
+  text-decoration-color: var(--on-dark-faint);
   text-underline-offset: 3px;
   width: fit-content;
   overflow-wrap: anywhere;
 }
 
 .link:hover {
-  color: #ffffff;
-  text-decoration-color: #07b9d5;
+  color: var(--on-dark);
+  text-decoration-color: var(--primary);
 }
 
 .link:focus-visible {
-  outline: 2px solid #07b9d5;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -90,11 +90,11 @@
 .sedeName {
   font-size: 0.92rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--on-dark);
 }
 
 .bottomBar {
-  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  border-top: 1px solid var(--on-dark-hairline);
 }
 
 .bottomInner {
@@ -107,7 +107,7 @@
   margin: 0;
   font-size: 0.85rem;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.72);
+  color: var(--on-dark-mute);
   text-align: center;
 }
 

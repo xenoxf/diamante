@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import { EMAIL_INSTITUCIONAL, TRANSPARENCIA_URL } from '../services/ciudadania.service';
+import '../styles/global.css';
+import '../styles/page.css';
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Servicios a la ciudadanía" title="Denuncias por hechos de corrupción" />
+    <div class="container">
+      <p class="lead">
+        Canal para denunciar presuntos hechos de corrupción en los que pueda
+        estar involucrado personal de la Institución Educativa El Diamante. La
+        denuncia puede presentarse de forma anónima y se garantiza la reserva
+        de la identidad del denunciante.
+      </p>
+      <p class="note">
+        Las denuncias temerarias o falsas pueden acarrear las sanciones
+        previstas en la ley. Este canal no reemplaza las denuncias penales,
+        que deben interponerse ante la Fiscalía General de la Nación.
+      </p>
+    </div>
+  </main>
+  <Footer />
+</Layout>

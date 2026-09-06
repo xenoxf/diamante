@@ -3,20 +3,21 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PageHero from '../components/PageHero.astro';
+import { ciudadaniaService } from '../services/ciudadania.service';
 import '../styles/global.css';
 import '../styles/page.css';
+
+const directorio = ciudadaniaService.getDirectorio();
 ---
 
 <Layout>
   <Header />
   <main class="page">
-    <PageHero kicker="Identidad institucional" title="Visión" />
+    <PageHero kicker="Servicios a la ciudadanía" title="Directorio" />
     <div class="container">
-      <p>
-        La <strong>Institución Educativa El Diamante</strong>, al 2017, será
-        reconocida como una institución pluriétnica y multicultural, modelo de
-        excelencia en la educación media técnica en la comuna 13 de Santiago de
-        Cali y referente para el desarrollo social de la comunidad.
+      <p class="lead">
+        Directorio de dependencias y coordinaciones de la Institución Educativa
+        El Diamante para la atención de la comunidad.
       </p>
     </div>
   </main>

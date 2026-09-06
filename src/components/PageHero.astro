@@ -1,18 +1,126 @@
 ---
-import styles from '../styles/pageHero.module.css';
+interface Crumb {
+  label: string;
+  href?: string;
+}
 
 interface Props {
   kicker: string;
   title: string;
+  // opcional: para rutas anidadas tipo Inicio / Nivel 1 / Nivel 2 / Actual
+  crumbs?: Crumb[];
 }
 
-const { kicker, title } = Astro.props;
+const { kicker, title, crumbs } = Astro.props;
+
+// Si se pasan crumbs explícitos, se usan tal cual (con Inicio antepuesto si no lo incluyen).
+// Si no, se construye automáticamente: Inicio / kicker / title  (kicker se omite si es igual al título)
+const autoCrumbs: Crumb[] = (() => {
+  if (crumbs && crumbs.length > 0) return crumbs;
+  const list: Crumb[] = [];
+  const k = kicker?.trim();
+  const t = title?.trim();
+  // evita duplicar kicker cuando es igual al título (case-insensitive)
+  if (k && t && k.toLowerCase() !== t.toLowerCase()) {
+    list.push({ label: k });
+  }
+  if (t) list.push({ label: t });
+  return list;
+})();
+
+const hasCrumbs = autoCrumbs.length > 0;
 ---
 
-<section class={styles.hero}>
-  <div class={styles.inner}>
-    <p class={styles.kicker}>{kicker}</p>
-    <h1 class={styles.title}>{title}</h1>
-    <span class={styles.rule} aria-hidden="true"></span>
+<section class="page-hero">
+  <div class="page-hero__inner">
+    <nav class="page-hero__breadcrumb" aria-label="Miga de pan">
+      <a href="/" class="page-hero__link">Inicio</a>
+      {
+        autoCrumbs.map((c) => (
+          <>
+            <span class="page-hero__sep" aria-hidden="true">/</span>
+            {c.href ? (
+              <a href={c.href} class="page-hero__link">{c.label}</a>
+            ) : (
+              <span class="page-hero__current" aria-current={c === autoCrumbs[autoCrumbs.length - 1] ? 'page' : undefined}>
+                {c.label}
+              </span>
+            )}
+          </>
+        ))
+      }
+    </nav>
+    <h1 class="page-hero__title">{title}</h1>
   </div>
 </section>
+
+<style>
+  .page-hero {
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .page-hero__inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 1rem 1.5rem 1.15rem;
+  }
+
+  .page-hero__breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: var(--ink-faint);
+  }
+
+  .page-hero__link {
+    color: var(--ink-faint);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .page-hero__link:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .page-hero__sep {
+    color: var(--line-faint);
+    user-select: none;
+  }
+
+  .page-hero__current {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* el último segmento (página actual) siempre con énfasis */
+  .page-hero__current[aria-current='page'] {
+    color: var(--ink);
+  }
+
+  .page-hero__title {
+    margin: 0.55rem 0 0;
+    font-size: 1.55rem;
+    line-height: 1.25;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+
+  @media (max-width: 640px) {
+    .page-hero__inner {
+      padding: 0.85rem 1.25rem 1rem;
+    }
+    .page-hero__breadcrumb {
+      font-size: 0.78rem;
+    }
+    .page-hero__title {
+      font-size: 1.3rem;
+    }
+  }
+</style>
