@@ -16,7 +16,7 @@ export const especialidades: Especialidad[] = [
   },
   {
     slug: 'sistemas',
-    nombre: 'Técnico en Sistemas',
+    nombre: 'Técnico en Sistemas Teleinformaticos',
     images: ['/tecnica/sistemas/sistemas_1.jpeg'],
     descripcion:
       'Formación técnica en el uso, mantenimiento y aprovechamiento de las tecnologías de la información. El estudiante fortalece sus competencias digitales para el ámbito académico y laboral.',

@@ -31,24 +31,24 @@ const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(sede.mapQuery
           />
         </p>
       )}
-      <dl class="data">
-        <div>
-          <dt>Barrio</dt>
-          <dd>{sede.barrio}</dd>
-        </div>
-        <div>
-          <dt>Dirección</dt>
-          <dd>{sede.direccion}</dd>
-        </div>
-        <div>
-          <dt>Teléfono</dt>
-          <dd>{sede.telefono}</dd>
-        </div>
-        <div>
-          <dt>Correo</dt>
-          <dd><a href={`mailto:${sede.email}`}>{sede.email}</a></dd>
-        </div>
-      </dl>
+      <div class="data">
+        
+          <h4>Barrio</h4>
+          <p>{sede.barrio}</p>
+        
+        
+          <h4>Dirección</h4>
+          <p>{sede.direccion}</p>
+        
+        
+          <h4>Teléfono</h4>
+          <p>{sede.telefono}</p>
+        
+        
+          <h4>Correo</h4>
+          <p><a href={`mailto:${sede.email}`}>{sede.email}</a></p>
+        
+      </div>
       <h2>Ubicación</h2>
       <iframe
         class="map"
