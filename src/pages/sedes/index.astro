@@ -3,15 +3,18 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import PageHero from '../../components/PageHero.astro';
-import { sedes } from '../../data/sedes';
+import { sedesService } from '../../services/sedes.service';
 import '../../styles/global.css';
+import '../../styles/page.css';
+
+const sedes = sedesService.getSedes();
 ---
 
 <Layout>
   <Header />
   <main class="page">
     <PageHero kicker="Nuestra institución" title="Sedes" />
-    <div class="container">
+    <div class="container container--wide">
       <p class="lead">
         La Institución Educativa El Diamante presta el servicio educativo en sus
         sedes ubicadas en Santiago de Cali. Seleccione una sede para consultar
@@ -20,6 +23,7 @@ import '../../styles/global.css';
       <div class="grid">
         {sedes.map((sede) => (
           <article class="card">
+          <img src={sede.bannerUrl} alt="" />
             <h2>{sede.nombre}</h2>
             <p class="barrio">{sede.barrio}</p>
             <p class="address">{sede.direccion}</p>
@@ -31,52 +35,3 @@ import '../../styles/global.css';
   </main>
   <Footer />
 </Layout>
-
-<style>
-  .page {
-    background: #ffffff;
-    color: #1a1d21;
-    padding-bottom: 4rem;
-  }
-  .container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 2.5rem 1.5rem 0;
-  }
-  .lead {
-    font-size: 1.05rem;
-    line-height: 1.75;
-    margin-bottom: 2rem;
-    max-width: 800px;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.25rem;
-  }
-  .card {
-    border: 1px solid #dfe3e8;
-    border-top: 4px solid #07b9d5;
-    padding: 1.5rem;
-  }
-  .card h2 {
-    font-size: 1.15rem;
-    margin-bottom: 0.4rem;
-  }
-  .barrio {
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: #5a636c;
-    margin-bottom: 0.4rem;
-  }
-  .address {
-    line-height: 1.7;
-    margin-bottom: 1rem;
-  }
-  .link {
-    font-weight: 700;
-    color: #06788a;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-</style>

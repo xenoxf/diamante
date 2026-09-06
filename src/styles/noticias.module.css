@@ -1,9 +1,9 @@
 /* Noticias: reticula sobria sobre fondo blanco. */
 
 .section {
-  background: #ffffff;
-  color: #16181d;
-  border-top: 1px solid #e3e7eb;
+  background: var(--surface);
+  color: var(--ink);
+  border-top: 1px solid var(--line-soft);
   padding: 4rem 0;
 }
 
@@ -21,7 +21,7 @@
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #4a5560;
+  color: var(--ink-faint);
   margin: 0 0 0.6rem;
 }
 
@@ -30,7 +30,7 @@
   display: inline-block;
   width: 28px;
   height: 3px;
-  background: #07b9d5;
+  background: var(--primary);
   border-radius: 2px;
 }
 
@@ -39,7 +39,7 @@
   line-height: 1.2;
   font-weight: 800;
   letter-spacing: -0.01em;
-  color: #16181d;
+  color: var(--ink);
   margin: 0 0 0.75rem;
 }
 
@@ -47,7 +47,7 @@
   max-width: 720px;
   font-size: 1rem;
   line-height: 1.65;
-  color: #3d444d;
+  color: var(--ink-soft);
   margin: 0 0 2rem;
 }
 
@@ -60,8 +60,8 @@
 .card {
   display: flex;
   flex-direction: column;
-  background: #ffffff;
-  border: 1px solid #dfe3e8;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -69,8 +69,8 @@
 .imagePlaceholder {
   position: relative;
   height: 160px;
-  background: #eceff2;
-  border-bottom: 1px solid #dfe3e8;
+  background: var(--skeleton-cool);
+  border-bottom: 1px solid var(--line);
 }
 
 .category {
@@ -82,9 +82,9 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #1c2127;
-  background: #ffffff;
-  border: 1px solid #d3d9df;
+  color: var(--foreground);
+  background: var(--surface);
+  border: 1px solid var(--line-pale);
   border-radius: 4px;
   padding: 0.3rem 0.6rem;
 }
@@ -100,21 +100,21 @@
 .date {
   font-size: 0.82rem;
   font-weight: 600;
-  color: #5b6470;
+  color: var(--muted-foreground);
 }
 
 .cardTitle {
   font-size: 1.02rem;
   line-height: 1.4;
   font-weight: 750;
-  color: #16181d;
+  color: var(--ink);
   margin: 0;
 }
 
 .summary {
   font-size: 0.92rem;
   line-height: 1.6;
-  color: #3d444d;
+  color: var(--ink-soft);
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -127,21 +127,21 @@
   padding-top: 0.7rem;
   font-size: 0.9rem;
   font-weight: 700;
-  color: #067e92;
+  color: var(--primary-dark);
   text-decoration: underline;
-  text-decoration-color: #9adce8;
+  text-decoration-color: var(--primary-pale);
   text-underline-offset: 3px;
   width: fit-content;
 }
 
 .readMore:hover {
-  color: #055f6e;
-  text-decoration-color: #07b9d5;
+  color: var(--primary-deep);
+  text-decoration-color: var(--primary);
 }
 
 .readMore:focus-visible,
 .viewAll:focus-visible {
-  outline: 2px solid #07b9d5;
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
@@ -157,16 +157,16 @@
   padding: 0.8rem 1.6rem;
   font-size: 0.92rem;
   font-weight: 700;
-  color: #1c2127;
-  background: #ffffff;
-  border: 1px solid #b9c2cb;
+  color: var(--foreground);
+  background: var(--surface);
+  border: 1px solid var(--line-faint);
   border-radius: 6px;
   transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .viewAll:hover {
-  border-color: #07b9d5;
-  background: #f4fafc;
+  border-color: var(--primary);
+  background: var(--primary-wash);
 }
 
 @media (max-width: 1024px) {

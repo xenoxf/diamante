@@ -1,4 +1,4 @@
-import type { Especialidad } from './types';
+import type { Especialidad } from '../types/especialidad.types';
 
 export const especialidades: Especialidad[] = [
   {

@@ -4,12 +4,12 @@
 	position: sticky;
 	inset: 0;
 	z-index: 50;
-	background: #ffffff;
+	background: var(--surface);
 	transition: box-shadow 0.25s ease;
 }
 
 .header[data-scrolled="true"] {
-	box-shadow: 0 4px 18px rgba(0, 34, 51, 0.16);
+	box-shadow: 0 4px 18px var(--shadow-teal);
 }
 
 /* --- Barra superior utilitaria (estilo gobierno) --- */
@@ -34,7 +34,7 @@
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
 	font-weight: 600;
-	color: rgba(255, 255, 255, 0.92);
+	color: var(--on-dark-bright);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -49,9 +49,9 @@
 
 .topbarLinks a {
 	padding: 0 0.8rem;
-	color: rgba(255, 255, 255, 0.85);
+	color: var(--on-dark-mute);
 	font-weight: 600;
-	border-left: 1px solid rgba(255, 255, 255, 0.25);
+	border-left: 1px solid var(--on-dark-line);
 	white-space: nowrap;
 	transition: color 0.2s ease;
 }
@@ -65,7 +65,7 @@
 }
 
 .topbarLinks a:hover {
-	color: #ffffff;
+	color: var(--on-dark);
 	text-decoration: underline;
 }
 
@@ -169,10 +169,10 @@
 	left: 50%;
 	transform: translate(-50%, 6px);
 	min-width: 260px;
-	background: #ffffff;
+	background: var(--surface);
 	border: 1px solid var(--border);
 	border-top: 3px solid var(--primary);
-	box-shadow: 0 16px 32px rgba(0, 34, 51, 0.18);
+	box-shadow: 0 16px 32px var(--shadow-teal);
 	padding: 0.4rem 0;
 	opacity: 0;
 	visibility: hidden;
@@ -224,7 +224,7 @@
 }
 
 .cta:hover {
-	background: #06a5be;
+	background: var(--primary-dark);
 }
 
 .menuButton {
@@ -235,7 +235,7 @@
 	height: 44px;
 	border: 1px solid var(--border);
 	border-radius: 4px;
-	background: #ffffff;
+	background: var(--surface);
 	cursor: pointer;
 	color: var(--foreground);
 }
@@ -289,9 +289,9 @@
 		flex-direction: column;
 		align-items: stretch;
 		height: auto;
-		background: #ffffff;
+		background: var(--surface);
 		border-bottom: 3px solid var(--primary);
-		box-shadow: 0 16px 28px rgba(0, 34, 51, 0.16);
+		box-shadow: 0 16px 28px var(--shadow-teal);
 		padding: 0.5rem 0 1rem;
 	}
 

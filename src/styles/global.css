@@ -38,6 +38,44 @@
 
 	--ring: #07B9D5;
 
+	/* Paleta institucional centralizada: ningún otro archivo debe usar
+	hex ni rgb literales, solo estas variables. */
+	--surface: #ffffff;
+	--ink: #16181d;
+	--ink-soft: #3d444d;
+	--ink-faint: #4a5560;
+
+	--line: #dfe3e8;
+	--line-soft: #e5e7eb;
+	--line-faint: #b9c2cb;
+	--line-pale: #d3d9df;
+
+	--wash: #f4f6f8;
+	--skeleton: #e9ecef;
+	--skeleton-cool: #eceff2;
+
+	--primary-dark: #067e92;
+	--primary-deep: #055f6e;
+	--primary-pale: #9adce8;
+	--primary-wash: #f4fafc;
+
+	--on-dark: #ffffff;
+	--on-dark-bright: rgba(255, 255, 255, 0.92);
+	--on-dark-soft: rgba(255, 255, 255, 0.78);
+	--on-dark-mute: rgba(255, 255, 255, 0.72);
+	--on-dark-faint: rgba(255, 255, 255, 0.4);
+	--on-dark-line: rgba(255, 255, 255, 0.25);
+	--on-dark-hairline: rgba(255, 255, 255, 0.16);
+
+	--scrim: #0b0d10;
+	--glass: rgba(10, 14, 18, 0.55);
+	--glass-border: rgba(255, 255, 255, 0.4);
+
+	--shadow-teal: rgba(0, 34, 51, 0.16);
+	--shade-soft: rgba(0, 0, 0, 0.08);
+	--shade: rgba(0, 0, 0, 0.12);
+	--shade-strong: rgba(0, 0, 0, 0.18);
+
 	--sidebar-background: #FFFFFF;
 	--sidebar-foreground: #111418;
 

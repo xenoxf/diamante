@@ -1,40 +1,10 @@
-export interface Sede {
-  slug: string;
-  nombre: string;
-  barrio: string;
-  direccion: string;
-  telefono: string;
-  email: string;
-  mapQuery: string;
-  imgPath: string;
-}
-
-export interface Noticia {
-  slug: string;
-  titulo: string;
-  fecha: string;
-  categoria: string;
-  resumen: string;
-}
-
-export interface Especialidad {
-  slug: string;
-  nombre: string;
-  descripcion: string;
-  puntos: string[];
-  images: string[];
-}
-
-export interface IdentidadCard {
-  id: string;
-  titulo: 'Misión' | 'Visión' | 'Valores Institucionales' | 'Organigrama';
-  texto: string;
-  imgPath: string;
-  href: string;
-}
-
-export interface GaleriaItem {
-  id: string;
-  titulo: string;
-  categoria: string;
-}
+export type { Sede } from '../types/sede.types';
+export type { Noticia } from '../types/noticia.types';
+export type { Especialidad } from '../types/especialidad.types';
+export type { IdentidadCard } from '../types/identidad.types';
+export type { GaleriaItem } from '../types/galeria.types';
+export type { Invitacion } from '../types/contratacion.types';
+export type { DocumentoInstitucional } from '../types/institucional.types';
+export type { CanalAtencion, EntradaDirectorio } from '../types/ciudadania.types';
+export type { LandscapeSlide, LandscapeImage, GalleryImage, PicsumPhoto } from '../types/landscape.types';
+export type { CarruselSlide, CarruselConfig } from '../types/carrusel.types';

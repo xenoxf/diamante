@@ -1,4 +1,4 @@
-import type { GaleriaItem } from './types';
+import type { GaleriaItem } from '../types/galeria.types';
 
 export const galeria: GaleriaItem[] = [
   { id: 'g1', titulo: 'Jornada de aseo y embellecimiento', categoria: 'Sedes' },

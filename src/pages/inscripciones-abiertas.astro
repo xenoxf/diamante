@@ -1,0 +1,41 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import FileViewer from '../components/FileViewer.astro';
+import '../styles/global.css';
+import '../styles/page.css';
+
+const fichaUrl =
+  'https://www.ie-eldiamantecali.edu.co/wp-content/uploads/2024/10/FICHA-DE-INSCRIPCION-ACTUALIZADA-eldiamante.pdf';
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Admisiones" title="Inscripciones abiertas" />
+    <div class="container">
+      <p class="lead">
+        La Institución Educativa El Diamante informa a las familias los
+        requisitos de inscripción y matrícula. El trámite se realiza en cada
+        sede, de acuerdo con el calendario establecido por la Secretaría de
+        Educación de Santiago de Cali.
+      </p>
+      <h2>Formulario de inscripción</h2>
+      <p class="intro">
+        Puedes ver y descargar el formulario directamente aquí, sin salir de la página.
+      </p>
+      <FileViewer src={fichaUrl} title="Ficha de inscripción actualizada" format="PDF" />
+
+      <p class="back" style="margin-top:1.5rem">
+        <a href="/lista-utiles-escolares">Consultar la lista de útiles escolares 2026</a>
+      </p>
+      <p class="note">
+        Nota: los requisitos y fechas pueden variar cada año. Se recomienda
+        consultar directamente en la sede antes de iniciar el trámite.
+      </p>
+    </div>
+  </main>
+  <Footer />
+</Layout>

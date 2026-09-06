@@ -19,19 +19,50 @@ const nav: NavItem[] = [
 		label: 'Identidad',
 		href: '/#identidad',
 		children: [
+			{ label: 'Inscripciones Abiertas', href: '/inscripciones-abiertas' },
 			{ label: 'Misión', href: '/mision' },
 			{ label: 'Visión', href: '/vision' },
 			{ label: 'Valores Institucionales', href: '/valores-institucionales' },
-			{ label: 'P.E.I.', href: '/pei' },
 			{ label: 'Manual de Convivencia', href: '/manual-convivencia' },
+			{ label: 'Organigrama', href: '/organigrama' },
+			{ label: 'P.E.I.', href: '/pei' },
+			{ label: 'A Qué Vamos al Colegio', href: '/a-que-vamos-al-colegio' },
+			{ label: 'Proyecto Ambiental', href: '/proyecto-ambiental' },
 			{ label: 'Nuestras Sedes', href: '/sedes' },
 		],
 	},
 	{ label: 'Sedes', href: '/#sedes' },
 	{ label: 'Especialidades', href: '/#especialidades' },
 	{ label: 'Noticias', href: '/#noticias' },
-	{ label: 'Contratación', href: '/contratacion' },
-	{ label: 'Organismo', href: '/organismo' },
+	{
+		label: 'Servicios',
+		href: '/contacto',
+		children: [
+			{ label: 'Canales de Atención', href: '/canales-de-atencion' },
+			{ label: 'Contáctanos', href: '/contacto' },
+			{ label: 'Directorio', href: '/directorio' },
+			{ label: 'Peticiones, Quejas y Reclamos', href: '/peticiones-quejas-y-reclamos' },
+			{ label: 'Denuncias de Corrupción', href: '/denuncias-hechos-de-corrupcion' },
+		],
+	},
+	{
+		label: 'Contratación',
+		href: '/contratacion',
+		children: [
+			{ label: 'Invitaciones', href: '/contratacion' },
+			{ label: 'Resolución de Matrícula', href: '/resolucion-proceso-de-matricula' },
+		],
+	},
+	{
+		label: 'Organismo',
+		href: 'https://www.cali.gov.co/educacion/',
+		children: [
+			{ label: 'Educación', href: 'https://www.cali.gov.co/educacion/' },
+			{ label: 'Deporte y Recreación', href: 'https://www.cali.gov.co/deporte/' },
+			{ label: 'Paz y Cultura Ciudadana', href: 'https://www.cali.gov.co/pazycultura/' },
+			{ label: 'Bienestar Social', href: 'https://www.cali.gov.co/bienestar/' },
+		],
+	},
 ];
 ---
 
