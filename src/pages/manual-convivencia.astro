@@ -1,0 +1,23 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import FileViewer from '../components/FileViewer.astro';
+import { institucionalService } from '../services/institucional.service';
+import '../styles/global.css';
+import '../styles/page.css';
+
+const manualPdf = institucionalService.getDocumentoById('manual-convivencia')?.url ?? '#';
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Convivencia escolar" title="Manual de convivencia" />
+    <div class="container">
+      <FileViewer src={manualPdf} title="Manual de Convivencia — IE El Diamante" format="PDF" />
+    </div>
+  </main>
+  <Footer />
+</Layout>

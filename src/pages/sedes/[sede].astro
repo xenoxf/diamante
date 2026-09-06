@@ -1,0 +1,65 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import { sedesService } from '../../services/sedes.service';
+import '../../styles/global.css';
+import '../../styles/page.css';
+
+export async function getStaticPaths() {
+  return sedesService.getSedes().map((s) => ({ params: { sede: s.slug }, props: { sede: s } }));
+}
+
+const { sede } = Astro.props;
+const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(sede.mapQuery)}&output=embed`;
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Nuestras sedes" title={sede.nombre} />
+    <div class="container">
+      {sede.bannerUrl && (
+        <p>
+          <img
+            class="figure-img"
+            src={sede.bannerUrl}
+            alt={`Banner de ${sede.nombre}`}
+            loading="lazy"
+            decoding="async"
+          />
+        </p>
+      )}
+      <dl class="data">
+        <div>
+          <dt>Barrio</dt>
+          <dd>{sede.barrio}</dd>
+        </div>
+        <div>
+          <dt>Dirección</dt>
+          <dd>{sede.direccion}</dd>
+        </div>
+        <div>
+          <dt>Teléfono</dt>
+          <dd>{sede.telefono}</dd>
+        </div>
+        <div>
+          <dt>Correo</dt>
+          <dd><a href={`mailto:${sede.email}`}>{sede.email}</a></dd>
+        </div>
+      </dl>
+      <h2>Ubicación</h2>
+      <iframe
+        class="map"
+        title={`Mapa de ubicación de ${sede.nombre}`}
+        src={mapSrc}
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen
+      ></iframe>
+      <p class="back"><a href="/sedes">Volver a todas las sedes</a></p>
+    </div>
+  </main>
+  <Footer />
+</Layout>

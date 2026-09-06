@@ -1,0 +1,25 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import { ciudadaniaService } from '../services/ciudadania.service';
+import '../styles/global.css';
+import '../styles/page.css';
+
+const directorio = ciudadaniaService.getDirectorio();
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Servicios a la ciudadanía" title="Directorio" />
+    <div class="container">
+      <p class="lead">
+        Directorio de dependencias y coordinaciones de la Institución Educativa
+        El Diamante para la atención de la comunidad.
+      </p>
+    </div>
+  </main>
+  <Footer />
+</Layout>

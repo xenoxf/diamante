@@ -1,0 +1,10 @@
+export type { Sede } from '../types/sede.types';
+export type { Noticia } from '../types/noticia.types';
+export type { Especialidad } from '../types/especialidad.types';
+export type { IdentidadCard } from '../types/identidad.types';
+export type { GaleriaItem } from '../types/galeria.types';
+export type { Invitacion } from '../types/contratacion.types';
+export type { DocumentoInstitucional } from '../types/institucional.types';
+export type { CanalAtencion, EntradaDirectorio } from '../types/ciudadania.types';
+export type { LandscapeSlide, LandscapeImage, GalleryImage, PicsumPhoto } from '../types/landscape.types';
+export type { CarruselSlide, CarruselConfig } from '../types/carrusel.types';

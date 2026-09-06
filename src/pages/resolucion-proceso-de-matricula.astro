@@ -1,0 +1,29 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import FileViewer from '../components/FileViewer.astro';
+import { institucionalService } from '../services/institucional.service';
+import '../styles/global.css';
+import '../styles/page.css';
+
+const ficha = institucionalService.getDocumentoById('ficha-inscripcion');
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Transparencia" title="Resolución del proceso de matrícula" />
+    <div class="container">
+
+      {ficha && (
+        <>
+          <h2 style="margin-top:2rem">Formulario de inscripción</h2>
+          <FileViewer src={ficha.url} title={ficha.titulo} format="PDF" />
+        </>
+      )}
+    </div>
+  </main>
+  <Footer />
+</Layout>
