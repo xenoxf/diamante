@@ -1,0 +1,10 @@
+export type { PicsumPhoto, LandscapeImage, LandscapeSlide, GalleryImage } from './landscape.types';
+export type { CarruselSlide, CarruselConfig } from './carrusel.types';
+export type { Sede } from './sede.types';
+export type { Noticia } from './noticia.types';
+export type { Especialidad } from './especialidad.types';
+export type { IdentidadCard } from './identidad.types';
+export type { GaleriaItem } from './galeria.types';
+export type { Invitacion } from './contratacion.types';
+export type { DocumentoInstitucional } from './institucional.types';
+export type { CanalAtencion, EntradaDirectorio } from './ciudadania.types';
