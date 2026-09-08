@@ -1,0 +1,205 @@
+---
+export const prerender = true;
+
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import PageHero from "../components/PageHero.astro";
+import { identidadService } from "../services/identidad.service";
+import { getStrapiMediaUrl } from "../lib/strapi";
+import "../styles/global.css";
+
+let valoresIntroduccion: string | null = null;
+let valores: Array<{ titulo: string; descripcion: string }> = [];
+let valoresImagenUrl: string | null = null;
+
+try {
+  const identidad = await identidadService.getIdentidad();
+  valoresIntroduccion = (identidad as any)?.valoresIntroduccion ?? null;
+  valores = Array.isArray((identidad as any)?.valores) ? (identidad as any).valores : [];
+  valoresImagenUrl = getStrapiMediaUrl((identidad as any)?.valoresImagen);
+} catch (err) {
+  console.warn('[valores-institucionales] Strapi fallback', err);
+}
+
+const fallbackIntroduccion =
+  'Se definen como valores institucionales aquellos que identificarán al educando formado en nuestras aulas y que fueron elegidos como parte de nuestra filosofía educativa, producto del entorno y del PEI. Los valores corporativos definidos para la formación de nuestros estudiantes son:';
+
+const fallbackValores = [
+  {
+    titulo: 'Pensamiento Crítico y Toma de Decisiones',
+    descripcion:
+      'Que comprenda, analice, discierna, argumente y proponga soluciones sobre situaciones de su entorno que le permita actuar de forma autónoma para resolver conflictos con responsabilidad social.',
+  },
+  {
+    titulo: 'Identidad y Pertenencia',
+    descripcion:
+      'Se reconozca como parte de la comunidad Diamantina cumpliendo sus deberes institucionales y compromisos, reflejando en actuaciones dentro y fuera de la institución los valores institucionales, además portando sus distintivos con orgullo y respeto.',
+  },
+  {
+    titulo: 'Trabajo en Equipo',
+    descripcion:
+      'Dinamiza la unidad grupal para fomentar la solidaridad, la responsabilidad, el compromiso, la tolerancia, el respeto mutuo, la discusión democrática, el compromiso hacia los consensos en pro del desarrollo institucional.',
+  },
+  {
+    titulo: 'Creatividad',
+    descripcion:
+      'Actitud innovadora que le permite la capacidad de generar ideas constructivas para su vida cotidiana de manera práctica.',
+  },
+  {
+    titulo: 'Inclusión Social',
+    descripcion:
+      'Interacción con sus pares, y en cualquier grupo social apoyándose en la convivencia pacífica.',
+  },
+];
+
+const intro = valoresIntroduccion ?? fallbackIntroduccion;
+const lista = valores.length > 0 ? valores : fallbackValores;
+const imgSrc = valoresImagenUrl ?? '/identidad/valores.png';
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero
+      kicker="Identidad institucional"
+      title="Valores institucionales"
+    />
+    <div class="container">
+      <img
+        class="img"
+        src={imgSrc}
+        alt="imagen referente a los valores institucionales"
+        loading="lazy"
+        decoding="async"
+      />
+      <div class="container-valores">
+        <h4>VALORES INSTITUCIONALES</h4>
+
+        <p>{intro}</p>
+
+        {lista.map((v) => (
+          <>
+            <h4>{v.titulo}</h4>
+            <p>{v.descripcion}</p>
+          </>
+        ))}
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+/* =========================
+   CONTENEDOR PRINCIPAL
+   ========================= */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  min-height: calc(100vh - 180px);
+  margin: 20px;
+
+  display: flex;
+  flex-direction: row;
+
+  gap: 3rem;
+}
+
+/* =========================
+   IMAGEN
+   ========================= */
+.img {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  display: block;
+  border-radius: 3px;
+}
+
+/* =========================
+   CONTENIDO
+   ========================= */
+.container-valores {
+  align-self: center;
+  max-width: 850px;
+}
+
+.container-valores h4 {
+  margin: 0 0 0.65rem;
+
+  color: var(--foreground);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.container-valores p {
+  margin: 0 0 1.8rem;
+
+  color: var(--muted-foreground);
+  font-size: 0.9rem;
+  line-height: 1.75;
+}
+
+/* Título principal */
+.container-valores h4:first-child {
+  margin-bottom: 0.8rem;
+
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.container-valores h4:first-child + p {
+  margin-bottom: 2rem;
+}
+
+
+/* =========================
+   TABLET
+   ========================= */
+@media (max-width: 1000px) {
+  .container {
+    width: min(92vw, 750px);
+    flex-direction: column;
+    gap: 2.5rem;
+    min-height: auto;
+  }
+
+  .img {
+    max-width: 100%;
+  }
+
+  .container-valores {
+    align-self: auto;
+  }
+}
+
+
+/* =========================
+   MÓVIL
+   ========================= */
+@media (max-width: 600px) {
+  .container {
+    width: calc(100% - 2rem);
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .img {
+    max-width: 100%;
+  }
+
+  .container-valores h4 {
+    font-size: 0.95rem;
+  }
+
+  .container-valores p {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin-bottom: 1.6rem;
+  }
+}
+</style>

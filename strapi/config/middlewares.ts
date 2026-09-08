@@ -1,0 +1,39 @@
+import type { Core } from '@strapi/strapi';
+
+const config: Core.Config.Middlewares = [
+  'strapi::logger',
+  'strapi::errors',
+  {
+    name: 'strapi::security',
+    config: {
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          'connect-src': ["'self'", 'https:'],
+          'img-src': ["'self'", 'data:', 'blob:', 'https:', 'http://localhost:*'],
+          'media-src': ["'self'", 'data:', 'blob:', 'https:', 'http://localhost:*'],
+        },
+      },
+    },
+  },
+  {
+    name: 'strapi::cors',
+    config: {
+      headers: '*',
+      origin: [
+        'http://localhost:4321',
+        'http://localhost:3000',
+        'https://www.ie-eldiamantecali.edu.co',
+        process.env.STRAPI_CORS_ORIGIN || 'http://localhost:4321',
+      ].filter(Boolean),
+    },
+  },
+  'strapi::poweredBy',
+  'strapi::query',
+  'strapi::body',
+  'strapi::session',
+  'strapi::favicon',
+  'strapi::public',
+];
+
+export default config;

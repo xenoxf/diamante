@@ -1,0 +1,27 @@
+---
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { CarruselEvents } from '../components/carruselEvents.tsx';
+import { Galeria } from '../components/galeria.tsx';
+import Sedes from '../components/Sedes.astro';
+import Especialidades from '../components/Especialidades.astro';
+import NuestraIdentidad from '../components/NuestraIdentidad.astro';
+import Noticias from '../components/Noticias.astro';
+import '../styles/global.css';
+---
+
+<Layout>
+	<Header />
+	<main id="inicio">
+		<CarruselEvents client:load />
+		<Galeria client:load />
+		<Sedes />
+		<Especialidades />
+		<NuestraIdentidad />
+		<Noticias />
+	</main>
+	<Footer />
+</Layout>

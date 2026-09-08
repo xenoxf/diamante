@@ -1,0 +1,36 @@
+{
+  "kind": "singleType",
+  "collectionName": "pagina_contacto",
+  "info": {
+    "singularName": "pagina-contacto",
+    "pluralName": "paginas-contacto",
+    "displayName": "Página Contacto",
+    "description": "Información de contacto y canales"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "titulo": {
+      "type": "string"
+    },
+    "introduccion": {
+      "type": "richtext"
+    },
+    "canales": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.canal-atencion"
+    },
+    "formularioActivo": {
+      "type": "boolean",
+      "default": true
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

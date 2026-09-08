@@ -1,0 +1,71 @@
+{
+  "kind": "collectionType",
+  "collectionName": "sedes",
+  "info": {
+    "singularName": "sede",
+    "pluralName": "sedes",
+    "displayName": "Sede",
+    "description": "Sedes de la institución"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "nombre": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "nombre",
+      "required": true
+    },
+    "barrio": {
+      "type": "string",
+      "required": true
+    },
+    "direccion": {
+      "type": "string",
+      "required": true
+    },
+    "telefono": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "mapQuery": {
+      "type": "text",
+      "required": true
+    },
+    "imagenCard": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "banner": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "orden": {
+      "type": "integer",
+      "required": true,
+      "default": 0
+    },
+    "horarioAtencion": {
+      "type": "text"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

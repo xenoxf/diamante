@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_identidad_valor_institucionals",
+  "info": {
+    "displayName": "Valor Institucional",
+    "icon": "star",
+    "description": "Valor con título y descripción"
+  },
+  "options": {},
+  "attributes": {
+    "titulo": {
+      "type": "string",
+      "required": true
+    },
+    "descripcion": {
+      "type": "text",
+      "required": true
+    },
+    "orden": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

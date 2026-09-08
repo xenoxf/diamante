@@ -1,0 +1,78 @@
+---
+import { getStrapiMediaUrl } from '../lib/strapi';
+
+interface SeoData {
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  keywords?: string | null;
+  canonicalURL?: string | null;
+  metaImage?: any;
+  noIndex?: boolean | null;
+}
+
+interface Props {
+  title?: string;
+  description?: string;
+  seo?: SeoData | null;
+  canonical?: string | null;
+  image?: string | null;
+  noIndex?: boolean;
+  keywords?: string | null;
+  siteName?: string;
+}
+
+const {
+  title: titleProp,
+  description: descProp,
+  seo,
+  canonical: canonicalProp,
+  image: imageProp,
+  noIndex: noIndexProp,
+  keywords: keywordsProp,
+  siteName = 'IE El Diamante',
+} = Astro.props as Props;
+
+// Priorizar: prop explícito > seo meta > fallback
+const title = (seo?.metaTitle?.trim() || titleProp?.trim() || 'IE El Diamante — Institución Educativa El Diamante') as string;
+const descriptionRaw = seo?.metaDescription?.trim() || descProp?.trim() || 'Institución Educativa El Diamante, Santiago de Cali. Educación media técnica, convivencia y formación integral.';
+const description = descriptionRaw.slice(0, 160);
+const keywords = (seo?.keywords?.trim() || keywordsProp?.trim() || null) as string | null;
+const canonical = (seo?.canonicalURL?.trim() || canonicalProp?.trim() || null) as string | null;
+const shouldNoIndex = seo?.noIndex ?? noIndexProp ?? false;
+
+// Imagen OG: prop > seo.metaImage > fallback null
+let ogImage: string | null = null;
+if (imageProp) {
+  ogImage = imageProp;
+} else if (seo?.metaImage) {
+  ogImage = getStrapiMediaUrl(seo.metaImage);
+}
+
+// canonical final: si no viene, construir desde Astro.url si está disponible
+const computedCanonical = canonical ?? (Astro.url ? Astro.url.href : null);
+const siteUrl = Astro.site?.toString() ?? (Astro.url ? `${Astro.url.protocol}//${Astro.url.host}` : undefined);
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+{keywords && <meta name="keywords" content={keywords} />}
+{shouldNoIndex ? <meta name="robots" content="noindex, nofollow" /> : <meta name="robots" content="index, follow" />}
+{computedCanonical && <link rel="canonical" href={computedCanonical} />}
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+{computedCanonical && <meta property="og:url" content={computedCanonical} />}
+{ogImage && <meta property="og:image" content={ogImage} />}
+{ogImage && <meta property="og:image:alt" content={title} />}
+
+<!-- Twitter -->
+<meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+{ogImage && <meta name="twitter:image" content={ogImage} />}
+
+<!-- Favicon fallback handled in Layout; additional SEO tags -->
+<meta name="generator" content={Astro.generator} />

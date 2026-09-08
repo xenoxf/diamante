@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "mensajes_contacto",
+  "info": {
+    "singularName": "mensaje-contacto",
+    "pluralName": "mensajes-contacto",
+    "displayName": "Mensaje Contacto",
+    "description": "Mensajes del formulario de contacto"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "content-manager": {
+      "visible": true
+    },
+    "content-type-builder": {
+      "visible": true
+    }
+  },
+  "attributes": {
+    "nombre": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "asunto": {
+      "type": "string",
+      "required": true
+    },
+    "mensaje": {
+      "type": "text",
+      "required": true
+    },
+    "sedeInteres": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sede.sede"
+    },
+    "estado": {
+      "type": "enumeration",
+      "enum": ["nuevo", "leido", "respondido", "archivado"],
+      "default": "nuevo",
+      "required": true
+    },
+    "consentimiento": {
+      "type": "boolean",
+      "required": true,
+      "default": false
+    }
+  }
+}

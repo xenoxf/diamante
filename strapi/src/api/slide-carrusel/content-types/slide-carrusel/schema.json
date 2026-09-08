@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "slides_carrusel",
+  "info": {
+    "singularName": "slide-carrusel",
+    "pluralName": "slides-carrusel",
+    "displayName": "Slide Carrusel",
+    "description": "Slides para carrusel del home"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "titulo": {
+      "type": "string"
+    },
+    "imagen": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "alt": {
+      "type": "string",
+      "required": true
+    },
+    "enlace": {
+      "type": "string"
+    },
+    "orden": {
+      "type": "integer",
+      "required": true,
+      "default": 0
+    },
+    "activo": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

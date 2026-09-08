@@ -1,0 +1,35 @@
+---
+import styles from '../styles/nuestraIdentidad.module.css';
+import { identidadService } from '../services/identidad.service';
+import { readSource } from '../lib/data-source';
+import DataSourceBadge from './DataSourceBadge.astro';
+
+let cards: any[] = [];
+try {
+  cards = await identidadService.getIdentidadCards();
+} catch (err) {
+  console.warn('[NuestraIdentidad] Strapi fallback', err);
+  cards = [];
+}
+const source = readSource(cards);
+
+// Fallback ya lo maneja el servicio; asegurar 4 cards
+---
+
+<section id="identidad" class={styles.section} aria-labelledby="identidad-titulo">
+  <div class={styles.inner}>
+    <h2 id="identidad-titulo" class={styles.title}>Nuestra Identidad</h2>
+    <div style="margin: 0 0 12px;"><DataSourceBadge source={source} /></div>
+    <div class={styles.rule} aria-hidden="true"></div>
+    
+    <ul class={styles.grid}>
+      {cards.map((card) => (
+        <li>
+          <a href={card.href} class={styles.cardLink} aria-label={card.titulo}>
+            <img class={styles.cardImg} src={card.imgPath} alt={"imagen de "+card.titulo} loading="lazy" decoding="async" />
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

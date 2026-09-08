@@ -1,0 +1,68 @@
+---
+import SEO from '../components/SEO.astro';
+
+interface SeoInput {
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  keywords?: string | null;
+  canonicalURL?: string | null;
+  metaImage?: any;
+  noIndex?: boolean | null;
+}
+
+interface Props {
+  title?: string;
+  description?: string;
+  seo?: SeoInput | null;
+  canonical?: string | null;
+  image?: string | null;
+  noIndex?: boolean;
+  keywords?: string | null;
+}
+
+const {
+  title = 'IE El Diamante — Institución Educativa El Diamante',
+  description = 'Institución Educativa El Diamante, Santiago de Cali. Educación media técnica, convivencia y formación integral.',
+  seo = null,
+  canonical = null,
+  image = null,
+  noIndex = false,
+  keywords = null,
+} = Astro.props as Props;
+
+// Permitir que seo.metaTitle/metaDescription tengan prioridad sobre props
+const effectiveTitle = (seo?.metaTitle || title) as string;
+const effectiveDescription = (seo?.metaDescription || description) as string;
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<SEO
+			title={effectiveTitle}
+			description={effectiveDescription}
+			seo={seo}
+			canonical={canonical}
+			image={image}
+			noIndex={noIndex}
+			keywords={keywords}
+		/>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+
+<style>
+	html,
+	body {
+		margin: 0;
+		width: 100%;
+		min-height: 100%;
+		background-color: var(--background);
+	}
+</style>

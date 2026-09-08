@@ -1,0 +1,160 @@
+---
+export const prerender = false;
+
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import { noticiasService } from '../../services/noticias.service';
+import { getStrapiMediaUrl } from '../../lib/strapi';
+import { setISRHeaders } from '../../lib/isr';
+import { readSource } from '../../lib/data-source';
+import DataSourceBadge from '../../components/DataSourceBadge.astro';
+import '../../styles/global.css';
+import '../../styles/page.css';
+
+setISRHeaders(Astro.response, { sMaxAge: 300 });
+
+export async function getStaticPaths() {
+  try {
+    const noticias = await noticiasService.getNoticias();
+    return noticias.map((n) => ({ params: { slug: n.slug }, props: { noticia: n } }));
+  } catch (err) {
+    console.warn('[noticias/[slug] getStaticPaths] fallback:', err);
+    const { noticias: fallback } = await import('../../data/noticias');
+    return fallback.map((n) => ({ params: { slug: n.slug }, props: { noticia: n } }));
+  }
+}
+
+const { slug } = Astro.params;
+let noticia: any = (Astro.props as any)?.noticia;
+
+// Fallback: buscar por slug via servicio (incluye contenido, portada, galeria)
+if (!noticia || !noticia.contenido) {
+  try {
+    const fetched = await noticiasService.getNoticiaBySlug(String(slug));
+    if (fetched) noticia = fetched;
+  } catch (err) {
+    console.warn('[noticias/[slug]] getNoticiaBySlug fallback:', err);
+  }
+}
+
+// Si aún no existe (slug inexistente), fallback 404 suave
+if (!noticia) {
+  // Astro no tiene 404 dinámico en prerender; mostramos mensaje
+}
+
+const portadaUrl: string | null =
+  noticia?.portadaUrl ??
+  getStrapiMediaUrl((noticia as any)?.portada) ??
+  null;
+
+const galeriaUrls: string[] =
+  noticia?.galeriaUrls ??
+  (Array.isArray((noticia as any)?.galeria)
+    ? (noticia as any).galeria.map((m: any) => getStrapiMediaUrl(m)).filter(Boolean)
+    : []);
+
+const contenidoHtml: string = noticia?.contenido ?? '';
+const detailSource = readSource((Astro.props as any)?.noticia ?? noticia);
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    {noticia ? (
+      <>
+        <PageHero kicker={noticia.categoria} title={noticia.titulo} />
+        <div class="container">
+          <div style="margin: 0 0 12px;"><DataSourceBadge source={detailSource} /></div>
+          <p class="meta">{noticia.fecha} · {noticia.categoria}</p>
+          <p class="lead lead--strong">{noticia.resumen}</p>
+
+          {portadaUrl && (
+            <p>
+              <img
+                class="figure-img"
+                src={portadaUrl}
+                alt={`Portada de ${noticia.titulo}`}
+                loading="lazy"
+                decoding="async"
+              />
+            </p>
+          )}
+
+          {contenidoHtml ? (
+            <div class="richtext" set:html={contenidoHtml} />
+          ) : (
+            <>
+              <p>
+                La Institución Educativa El Diamante invita a la comunidad a mantenerse
+                informada a través de los canales oficiales. Los detalles de esta
+                publicación se amplían en cada sede y en las comunicaciones dirigidas a
+                estudiantes y acudientes.
+              </p>
+              <p>
+                Para mayor información, las personas interesadas pueden acercarse a la
+                secretaría de la sede correspondiente en el horario de atención
+                establecido.
+              </p>
+            </>
+          )}
+
+          {galeriaUrls.length > 0 && (
+            <div style="margin-top:2rem;">
+              <h2>Galería</h2>
+              <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));">
+                {galeriaUrls.map((src) => (
+                  <img
+                    class="figure-img"
+                    src={src}
+                    alt={`Imagen de ${noticia.titulo}`}
+                    loading="lazy"
+                    decoding="async"
+                    style="height:180px;object-fit:cover;"
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          <p class="back"><a href="/noticias">Volver a todas las noticias</a></p>
+        </div>
+      </>
+    ) : (
+      <div class="container">
+        <h1>Noticia no encontrada</h1>
+        <p class="lead">La noticia solicitada no existe o fue movida.</p>
+        <p class="back"><a href="/noticias">Volver a todas las noticias</a></p>
+      </div>
+    )}
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .richtext :global(p) {
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+  .richtext :global(h2),
+  .richtext :global(h3) {
+    margin: 2rem 0 1rem;
+    font-size: 1.25rem;
+  }
+  .richtext :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+  }
+  .richtext :global(a) {
+    color: var(--primary-dark);
+    text-decoration: underline;
+  }
+  .richtext :global(ul),
+  .richtext :global(ol) {
+    margin: 1rem 0 1.5rem 1.5rem;
+    line-height: 1.7;
+  }
+</style>

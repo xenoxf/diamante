@@ -1,0 +1,70 @@
+---
+export const prerender = true;
+
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import { sedesService } from '../../services/sedes.service';
+import { getStrapiMediaUrl } from '../../lib/strapi';
+import '../../styles/global.css';
+import '../../styles/page.css';
+
+let sedes: Awaited<ReturnType<typeof sedesService.getSedes>> = [];
+try {
+  sedes = await sedesService.getSedes();
+} catch (err) {
+  console.warn('[sedes/index] fallback:', err);
+  const { sedes: fallback } = await import('../../data/sedes');
+  sedes = fallback as any;
+}
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Nuestra institución" title="Sedes" />
+    <div class="container container--wide">
+      <p class="lead">
+        La Institución Educativa El Diamante presta el servicio educativo en sus
+        sedes ubicadas en Santiago de Cali. Seleccione una sede para consultar
+        sus datos de contacto y su ubicación.
+      </p>
+      <div class="grid">
+        {sedes.map((sede) => {
+          const imagenCardUrl = (sede as any).imagenCardUrl ?? getStrapiMediaUrl((sede as any).imagenCard) ?? sede.imgPath ?? null;
+          const bannerUrl = (sede as any).bannerUrl ?? getStrapiMediaUrl((sede as any).banner) ?? null;
+          const displayImg = imagenCardUrl ?? bannerUrl;
+          return (
+            <article class="card">
+              {displayImg ? (
+                <img
+                  src={displayImg}
+                  alt={`Imagen de ${sede.nombre}`}
+                  loading="lazy"
+                  decoding="async"
+                  style="width:100%;height:180px;object-fit:cover;border-radius:6px;margin-bottom:1rem;display:block;"
+                />
+              ) : null}
+              {bannerUrl && bannerUrl !== displayImg ? (
+                <img
+                  src={bannerUrl}
+                  alt={`Banner de ${sede.nombre}`}
+                  loading="lazy"
+                  decoding="async"
+                  style="width:100%;height:120px;object-fit:cover;border-radius:6px;margin-bottom:1rem;display:block;"
+                />
+              ) : null}
+              <h2>{sede.nombre}</h2>
+              <p class="barrio">{sede.barrio}</p>
+              <p class="address">{sede.direccion}</p>
+              {sede.horarioAtencion ? <p class="meta" style="margin-bottom:0.5rem;">{sede.horarioAtencion}</p> : null}
+              <a class="link" href={`/sedes/${sede.slug}`}>Ver sede</a>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>

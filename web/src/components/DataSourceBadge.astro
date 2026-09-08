@@ -1,0 +1,71 @@
+---
+/**
+ * Badge mínimo que indica el origen de los datos de la sección.
+ * - source="strapi": punto verde + "Strapi en vivo"
+ * - source="fallback": punto ámbar + "Fallback local · Strapi no disponible"
+ *
+ * Uso:
+ *   import DataSourceBadge from '../components/DataSourceBadge.astro';
+ *   <DataSourceBadge source={source} />
+ */
+interface Props {
+  source: 'strapi' | 'fallback';
+  id?: string;
+}
+
+const { source = 'fallback', id } = Astro.props as Props;
+const isLive = source === 'strapi';
+const label = isLive ? 'Strapi en vivo' : 'Fallback local · Strapi no disponible';
+const title = isLive
+  ? 'Datos cargados desde Strapi (API REST)'
+  : 'Strapi no respondió o no tiene datos: se muestran datos locales de respaldo';
+---
+
+<span
+  class:list={['ds-badge', isLive ? 'ds-badge--live' : 'ds-badge--fallback']}
+  title={title}
+  data-source={source}
+  {...(id ? { id } : {})}
+  role="status"
+  aria-label={`Origen de datos: ${label}`}
+>
+  <span class="ds-dot" aria-hidden="true"></span>
+  {label}
+</span>
+
+<style>
+  .ds-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--line-soft, #e5e7eb);
+    background: var(--surface, #fff);
+    color: var(--ink-soft, #555);
+    vertical-align: middle;
+  }
+  .ds-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    display: inline-block;
+    flex: none;
+  }
+  .ds-badge--live .ds-dot {
+    background: #16a34a;
+  }
+  .ds-badge--fallback .ds-dot {
+    background: #d97706;
+  }
+  .ds-badge--live {
+    border-color: #bbf7d0;
+  }
+  .ds-badge--fallback {
+    border-color: #fde68a;
+  }
+</style>

@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_academico_punto_especialidads",
+  "info": {
+    "displayName": "Punto Especialidad",
+    "icon": "check"
+  },
+  "options": {},
+  "attributes": {
+    "texto": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

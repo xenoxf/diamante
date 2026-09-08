@@ -1,0 +1,81 @@
+---
+import { noticiasService } from '../services/noticias.service';
+import { getStrapiMediaUrl } from '../lib/strapi';
+import { readSource } from '../lib/data-source';
+import DataSourceBadge from './DataSourceBadge.astro';
+import styles from '../styles/noticias.module.css';
+
+let destacadas: Awaited<ReturnType<typeof noticiasService.getNoticias>> = [];
+try {
+  // Intento destacado=true + limit 4; si Strapi no tiene destacadas, fallback a últimas 4
+  destacadas = await noticiasService.getNoticias({ destacada: true, limit: 4 });
+  if (destacadas.length === 0) {
+    destacadas = await noticiasService.getNoticias({ limit: 4 });
+  }
+  // Si aún <4 pero hay más en fallback total, asegurar 4
+  if (destacadas.length < 4) {
+    const todas = await noticiasService.getNoticias();
+    const ids = new Set(destacadas.map((n) => n.slug));
+    for (const n of todas) {
+      if (destacadas.length >= 4) break;
+      if (!ids.has(n.slug)) destacadas.push(n);
+    }
+  }
+} catch (err) {
+  console.warn('[Noticias.astro] fallback destacadas:', err);
+  try {
+    const fallback = await noticiasService.getNoticias();
+    destacadas = fallback.slice(0, 4);
+  } catch {
+    const { noticias } = await import('../data/noticias');
+    destacadas = noticias.slice(0, 4);
+  }
+}
+const source = readSource(destacadas);
+---
+
+<section id="noticias" class={styles.section} aria-labelledby="noticias-titulo">
+  <div class={styles.container}>
+    <h2 id="noticias-titulo" class={styles.title}>Noticias</h2>
+    <div style="margin: 0 0 12px;"><DataSourceBadge source={source} /></div>
+    <p class={styles.intro}>
+      Informaci&oacute;n oficial sobre actividades acad&eacute;micas, culturales y administrativas
+      de la Instituci&oacute;n Educativa El Diamante.
+    </p>
+
+    <div class={styles.grid}>
+      {destacadas.map((noticia) => {
+        const portadaUrl = (noticia as any).portadaUrl ?? getStrapiMediaUrl((noticia as any).portada) ?? null;
+        return (
+          <article class={styles.card} aria-labelledby={`noticia-${noticia.slug}`}>
+            {portadaUrl ? (
+              <div
+                style={`height:160px;background-image:url('${portadaUrl}');background-size:cover;background-position:center;border-bottom:1px solid var(--line);position:relative;`}
+                role="img"
+                aria-label={`Imagen de ${noticia.titulo}`}
+              >
+                <span class={styles.category}>{noticia.categoria}</span>
+              </div>
+            ) : (
+              <div class={styles.imagePlaceholder} role="img" aria-label={`Imagen de ${noticia.titulo}`}>
+                <span class={styles.category}>{noticia.categoria}</span>
+              </div>
+            )}
+            <div class={styles.cardBody}>
+              <time class={styles.date} datetime={noticia.fecha}>{noticia.fecha}</time>
+              <h3 id={`noticia-${noticia.slug}`} class={styles.cardTitle}>{noticia.titulo}</h3>
+              <p class={styles.summary}>{noticia.resumen}</p>
+              <a class={styles.readMore} href={`/noticias/${noticia.slug}`}>
+                Leer m&aacute;s
+              </a>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+
+    <div class={styles.footer}>
+      <a class={styles.viewAll} href="/noticias">Ver todas las noticias</a>
+    </div>
+  </div>
+</section>

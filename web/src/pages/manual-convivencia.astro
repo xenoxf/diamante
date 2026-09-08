@@ -1,0 +1,42 @@
+---
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import FileViewer from '../components/FileViewer.astro';
+import { institucionalService } from '../services/institucional.service';
+import '../styles/global.css';
+import '../styles/page.css';
+
+let manualDoc: any = null;
+try {
+  manualDoc = await institucionalService.getDocumentoBySlug('manual-convivencia');
+} catch (err) {
+  console.warn('[manual-convivencia] Strapi fallback', err);
+}
+if (!manualDoc) {
+  try {
+    manualDoc = await institucionalService.getDocumentoById('manual-convivencia');
+  } catch {}
+}
+const manualPdf = manualDoc?.url ?? '#';
+const manualTitle = manualDoc?.titulo ?? 'Manual de Convivencia — IE El Diamante';
+const manualFormat = manualDoc?.formato ?? 'PDF';
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Convivencia escolar" title="Manual de convivencia" />
+    <div class="container">
+      {manualDoc ? (
+        <FileViewer src={manualPdf} title={manualTitle} format={manualFormat} />
+      ) : (
+        <p class="empty">Documento no disponible por el momento.</p>
+      )}
+    </div>
+  </main>
+  <Footer />
+</Layout>

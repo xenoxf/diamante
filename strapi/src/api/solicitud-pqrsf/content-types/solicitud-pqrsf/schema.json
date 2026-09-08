@@ -1,0 +1,60 @@
+{
+  "kind": "collectionType",
+  "collectionName": "solicitudes_pqrsf",
+  "info": {
+    "singularName": "solicitud-pqrsf",
+    "pluralName": "solicitudes-pqrsf",
+    "displayName": "Solicitud PQRSF",
+    "description": "Peticiones, quejas, reclamos, sugerencias y felicitaciones"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "tipo": {
+      "type": "enumeration",
+      "enum": ["peticion", "queja", "reclamo", "sugerencia", "felicitacion"],
+      "required": true
+    },
+    "nombre": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "telefono": {
+      "type": "string"
+    },
+    "asunto": {
+      "type": "string",
+      "required": true
+    },
+    "descripcion": {
+      "type": "text",
+      "required": true
+    },
+    "adjunto": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images", "files", "videos", "audios"]
+    },
+    "estado": {
+      "type": "enumeration",
+      "enum": ["nueva", "en_proceso", "respondida", "cerrada"],
+      "default": "nueva",
+      "required": true
+    },
+    "respuestaInterna": {
+      "type": "text",
+      "private": true
+    },
+    "consentimiento": {
+      "type": "boolean",
+      "required": true
+    }
+  }
+}

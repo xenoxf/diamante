@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "denuncias_corrupcion",
+  "info": {
+    "singularName": "denuncia-corrupcion",
+    "pluralName": "denuncias-corrupcion",
+    "displayName": "Denuncia Corrupción",
+    "description": "Denuncias por presuntos hechos de corrupción"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "anonima": {
+      "type": "boolean",
+      "default": true
+    },
+    "nombre": {
+      "type": "string"
+    },
+    "email": {
+      "type": "email"
+    },
+    "descripcion": {
+      "type": "text",
+      "required": true
+    },
+    "adjuntos": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images", "files", "videos", "audios"]
+    },
+    "reservaIdentidad": {
+      "type": "boolean",
+      "default": true
+    },
+    "estado": {
+      "type": "enumeration",
+      "enum": ["recibida", "en_revision", "cerrada"],
+      "default": "recibida",
+      "required": true
+    },
+    "consentimiento": {
+      "type": "boolean",
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,85 @@
+---
+import { sedes as sedesFallback } from '../data/sedes';
+import { configuracionService } from '../services/configuracion.service';
+import { sedesService } from '../services/sedes.service';
+import styles from '../styles/footer.module.css';
+
+// Consumir Strapi para footer dinámico: emailInstitucional, telefonoPrincipal, enlacesGobierno, avisoLegalFooter y sedes.
+// Fallback a datos locales si Strapi no está disponible (build sin CMS o error de red).
+const config = await configuracionService.getConfiguracion().catch(() => configuracionService.fallback);
+const sedes = await sedesService.getSedes().catch(() => sedesFallback);
+
+const enlacesGobierno = config.enlacesGobierno && config.enlacesGobierno.length > 0
+  ? config.enlacesGobierno
+  : [
+      { label: 'Transparencia', url: 'https://transparencia.cali.gov.co/', externo: true },
+      { label: 'Alcaldía de Cali', url: 'https://www.cali.gov.co/', externo: true },
+      { label: 'Secretaría de Educación', url: 'https://www.cali.gov.co/educacion/', externo: true },
+    ];
+
+const emailInstitucional = config.emailInstitucional ?? 'ie.eldiamante@cali.edu.co';
+const avisoLegal = config.avisoLegalFooter ?? '© 2026 Institución Educativa El Diamante · Santiago de Cali';
+---
+<footer id="contacto" class={styles.footer}>
+  <div class={styles.container}>
+    <div class={styles.grid}>
+      <div class={styles.column}>
+        <h2 class={styles.heading}>Instituci&oacute;n</h2>
+        <p class={styles.name}>{config.nombreInstitucion}</p>
+        <p class={styles.text}>{config.direccionPrincipal ?? 'Santiago de Cali, Colombia'}</p>
+        <a class={styles.link} href={`mailto:${emailInstitucional}`}>{emailInstitucional}</a>
+        {config.telefonoPrincipal && (
+          <a class={styles.link} href={`tel:${config.telefonoPrincipal.replace(/\s+/g, '')}`}>{config.telefonoPrincipal}</a>
+        )}
+        {config.horarioAtencion && (
+          <p class={styles.text} set:html={config.horarioAtencion} />
+        )}
+        <p class={styles.text}>Rectoría Institucional</p>
+      </div>
+
+      <div class={styles.column}>
+        <h2 class={styles.heading}>Sedes</h2>
+        <ul class={styles.list}>
+          {sedes.map((sede) => (
+            <li class={styles.listItem}>
+              <span class={styles.sedeName}>{sede.nombre}</span>
+              <a
+                class={styles.link}
+                href={`tel:${sede.telefono.replace(/\s+/g, '')}`}
+              >
+                {sede.telefono}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class={styles.column}>
+        <h2 class={styles.heading}>Gobierno</h2>
+        <ul class={styles.list}>
+          {enlacesGobierno.map((enlace) => {
+            const isExternal = (enlace as any).externo || (enlace as any).abrirEnNuevaPestana || enlace.url.startsWith('http');
+            return (
+              <li class={styles.listItem}>
+                <a
+                  class={styles.link}
+                  href={enlace.url}
+                  target={isExternal ? '_blank' : undefined}
+                  rel={isExternal ? 'noopener noreferrer' : undefined}
+                >
+                  {enlace.label}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class={styles.bottomBar}>
+    <div class={styles.bottomInner}>
+      <p class={styles.legal}>{avisoLegal}</p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_shared_horario_atencions",
+  "info": {
+    "displayName": "Horario Atención",
+    "icon": "clock"
+  },
+  "options": {},
+  "attributes": {
+    "dias": {
+      "type": "string",
+      "required": true
+    },
+    "horas": {
+      "type": "string",
+      "required": true
+    },
+    "sede": {
+      "type": "string"
+    }
+  }
+}

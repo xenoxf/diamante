@@ -1,0 +1,117 @@
+---
+export const prerender = false;
+
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import PageHero from '../../components/PageHero.astro';
+import DataSourceBadge from '../../components/DataSourceBadge.astro';
+import EspecialidadCarousel from '../../components/EspecialidadCarousel.tsx';
+import { especialidadesService } from '../../services/especialidades.service';
+import { getStrapiMediaUrl, getStrapiMediaUrls } from '../../lib/strapi';
+import { setISRHeaders } from '../../lib/isr';
+import { readSource } from '../../lib/data-source';
+import '../../styles/global.css';
+import '../../styles/page.css';
+
+setISRHeaders(Astro.response, { sMaxAge: 300 });
+
+export async function getStaticPaths() {
+  try {
+    const especialidades = await especialidadesService.getEspecialidades();
+    return especialidades.map((e) => ({ params: { slug: e.slug }, props: { especialidad: e } }));
+  } catch (err) {
+    console.warn('[especialidades/[slug] getStaticPaths] fallback:', err);
+    const { especialidades: fallback } = await import('../../data/especialidades');
+    return fallback.map((e) => ({ params: { slug: e.slug }, props: { especialidad: e } }));
+  }
+}
+
+let especialidad: any = (Astro.props as any)?.especialidad;
+const slugParam = Astro.params.slug as string;
+if (!especialidad || especialidad.slug !== slugParam || !especialidad.puntos || !especialidad.images) {
+  try {
+    const fetched = await especialidadesService.getEspecialidadBySlug(String(slugParam));
+    if (fetched) especialidad = fetched;
+  } catch (err) {
+    console.warn('[especialidades/[slug]] getEspecialidadBySlug fallback:', err);
+  }
+}
+
+const puntos: string[] = especialidad?.puntos ?? [];
+const imagenes: string[] =
+  especialidad?.images ??
+  getStrapiMediaUrls((especialidad as any)?.imagenes) ??
+  [];
+
+const displayImgs = imagenes.length > 0 ? imagenes : [`/tecnica/${especialidad?.slug}/${especialidad?.slug}_1.jpeg`];
+const detailSource = readSource((Astro.props as any)?.especialidad ?? especialidad);
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    {especialidad ? (
+      <>
+        <PageHero kicker="Oferta académica" title={especialidad.nombre} />
+        <div class="container">
+          <div style="margin: 0 0 12px;"><DataSourceBadge source={detailSource} /></div>
+          <p class="lead">{especialidad.descripcion}</p>
+
+          {puntos.length > 0 && (
+            <div style="margin-top:1.5rem;">
+              <h2>Puntos destacados</h2>
+              <ul class="points">
+                {puntos.map((p) => (
+                  <li>{p}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {displayImgs.length > 0 && (
+            <div style="margin-top:2rem;">
+              <h2>Galería</h2>
+              {displayImgs.length > 1 ? (
+                <EspecialidadCarousel
+                  images={displayImgs}
+                  alt={`${especialidad.nombre} galería`}
+                  client:visible
+                />
+              ) : (
+                <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
+                  {displayImgs.map((src, idx) => (
+                    <img
+                      class="figure-img"
+                      src={src}
+                      alt={`${especialidad.nombre} imagen ${idx + 1}`}
+                      loading="lazy"
+                      decoding="async"
+                      style="height:200px;object-fit:cover;"
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {especialidad.duracion && (
+            <p class="meta" style="margin-top:1.5rem;"><strong>Duración:</strong> {especialidad.duracion}</p>
+          )}
+          {especialidad.planEstudioUrl && (
+            <p><a class="link" href={especialidad.planEstudioUrl} target="_blank" rel="noopener">Ver plan de estudio</a></p>
+          )}
+
+          <p class="back"><a href="/especialidades">Volver a todas las especialidades</a></p>
+        </div>
+      </>
+    ) : (
+      <div class="container">
+        <h1>Especialidad no encontrada</h1>
+        <p>La especialidad solicitada no existe.</p>
+        <p class="back"><a href="/especialidades">Volver a todas las especialidades</a></p>
+      </div>
+    )}
+  </main>
+  <Footer />
+</Layout>

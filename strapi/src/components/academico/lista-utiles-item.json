@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_academico_lista_utiles_items",
+  "info": {
+    "displayName": "Lista Útiles Item",
+    "icon": "book"
+  },
+  "options": {},
+  "attributes": {
+    "grado": {
+      "type": "string",
+      "required": true
+    },
+    "descripcion": {
+      "type": "text"
+    },
+    "archivo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images", "files", "videos", "audios"]
+    }
+  }
+}

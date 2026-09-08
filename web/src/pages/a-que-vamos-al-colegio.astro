@@ -1,0 +1,39 @@
+---
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PageHero from '../components/PageHero.astro';
+import FileViewer from '../components/FileViewer.astro';
+import { institucionalService } from '../services/institucional.service';
+import '../styles/global.css';
+import '../styles/page.css';
+
+let doc: any = null;
+try {
+  doc = await institucionalService.getDocumentoBySlug('a-que-vamos-al-colegio');
+} catch (err) {
+  console.warn('[a-que-vamos-al-colegio] Strapi fallback', err);
+}
+if (!doc) {
+  try {
+    doc = await institucionalService.getDocumentoById('a-que-vamos-al-colegio');
+  } catch {}
+}
+---
+
+<Layout>
+  <Header />
+  <main class="page">
+    <PageHero kicker="Permanencia escolar" title="¿A qué vamos al colegio?" />
+    <div class="container">
+      {doc ? (
+        <FileViewer src={doc.url} title={doc.titulo ?? '¿A qué vamos al colegio?'} format={doc.formato ?? 'PDF'} />
+      ) : (
+        <p class="empty">Documento no disponible por el momento.</p>
+      )}
+    </div>
+  </main>
+  <Footer />
+</Layout>

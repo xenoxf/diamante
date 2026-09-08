@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_shared_canal_atencions",
+  "info": {
+    "displayName": "Canal Atención",
+    "icon": "headset"
+  },
+  "options": {},
+  "attributes": {
+    "nombre": {
+      "type": "string",
+      "required": true
+    },
+    "detalle": {
+      "type": "text",
+      "required": true
+    },
+    "icono": {
+      "type": "string"
+    }
+  }
+}
