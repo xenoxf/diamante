@@ -1,6 +1,7 @@
 import type { Noticia } from '../types/noticia.types';
 import { noticias as noticiasFallback } from '../data/noticias';
 import { fetchStrapi } from '../lib/strapi';
+import { attachSource } from '../lib/data-source';
 import { mapStrapiNoticiaToNoticia } from '../lib/mappers';
 import type { StrapiCollectionResponse } from '../lib/strapi-types';
 
@@ -85,16 +86,16 @@ export const noticiasService = {
       const data: any[] = (res as any).data ?? [];
       if (!Array.isArray(data) || data.length === 0) {
         // fallback con paginación manual si Strapi vacío
-        return applyFallbackPagination(noticiasFallback, query);
+        return attachSource(applyFallbackPagination(noticiasFallback, query), 'fallback');
       }
       const mapped = data.map(mapStrapiNoticiaToNoticia);
       // Si no hay suficientes destacadas pero fallback espera 4, completar? No, devolver lo que hay
-      if (mapped.length === 0) return applyFallbackPagination(noticiasFallback, query);
+      if (mapped.length === 0) return attachSource(applyFallbackPagination(noticiasFallback, query), 'fallback');
       // Si query limit pero Strapi ya paginó, mapped ya está limitado
-      return mapped;
+      return attachSource(mapped, 'strapi');
     } catch (err) {
       console.warn('[noticiasService.getNoticias] Strapi falla, usando fallback local:', err);
-      return applyFallbackPagination(noticiasFallback, query);
+      return attachSource(applyFallbackPagination(noticiasFallback, query), 'fallback');
     }
   },
 

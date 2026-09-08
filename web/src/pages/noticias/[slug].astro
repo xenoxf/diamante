@@ -1,5 +1,5 @@
 ---
-export const prerender = true;
+export const prerender = false;
 
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
@@ -7,8 +7,13 @@ import Footer from '../../components/Footer.astro';
 import PageHero from '../../components/PageHero.astro';
 import { noticiasService } from '../../services/noticias.service';
 import { getStrapiMediaUrl } from '../../lib/strapi';
+import { setISRHeaders } from '../../lib/isr';
+import { readSource } from '../../lib/data-source';
+import DataSourceBadge from '../../components/DataSourceBadge.astro';
 import '../../styles/global.css';
 import '../../styles/page.css';
+
+setISRHeaders(Astro.response, { sMaxAge: 300 });
 
 export async function getStaticPaths() {
   try {
@@ -51,6 +56,7 @@ const galeriaUrls: string[] =
     : []);
 
 const contenidoHtml: string = noticia?.contenido ?? '';
+const detailSource = readSource((Astro.props as any)?.noticia ?? noticia);
 ---
 
 <Layout>
@@ -60,6 +66,7 @@ const contenidoHtml: string = noticia?.contenido ?? '';
       <>
         <PageHero kicker={noticia.categoria} title={noticia.titulo} />
         <div class="container">
+          <div style="margin: 0 0 12px;"><DataSourceBadge source={detailSource} /></div>
           <p class="meta">{noticia.fecha} · {noticia.categoria}</p>
           <p class="lead lead--strong">{noticia.resumen}</p>
 

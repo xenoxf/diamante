@@ -2,6 +2,9 @@
 import styles from "../styles/especialidades.module.css";
 import { especialidadesService } from "../services/especialidades.service";
 import { getStrapiMediaUrl } from "../lib/strapi";
+import { readSource } from "../lib/data-source";
+import DataSourceBadge from "./DataSourceBadge.astro";
+import EspecialidadCarousel from "./EspecialidadCarousel.tsx";
 
 let especialidades: Awaited<ReturnType<typeof especialidadesService.getEspecialidades>> = [];
 try {
@@ -11,6 +14,7 @@ try {
   const { especialidades: fallback } = await import("../data/especialidades");
   especialidades = fallback;
 }
+const source = readSource(especialidades);
 ---
 
 <section
@@ -22,11 +26,16 @@ try {
     <h2 id="especialidades-titulo" class={styles.title}>
       Nuestras Especialidades Técnicas
     </h2>
+    <div style="margin: 0 0 12px;"><DataSourceBadge source={source} /></div>
     <div class={styles.rule} aria-hidden="true"></div>
     <ul class={styles.grid}>
       {
         especialidades.map((item) => {
-          const imgSrc = item.images?.[0] ?? getStrapiMediaUrl((item as any).imagenes) ?? `/tecnica/${item.slug}/${item.slug}_1.jpeg`;
+          const imgs = item.images?.length
+            ? item.images
+            : ([getStrapiMediaUrl((item as any).imagenes)].filter(Boolean) as string[]);
+          const fallbackSingle = `/tecnica/${item.slug}/${item.slug}_1.jpeg`;
+          const list = imgs.length > 0 ? imgs : [fallbackSingle];
           return (
             <li>
               <a
@@ -34,12 +43,11 @@ try {
                 class={styles.cardLink}
               >
                 <article class={styles.card}>
-                  <img
-                    class={styles.cardImage}
-                    src={imgSrc}
+                  <EspecialidadCarousel
+                    images={list}
                     alt={`imagen de la técnica de ${item.nombre}`}
-                    loading="lazy"
-                    decoding="async"
+                    imgClassName={styles.cardImage}
+                    client:visible
                   />
                   <div class={styles.cardBody}>
                     <p class={styles.cardTitle}>{item.nombre}</p>

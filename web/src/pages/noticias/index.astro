@@ -1,5 +1,5 @@
 ---
-export const prerender = true;
+export const prerender = false;
 
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
@@ -7,8 +7,13 @@ import Footer from '../../components/Footer.astro';
 import PageHero from '../../components/PageHero.astro';
 import { noticiasService } from '../../services/noticias.service';
 import { getStrapiMediaUrl } from '../../lib/strapi';
+import { setISRHeaders } from '../../lib/isr';
+import { readSource } from '../../lib/data-source';
+import DataSourceBadge from '../../components/DataSourceBadge.astro';
 import '../../styles/global.css';
 import '../../styles/page.css';
+
+setISRHeaders(Astro.response, { sMaxAge: 180 });
 
 // Soporte ?page query param con paginación Strapi meta
 const url = Astro.url;
@@ -45,6 +50,7 @@ try {
 if (pagination && page > pagination.pageCount) {
   page = pagination.pageCount;
 }
+const source = readSource(noticias);
 ---
 
 <Layout>
@@ -56,6 +62,7 @@ if (pagination && page > pagination.pageCount) {
         Información oficial sobre actividades académicas, culturales y
         administrativas de la Institución Educativa El Diamante.
       </p>
+      <div style="margin: 0 0 12px;"><DataSourceBadge source={source} /></div>
 
       {noticias.length === 0 ? (
         <p class="empty">No hay noticias disponibles en este momento.</p>

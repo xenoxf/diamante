@@ -1,5 +1,5 @@
 ---
-export const prerender = true;
+export const prerender = false;
 
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
@@ -7,8 +7,11 @@ import Footer from '../../components/Footer.astro';
 import PageHero from '../../components/PageHero.astro';
 import { sedesService } from '../../services/sedes.service';
 import { getStrapiMediaUrl } from '../../lib/strapi';
+import { setISRHeaders } from '../../lib/isr';
 import '../../styles/global.css';
 import '../../styles/page.css';
+
+setISRHeaders(Astro.response, { sMaxAge: 300 });
 
 export async function getStaticPaths() {
   try {

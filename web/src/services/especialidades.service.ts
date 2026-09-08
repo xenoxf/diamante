@@ -1,6 +1,7 @@
 import type { Especialidad } from '../types/especialidad.types';
 import { especialidades as especialidadesFallback } from '../data/especialidades';
 import { fetchStrapi } from '../lib/strapi';
+import { attachSource } from '../lib/data-source';
 import { mapStrapiEspecialidadToEspecialidad } from '../lib/mappers';
 import type { StrapiCollectionResponse } from '../lib/strapi-types';
 
@@ -19,11 +20,11 @@ export const especialidadesService = {
         },
       });
       const data: any[] = (res as any).data ?? [];
-      if (!Array.isArray(data) || data.length === 0) return especialidadesFallback;
-      return data.map(mapStrapiEspecialidadToEspecialidad);
+      if (!Array.isArray(data) || data.length === 0) return attachSource(especialidadesFallback, 'fallback');
+      return attachSource(data.map(mapStrapiEspecialidadToEspecialidad), 'strapi');
     } catch (err) {
       console.warn('[especialidadesService.getEspecialidades] fallback:', err);
-      return especialidadesFallback;
+      return attachSource(especialidadesFallback, 'fallback');
     }
   },
 

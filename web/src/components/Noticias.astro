@@ -1,6 +1,8 @@
 ---
 import { noticiasService } from '../services/noticias.service';
 import { getStrapiMediaUrl } from '../lib/strapi';
+import { readSource } from '../lib/data-source';
+import DataSourceBadge from './DataSourceBadge.astro';
 import styles from '../styles/noticias.module.css';
 
 let destacadas: Awaited<ReturnType<typeof noticiasService.getNoticias>> = [];
@@ -29,11 +31,13 @@ try {
     destacadas = noticias.slice(0, 4);
   }
 }
+const source = readSource(destacadas);
 ---
 
 <section id="noticias" class={styles.section} aria-labelledby="noticias-titulo">
   <div class={styles.container}>
     <h2 id="noticias-titulo" class={styles.title}>Noticias</h2>
+    <div style="margin: 0 0 12px;"><DataSourceBadge source={source} /></div>
     <p class={styles.intro}>
       Informaci&oacute;n oficial sobre actividades acad&eacute;micas, culturales y administrativas
       de la Instituci&oacute;n Educativa El Diamante.

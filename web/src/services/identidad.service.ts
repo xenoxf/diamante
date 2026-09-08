@@ -1,6 +1,7 @@
 import type { IdentidadCard } from '../types/identidad.types';
 import { identidadCards as identidadFallback } from '../data/identidad';
 import { fetchStrapi } from '../lib/strapi';
+import { attachSource } from '../lib/data-source';
 import { mapStrapiPaginaIdentidadToCards } from '../lib/mappers';
 import type { StrapiSingleResponse } from '../lib/strapi-types';
 
@@ -98,14 +99,14 @@ export const identidadService = {
       // Strapi single puede venir como objeto directo
       const entity = unwrapped && typeof unwrapped === 'object' && !Array.isArray(unwrapped) ? unwrapped : null;
       if (!entity || (!entity.mision && !entity.vision)) {
-        return identidadFallback;
+        return attachSource(identidadFallback, 'fallback');
       }
       const cards = mapStrapiPaginaIdentidadToCards(entity);
-      if (cards.length === 0) return identidadFallback;
-      return cards;
+      if (cards.length === 0) return attachSource(identidadFallback, 'fallback');
+      return attachSource(cards, 'strapi');
     } catch (err) {
       console.warn('[identidadService.getIdentidadCards] fallback:', err);
-      return identidadFallback;
+      return attachSource(identidadFallback, 'fallback');
     }
   },
 

@@ -1,5 +1,6 @@
 import type { CarruselConfig, CarruselSlide } from '../types/carrusel.types';
 import { fetchStrapi } from '../lib/strapi';
+import { attachSource } from '../lib/data-source';
 import { mapStrapiSlidesToCarrusel } from '../lib/mappers';
 import type { StrapiCollectionResponse } from '../lib/strapi-types';
 
@@ -78,17 +79,17 @@ async function getCarruselSlides(limit = 8, signal?: AbortSignal, skipConfig = f
     });
     const data: any[] = (res as any).data ?? [];
     const slides = mapStrapiSlidesToCarrusel(data).slice(0, limit);
-    if (slides.length >= 2) return slides;
+    if (slides.length >= 2) return attachSource(slides, 'strapi');
     if (slides.length > 0 && slides.length < limit) {
       // Completar con fallback picsum si faltan slides
       const missing = picsumFallback(limit - slides.length);
-      return [...slides, ...missing].slice(0, limit);
+      return attachSource([...slides, ...missing].slice(0, limit), 'fallback');
     }
     throw new Error('Sin suficientes slides Strapi');
   } catch (err) {
     if ((signal as any)?.aborted) return [];
     console.warn('[carruselService.getCarruselSlides] fallback picsum:', err);
-    return picsumFallback(limit);
+    return attachSource(picsumFallback(limit), 'fallback');
   }
 }
 

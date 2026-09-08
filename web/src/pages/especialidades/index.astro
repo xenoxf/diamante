@@ -1,12 +1,15 @@
 ---
-export const prerender = true;
+export const prerender = false;
 
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import PageHero from '../../components/PageHero.astro';
+import DataSourceBadge from '../../components/DataSourceBadge.astro';
+import EspecialidadCarousel from '../../components/EspecialidadCarousel.tsx';
 import { especialidadesService } from '../../services/especialidades.service';
 import { getStrapiMediaUrl } from '../../lib/strapi';
+import { readSource } from '../../lib/data-source';
 import '../../styles/global.css';
 import '../../styles/page.css';
 
@@ -18,6 +21,7 @@ try {
   const { especialidades: fallback } = await import('../../data/especialidades');
   especialidades = fallback;
 }
+const source = readSource(especialidades);
 ---
 
 <Layout>
@@ -30,20 +34,20 @@ try {
         especialidades de la educación media, orientadas a la continuidad
         educativa y a la vinculación al mundo productivo.
       </p>
+      <div style="margin: 0 0 12px;"><DataSourceBadge source={source} /></div>
       <div class="grid">
         {especialidades.map((esp) => {
-          const thumb = esp.images?.[0] ?? getStrapiMediaUrl((esp as any).imagenes) ?? `/tecnica/${esp.slug}/${esp.slug}_1.jpeg`;
+          const imgs = esp.images?.length
+            ? esp.images
+            : ([getStrapiMediaUrl((esp as any).imagenes)].filter(Boolean) as string[]);
+          const list = imgs.length > 0 ? imgs : [`/tecnica/${esp.slug}/${esp.slug}_1.jpeg`];
           return (
             <article class="card">
-              {thumb && (
-                <img
-                  src={thumb}
-                  alt={`Imagen de ${esp.nombre}`}
-                  loading="lazy"
-                  decoding="async"
-                  style="width:100%;height:180px;object-fit:cover;border-radius:6px;margin-bottom:1rem;display:block;"
-                />
-              )}
+              <EspecialidadCarousel
+                images={list}
+                alt={`Imagen de ${esp.nombre}`}
+                client:visible
+              />
               <h2>{esp.nombre}</h2>
               <p>{esp.descripcion}</p>
               {esp.puntos && esp.puntos.length > 0 && (

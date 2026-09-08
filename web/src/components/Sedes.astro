@@ -1,6 +1,8 @@
 ---
 import { sedesService } from '../services/sedes.service';
 import { getStrapiMediaUrl } from '../lib/strapi';
+import { readSource } from '../lib/data-source';
+import DataSourceBadge from './DataSourceBadge.astro';
 import styles from '../styles/sedes.module.css';
 
 let sedes: Awaited<ReturnType<typeof sedesService.getSedes>> = [];
@@ -11,6 +13,7 @@ try {
   const { sedes: fallback } = await import('../data/sedes');
   sedes = fallback as any;
 }
+const source = readSource(sedes);
 ---
 <section id="sedes" class={styles.section} aria-labelledby="sedes-titulo">
   <div class={styles.container}>
@@ -18,6 +21,7 @@ try {
       <div class={styles.grid}>
         <figure class={styles.heroFigure}>
           <h2 id="sedes-titulo" class={styles.title}>Nuestras Sedes</h2>
+          <div style="margin: 0 0 12px;"><DataSourceBadge source={source} /></div>
           <img
             class={styles.heroImage}
             src="/niña_apunta.png"

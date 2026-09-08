@@ -2,6 +2,7 @@ import type { GaleriaItem } from '../types/galeria.types';
 import type { GalleryImage } from '../types/landscape.types';
 import { galeria as galeriaFallback } from '../data/galeria';
 import { fetchStrapi } from '../lib/strapi';
+import { attachSource } from '../lib/data-source';
 import {
   mapStrapiGaleriaItemToLegacy,
   mapStrapiGaleriaToGalleryImages,
@@ -130,7 +131,7 @@ export const galeriaService = {
       });
       const data: any[] = (res as any).data ?? [];
       const images = mapStrapiGaleriaToGalleryImages(data).slice(0, count);
-      if (images.length >= Math.min(6, count)) return images;
+      if (images.length >= Math.min(6, count)) return attachSource(images, 'strapi');
       // Si filtro destacadoHome y no hay suficientes, reintentar sin filtro
       if (typeof destacadoHome === 'boolean' && images.length < Math.min(6, count)) {
         try {
@@ -149,10 +150,10 @@ export const galeriaService = {
           const data2: any[] = (res2 as any).data ?? [];
           const images2 = mapStrapiGaleriaToGalleryImages(data2).slice(0, count);
           if (images2.length > 0) {
-            if (images2.length >= Math.min(6, count)) return images2;
+            if (images2.length >= Math.min(6, count)) return attachSource(images2, 'strapi');
             if (images2.length < count) {
               const missing = count - images2.length;
-              return [...images2, ...picsumGalleryFallback(missing)];
+              return attachSource([...images2, ...picsumGalleryFallback(missing)], 'fallback');
             }
           }
         } catch {
@@ -162,14 +163,14 @@ export const galeriaService = {
       // Si no hay suficientes imágenes con media, fallback parcial + picsum
       if (images.length > 0 && images.length < count) {
         const missing = count - images.length;
-        return [...images, ...picsumGalleryFallback(missing)];
+        return attachSource([...images, ...picsumGalleryFallback(missing)], 'fallback');
       }
       if (images.length === 0) throw new Error('Sin imágenes Strapi');
-      return images;
+      return attachSource(images, 'strapi');
     } catch (err) {
       if ((actualSignal as any)?.aborted) return [];
       console.warn('[galeriaService.getGaleriaImages] Strapi falla, usando picsum fallback:', err);
-      return picsumGalleryFallback(count);
+      return attachSource(picsumGalleryFallback(count), 'fallback');
     }
   },
 

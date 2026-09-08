@@ -1,6 +1,7 @@
 import type { Sede } from '../types/sede.types';
 import { sedes as sedesFallback } from '../data/sedes';
 import { fetchStrapi } from '../lib/strapi';
+import { attachSource } from '../lib/data-source';
 import { mapStrapiSedeToSede } from '../lib/mappers';
 import type { StrapiCollectionResponse } from '../lib/strapi-types';
 
@@ -19,11 +20,11 @@ export const sedesService = {
         },
       });
       const data: any[] = (res as any).data ?? [];
-      if (!Array.isArray(data) || data.length === 0) return sedesFallback;
-      return data.map(mapStrapiSedeToSede);
+      if (!Array.isArray(data) || data.length === 0) return attachSource(sedesFallback, 'fallback');
+      return attachSource(data.map(mapStrapiSedeToSede), 'strapi');
     } catch (err) {
       console.warn('[sedesService.getSedes] Strapi falla, fallback:', err);
-      return sedesFallback;
+      return attachSource(sedesFallback, 'fallback');
     }
   },
 
