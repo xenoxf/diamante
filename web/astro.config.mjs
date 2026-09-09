@@ -17,5 +17,5 @@ export default defineConfig({
     // Asegurar que variables con prefijo PUBLIC_ estén disponibles en client
     envPrefix: ['PUBLIC_', 'STRAPI_'],
   },
-  site: process.env.SITE_URL || 'https://www.ie-eldiamantecali.edu.co',
+  site: process.env.SITE_URL || 'https://diamante-nu.vercel.app',
 })
