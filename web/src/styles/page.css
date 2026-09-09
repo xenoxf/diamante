@@ -59,11 +59,21 @@ vienen de las variables de global.css. */
 .steps,
 .list,
 .data {
-  list-style: none;
   margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 0.75rem;
+  padding-left: 1.5rem;
+  list-style-position: outside;
+}
+
+.points {
+  list-style-type: disc;
+}
+
+.steps {
+  list-style-type: decimal;
+}
+
+.list {
+  list-style-type: circle;
 }
 
 .points,
@@ -77,11 +87,8 @@ vienen de las variables de global.css. */
 .list li,
 .data li,
 .data div {
-  border: 1px solid var(--line);
-  border-left: 4px solid var(--primary);
-  padding: 0.9rem 1.1rem;
+  padding: 0.25rem 0;
   line-height: 1.7;
-  background: var(--surface);
 }
 
 .data {

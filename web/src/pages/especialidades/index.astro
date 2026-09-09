@@ -6,10 +6,11 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import PageHero from '../../components/PageHero.astro';
 import DataSourceBadge from '../../components/DataSourceBadge.astro';
-import EspecialidadCarousel from '../../components/EspecialidadCarousel.tsx';
+import Masonry from '../../components/mansory';
 import { especialidadesService } from '../../services/especialidades.service';
 import { getStrapiMediaUrl } from '../../lib/strapi';
 import { readSource } from '../../lib/data-source';
+import type { GalleryImage } from '../../types';
 import '../../styles/global.css';
 import '../../styles/page.css';
 
@@ -41,15 +42,29 @@ const source = readSource(especialidades);
             ? esp.images
             : ([getStrapiMediaUrl((esp as any).imagenes)].filter(Boolean) as string[]);
           const list = imgs.length > 0 ? imgs : [`/tecnica/${esp.slug}/${esp.slug}_1.jpeg`];
+          const fotos: GalleryImage[] = list.map((src, idx) => ({
+            id: `${esp.slug}-${idx}`,
+            src,
+            width: 800,
+            height: 600,
+            alt: `${esp.nombre} imagen ${idx + 1}`,
+            href: src,
+          }));
           return (
             <article class="card">
-              <EspecialidadCarousel
-                images={list}
-                alt={`Imagen de ${esp.nombre}`}
-                client:visible
-              />
+              {fotos.length > 1 ? (
+                <Masonry fotos={fotos} client:visible />
+              ) : (
+                <img
+                  src={fotos[0].src}
+                  alt={fotos[0].alt}
+                  loading="lazy"
+                  decoding="async"
+                  style="width:100%;height:auto;"
+                />
+              )}
               <h2>{esp.nombre}</h2>
-              <p>{esp.descripcion}</p>
+              <div set:html={esp.descripcion} />
               {esp.puntos && esp.puntos.length > 0 && (
                 <ul style="margin:0.75rem 0 1rem 1.25rem;line-height:1.6;">
                   {esp.puntos.slice(0, 3).map((p) => (
@@ -66,3 +81,30 @@ const source = readSource(especialidades);
   </main>
   <Footer />
 </Layout>
+
+<style>
+  .richtext :global(p) {
+    line-height: 1.8;
+    margin-bottom: 1.25rem;
+  }
+  .richtext :global(h2),
+  .richtext :global(h3) {
+    margin: 2rem 0 1rem;
+    font-size: 1.25rem;
+  }
+  .richtext :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+  }
+  .richtext :global(a) {
+    color: var(--primary-dark);
+    text-decoration: underline;
+  }
+  .richtext :global(ul),
+  .richtext :global(ol) {
+    margin: 1rem 0 1.5rem 1.5rem;
+    line-height: 1.7;
+  }
+</style>
