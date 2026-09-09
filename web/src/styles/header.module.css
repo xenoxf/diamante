@@ -1,145 +1,147 @@
 /* ===== Header institucional serio ===== */
 
 .header {
-	position: sticky;
-	inset: 0;
-	z-index: 50;
-	background: rgba(255, 255, 255, 0.349);
-	backdrop-filter: blur(10px);
-	transition: box-shadow 0.25s ease;
+  position: sticky;
+  inset: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.349);
+  backdrop-filter: blur(10px);
+  transition: box-shadow 0.25s ease;
 }
 
 .header[data-scrolled="true"] {
-	box-shadow: 0 4px 18px var(--shadow-teal);
+  box-shadow: 0 4px 18px var(--shadow-teal);
 }
 
 /* --- Barra superior utilitaria (estilo gobierno) --- */
 .topbar {
-	background: var(--primary);
-	color: var(--primary-foreground);
-	font-size: 12px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 12px;
 }
 
 .topbarInner {
-	max-width: var(--max-width);
-	height: 36px;
-	margin: 0 auto;
-	padding: 0 1.5rem;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 1rem;
+  max-width: var(--max-width);
+  height: 36px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .topbarLabel {
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	font-weight: 600;
-	color: var(--on-dark-bright);
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--on-dark-bright);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .topbarLinks {
-	display: flex;
-	align-items: center;
-	gap: 0;
-	flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
 }
 
 .topbarLinks a {
-	padding: 0 0.8rem;
-	color: var(--on-dark-mute);
-	font-weight: 600;
-	border-left: 1px solid var(--on-dark-line);
-	white-space: nowrap;
-	transition: color 0.2s ease;
+  padding: 0 0.8rem;
+  color: var(--on-dark-mute);
+  font-weight: 600;
+  border-left: 1px solid var(--on-dark-line);
+  white-space: nowrap;
+  transition: color 0.2s ease;
 }
 
 .topbarLinks a:first-child {
-	border-left: 0;
+  border-left: 0;
 }
 
 .topbarLinks a:last-child {
-	padding-right: 0;
+  padding-right: 0;
 }
 
 .topbarLinks a:hover {
-	color: var(--on-dark);
-	text-decoration: underline;
+  color: var(--on-dark);
+  text-decoration: underline;
 }
 
 /* --- Barra principal --- */
 .mainbar {
-	height: 76px;
+  height: 76px;
 }
 
 .mainbarInner {
-	max-width: var(--max-width);
-	height: 100%;
-	margin: 0 auto;
-	padding: 0 1.5rem;
-	display: flex;
-	align-items: center;
-	gap: 1.5rem;
+  max-width: var(--max-width);
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
 }
 
 .brand {
-	display: flex;
-	align-items: center;
-	gap: 0.75rem;
-	flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
 }
 
 .logo {
-	width: 56px;
-	height: 56px;
-	object-fit: contain;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
 }
 
-.name {
-	font-size: 15px;
-	line-height: 1.25;
-	font-weight: 800;
-	color: var(--foreground);
-	text-transform: uppercase;
-	letter-spacing: 0.02em;
-	white-space: nowrap;
+.name,
+.nam1 {
+  font-size: 15px;
+  line-height: 1.25;
+  font-weight: 800;
+  color: var(--foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.nam1 {
+  display: none;
 }
 
 .name small {
-	display: block;
-	font-size: 11px;
-	font-weight: 600;
-	letter-spacing: 0.14em;
-	color: var(--muted-foreground);
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--muted-foreground);
 }
 
 /* Links centrados */
 .nav {
-	flex: 1;
-	display: flex;
-	align-items: stretch;
-	justify-content: center;
-	height: 100%;
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  height: 100%;
 }
 
 .link {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.3rem;
-	padding: 0 1rem;
-	font-size: 13px;
-	font-weight: 700;
-	letter-spacing: 0.06em;
-	color: var(--foreground);
-	border-bottom: 3px solid transparent;
-	transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
-}
-
-.link:hover {
-	text-decoration: underline;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 1rem;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--foreground);
+  text-decoration: underline;
+  border-bottom: 3px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .link:focus-visible,
@@ -147,177 +149,199 @@
 .cta:focus-visible,
 .menuButton:focus-visible,
 .topbarLinks a:focus-visible {
-	outline: 2px solid var(--primary);
-	outline-offset: 2px;
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 .link svg {
-	width: 14px;
-	height: 14px;
+  width: 14px;
+  height: 14px;
 }
 
 /* Dropdown institucional */
 .dropdown {
-	position: relative;
-	display: flex;
-	align-items: stretch;
+  position: relative;
+  display: flex;
+  align-items: stretch;
 }
 
 .menu {
-	position: absolute;
-	top: 80%;
-	left: 50%;
-	transform: translate(-50%, 6px);
-	min-width: 260px;
-	background: var(--surface);
-	border: 1px solid var(--border);
-	border-top: 3px solid var(--primary);
-	box-shadow: 0 16px 32px var(--shadow-teal);
-	padding: 0.4rem 0;
-	opacity: 0;
-	visibility: hidden;
-	transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s;
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  transform: translate(-50%, 6px);
+  min-width: 260px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--primary);
+  box-shadow: 0 16px 32px var(--shadow-teal);
+  padding: 0.4rem 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s;
 }
 
 .dropdown:hover .menu,
 .dropdown:focus-within .menu {
-	opacity: 1;
-	visibility: visible;
-	transform: translate(-50%, 0);
-	transition: opacity 0.2s ease, transform 0.2s ease;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .subLink {
-	display: block;
-	padding: 0.7rem 1.25rem;
-	font-size: 13.5px;
-	font-weight: 600;
-	color: var(--foreground);
-	border-left: 3px solid transparent;
-	transition: background-color 0.15s ease, border-color 0.15s ease;
-	white-space: nowrap;
+  display: block;
+  padding: 0.7rem 1.25rem;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--foreground);
+  border-left: 3px solid transparent;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
 }
 
 .subLink:hover {
-	background: var(--background);
-	border-left-color: var(--primary);
+  background: var(--background);
+  border-left-color: var(--primary);
 }
 
 /* Acción derecha */
 .actions {
-	display: flex;
-	align-items: center;
-	flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .cta {
-	font-size: 13px;
-	font-weight: 800;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-	color: var(--primary-foreground);
-	background: var(--primary);
-	padding: 0.75rem 1.4rem;
-	border-radius: 4px;
-	white-space: nowrap;
-	transition: background-color 0.2s ease;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary-foreground);
+  background: var(--primary);
+  padding: 0.75rem 1.4rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
 }
 
 .cta:hover {
-	background: var(--primary-dark);
+  background: var(--primary-dark);
 }
 
 .menuButton {
-	display: none;
-	align-items: center;
-	justify-content: center;
-	width: 44px;
-	height: 44px;
-	border: 1px solid var(--border);
-	border-radius: 4px;
-	background: var(--surface);
-	cursor: pointer;
-	color: var(--foreground);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  cursor: pointer;
+  color: var(--foreground);
 }
 
 .menuButton svg {
-	width: 22px;
-	height: 22px;
+  width: 22px;
+  height: 22px;
 }
 
 .iconClose {
-	display: none;
+  display: none;
 }
 
 .header[data-open="true"] .iconClose {
-	display: block;
+  display: block;
 }
 
 .header[data-open="true"] .iconOpen {
-	display: none;
+  display: none;
 }
 
 /* --- Móvil --- */
 @media (max-width: 960px) {
-	.topbar {
-		display: none;
-	}
+  .topbar {
+    display: none;
+  }
 
-	.name {
-		font-size: 13px;
-	}
+  .mainbarInner {
+    justify-content: space-between;
+    margin: 0;
+    padding: 0 0.7rem 0 0;
+  }
 
-	.logo {
-		width: 46px;
-		height: 46px;
-	}
+  .name {
+    display: none;
+  }
 
-	.menuButton {
-		display: inline-flex;
-	}
+  .nam1 {
+    display: block;
+    font-size: 13px;
+  }
 
-	.actions .cta {
-		display: none;
-	}
+  .logo {
+    width: 46px;
+    height: 46px;
+  }
 
-	.nav {
-		position: absolute;
-		top: 100%;
-		left: 0;
-		right: 0;
-		display: none;
-		flex-direction: column;
-		align-items: stretch;
-		height: auto;
-		background: var(--surface);
-		border-bottom: 3px solid var(--primary);
-		box-shadow: 0 16px 28px var(--shadow-teal);
-		padding: 0.5rem 0 1rem;
-	}
+  .menuButton {
+    display: inline-flex;
+  }
 
-	.header[data-open="true"] .nav {
-		display: flex;
-	}
+  .actions .cta {
+    display: none;
+  }
 
-	.link {
-		padding: 0.9rem 1.5rem;
-		border-bottom: 1px solid var(--border);
-	}
+  .nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    background: var(--surface);
+    border-bottom: 3px solid var(--primary);
+    box-shadow: 0 16px 28px var(--shadow-teal);
+    padding: 0.5rem 0 1rem;
+  }
 
-	.dropdown {
-		flex-direction: column;
-	}
+  .header[data-open="true"] .nav {
+    display: flex;
+  }
 
-	.menu {
-		position: static;
-		transform: none;
-		opacity: 1;
-		visibility: visible;
-		box-shadow: none;
-		border: 0;
-		border-left: 3px solid var(--primary);
-		margin: 0 1.5rem;
-		padding: 0;
-		background: var(--background);
-	}
+  .link {
+    padding: 0.9rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dropdown {
+    flex-direction: column;
+  }
+
+  .menu {
+    position: static;
+    transform: none;
+    opacity: 1;
+    visibility: visible;
+    box-shadow: none;
+    border: 0;
+    overflow-y: auto;
+    border-left: 3px solid var(--primary);
+    margin: 0 1.5rem;
+    padding: 0;
+    background: var(--background);
+  }
+}
+
+@media (max-width: 420px) {
+  .name {
+    display: block;
+    font-size: 0.8rem;
+  }
+
+  .nam1 {
+    display: none;
+  }
 }

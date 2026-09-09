@@ -103,9 +103,12 @@ const nav: NavItem[] = [
 					height="56"
 				/>
 				<span class={styles.name}>
-					Institucion Educativa <br> El Diamante
-				</span>
-			</a>
+          Institucion Educativa <br> El Diamante
+        </span>
+
+	<span class={styles.nam1}>
+          Institucion Educativa El Diamante
+				</span>		</a>
 
 			<nav class={styles.nav} aria-label="Navegación principal">
 				{nav.map((item) =>
@@ -121,10 +124,10 @@ const nav: NavItem[] = [
 								{item.children.map((sub) => {
 									const isExternal = (sub as any).external || sub.href.startsWith('http');
 									return (
-										<a
+                  <a 
+                      href={item.href}
 											role="menuitem"
 											class={styles.subLink}
-											href={sub.href}
 											target={isExternal ? '_blank' : undefined}
 											rel={isExternal ? 'noopener noreferrer' : undefined}
 										>
