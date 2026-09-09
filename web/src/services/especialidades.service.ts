@@ -43,11 +43,15 @@ export const especialidadesService = {
       });
       const data: any[] = (res as any).data ?? [];
       const raw = Array.isArray(data) ? data[0] : null;
-      if (!raw) return especialidadesFallback.find((e) => e.slug === slug);
-      return mapStrapiEspecialidadToEspecialidad(raw);
+      if (!raw) {
+        const fb = especialidadesFallback.find((e) => e.slug === slug);
+        return fb ? attachSource(fb, 'fallback') : undefined;
+      }
+      return attachSource(mapStrapiEspecialidadToEspecialidad(raw), 'strapi');
     } catch (err) {
       console.warn('[especialidadesService.getEspecialidadBySlug] fallback:', err);
-      return especialidadesFallback.find((e) => e.slug === slug);
+      const fb = especialidadesFallback.find((e) => e.slug === slug);
+      return fb ? attachSource(fb as any, 'fallback') : undefined;
     }
   },
 };

@@ -182,11 +182,15 @@ export const noticiasService = {
       });
       const data: any[] = (res as any).data ?? [];
       const raw = Array.isArray(data) ? data[0] : null;
-      if (!raw) return noticiasFallback.find((n) => n.slug === slug);
-      return mapStrapiNoticiaToNoticia(raw);
+      if (!raw) {
+        const fb = noticiasFallback.find((n) => n.slug === slug);
+        return fb ? attachSource(fb as any, 'fallback') : undefined;
+      }
+      return attachSource(mapStrapiNoticiaToNoticia(raw), 'strapi');
     } catch (err) {
       console.warn('[noticiasService.getNoticiaBySlug] fallback:', err);
-      return noticiasFallback.find((n) => n.slug === slug);
+      const fb = noticiasFallback.find((n) => n.slug === slug);
+      return fb ? attachSource(fb as any, 'fallback') : undefined;
     }
   },
 

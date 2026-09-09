@@ -43,11 +43,15 @@ export const sedesService = {
       });
       const data: any[] = (res as any).data ?? [];
       const raw = Array.isArray(data) ? data[0] : null;
-      if (!raw) return sedesFallback.find((s) => s.slug === slug);
-      return mapStrapiSedeToSede(raw);
+      if (!raw) {
+        const fb = sedesFallback.find((s) => s.slug === slug);
+        return fb ? attachSource(fb, 'fallback') : undefined;
+      }
+      return attachSource(mapStrapiSedeToSede(raw), 'strapi');
     } catch (err) {
       console.warn('[sedesService.getSedeBySlug] fallback:', err);
-      return sedesFallback.find((s) => s.slug === slug);
+      const fb = sedesFallback.find((s) => s.slug === slug);
+      return fb ? attachSource(fb as any, 'fallback') : undefined;
     }
   },
 };

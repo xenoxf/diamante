@@ -6,15 +6,14 @@ import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import PageHero from "../../components/PageHero.astro";
 import DataSourceBadge from "../../components/DataSourceBadge.astro";
-import EspecialidadCarousel from "../../components/EspecialidadCarousel.tsx";
 import { especialidadesService } from "../../services/especialidades.service";
-import { getStrapiMediaUrl, getStrapiMediaUrls } from "../../lib/strapi";
+import { getStrapiMediaUrls } from "../../lib/strapi";
 import { setISRHeaders } from "../../lib/isr";
 import { readSource } from "../../lib/data-source";
 import Masonry from "../../components/mansory";
 import "../../styles/global.css";
 import "../../styles/page.css";
-import type { GaleriaItem, GalleryImage } from "../../types";
+import type { GalleryImage } from "../../types";
 
 setISRHeaders(Astro.response, { sMaxAge: 300 });
 
@@ -63,10 +62,20 @@ const imagenes: string[] =
     getStrapiMediaUrls((especialidad as any)?.imagenes) ??
     [];
 
-const displayImgs =
+const displayImgs: string[] =
     imagenes.length > 0
         ? imagenes
-        : [`/tecnica/${especialidad?.slug}/${especialidad?.slug}_1.jpeg`];
+        : especialidad?.slug
+          ? [`/tecnica/${especialidad.slug}/${especialidad.slug}_1.jpeg`]
+          : [];
+const galleryImages: GalleryImage[] = displayImgs.map((src, idx) => ({
+    id: `${especialidad?.slug ?? "especialidad"}-${idx}`,
+    src,
+    width: 800,
+    height: 600,
+    alt: `${especialidad?.nombre ?? "Especialidad"} imagen ${idx + 1}`,
+    href: src,
+}));
 const detailSource = readSource(
     (Astro.props as any)?.especialidad ?? especialidad,
 );
@@ -101,10 +110,8 @@ const detailSource = readSource(
                     {displayImgs.length > 0 && (
                         <div style="margin-top:2rem;">
                             <h2>Galería</h2>
-                            {displayImgs.length > 1 ? (
-                                <Masonry
-                                    fotos={displayImgs as GalleryImage[]}
-                                />
+                            {galleryImages.length > 1 ? (
+                                <Masonry fotos={galleryImages} />
                             ) : (
                                 <div
                                     class="grid"

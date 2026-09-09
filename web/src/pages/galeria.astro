@@ -16,7 +16,13 @@ import "../styles/page.css";
 
 setISRHeaders(Astro.response, { sMaxAge: 180 });
 
-const fotos = await galeriaService.getGaleriaImages(18);
+let fotos: Awaited<ReturnType<typeof galeriaService.getGaleriaImages>> = [];
+try {
+  fotos = await galeriaService.getGaleriaImages(18);
+} catch (err) {
+  console.warn("[galeria] getGaleriaImages fallback:", err);
+  fotos = [];
+}
 const source = readSource(fotos);
 ---
 
@@ -32,7 +38,11 @@ const source = readSource(fotos);
             <div style="margin: 0 0 12px;">
                 <DataSourceBadge source={source} />
             </div>
-            <Mansory fotos={fotos} />
+            {fotos.length > 0 ? (
+                <Mansory fotos={fotos} />
+            ) : (
+                <p class="empty">No hay imágenes disponibles en este momento.</p>
+            )}
         </div>
     </main>
     <Footer />

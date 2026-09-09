@@ -50,7 +50,10 @@ const bannerUrl: string | null =
   getStrapiMediaUrl((sede as any)?.banner) ??
   null;
 
-const mapSrc = sede ? `https://www.google.com/maps?q=${encodeURIComponent(sede.mapQuery)}&output=embed` : '';
+const mapQueryRaw: string = sede?.mapQuery ?? sede?.direccion ?? "";
+const mapSrc = mapQueryRaw
+  ? `https://www.google.com/maps?q=${encodeURIComponent(mapQueryRaw)}&output=embed`
+  : "";
 ---
 
 <Layout>
@@ -125,14 +128,18 @@ const mapSrc = sede ? `https://www.google.com/maps?q=${encodeURIComponent(sede.m
           </div>
 
           <h2>Ubicación</h2>
-          <iframe
-            class="map"
-            title={`Mapa de ubicación de ${sede.nombre}`}
-            src={mapSrc}
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            allowfullscreen
-          ></iframe>
+          {mapSrc ? (
+            <iframe
+              class="map"
+              title={`Mapa de ubicación de ${sede.nombre}`}
+              src={mapSrc}
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen
+            ></iframe>
+          ) : (
+            <p class="meta">Mapa no disponible para esta sede.</p>
+          )}
           <p class="back"><a href="/sedes">Volver a todas las sedes</a></p>
         </div>
       </>
