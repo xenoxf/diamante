@@ -1,0 +1,43 @@
+{"message":"connected.","label":"vite","level":"info"}
+{"message":"Generated 29ms","label":"types","level":"info"}
+{"message":"connected.","label":"vite","level":"info"}
+{"message":"Re-optimizing dependencies because vite config has changed","label":"vite","level":"info"}
+{"message":" astro  v7.2.10 ready in 4553 ms\n┃ Local    http://localhost:4321/\n┃ Network  use --host to expose","label":"SKIP_FORMAT","level":"info"}
+{"message":"watching for file changes...","label":null,"level":"info"}
+{"message":"[optimizer] bundling dependencies...","label":"vite","level":"info"}
+{"message":"[200] / 37ms","label":null,"level":"info"}
+{"message":"[200] / 49ms","label":null,"level":"info"}
+{"message":"src/components/Hero.astro","label":"watch","level":"info"}
+{"message":"[200] / 35ms","label":null,"level":"info"}
+{"message":"/src/pages/index.astro?astro&type=style&index=0&lang.css","label":"watch","level":"info"}
+{"message":"[200] / 37ms","label":null,"level":"info"}
+{"message":"src/components/Hero.astro","label":"watch","level":"info"}
+{"message":"[200] / 52ms","label":null,"level":"info"}
+{"message":"src/components/Hero.astro","label":"watch","level":"info"}
+{"message":"[200] / 26ms","label":null,"level":"info"}
+{"message":"src/components/Hero.astro","label":"watch","level":"info"}
+{"message":"[200] / 100ms","label":null,"level":"info"}
+{"message":"src/components/Hero.astro","label":"watch","level":"info"}
+{"message":"[200] / 42ms","label":null,"level":"info"}
+{"message":"/src/pages/index.astro?astro&type=style&index=0&lang.css","label":"watch","level":"info"}
+{"message":"[200] / 105ms","label":null,"level":"info"}
+{"message":"src/components/Hero.astro","label":"watch","level":"info"}
+{"message":"[200] / 98ms","label":null,"level":"info"}
+{"message":"src/components/Hero.astro","label":"watch","level":"info"}
+{"message":"[200] / 66ms","label":null,"level":"info"}
+{"message":"/src/components/Sedes.astro?astro&type=style&index=0&lang.css","label":"watch","level":"info"}
+{"message":"[200] / 186ms","label":null,"level":"info"}
+{"message":"/src/components/Galeria.astro?astro&type=style&index=0&lang.css","label":"watch","level":"info"}
+{"message":"[200] / 121ms","label":null,"level":"info"}
+{"message":"/src/components/Identidad.astro?astro&type=style&index=0&lang.css","label":"watch","level":"info"}
+{"message":"[200] / 106ms","label":null,"level":"info"}
+{"message":"/src/components/Especialidades.astro?astro&type=style&index=0&lang.css","label":"watch","level":"info"}
+{"message":"[200] / 61ms","label":null,"level":"info"}
+{"message":"[200] / 46ms","label":null,"level":"info"}
+{"message":"/src/components/Noticias.astro?astro&type=style&index=0&lang.css","label":"watch","level":"info"}
+{"message":"[200] / 83ms","label":null,"level":"info"}
+{"message":"/src/components/Footer.astro?astro&type=style&index=0&lang.css","label":"watch","level":"info"}
+{"message":"[200] / 102ms","label":null,"level":"info"}
+{"message":"/src/pages/index.astro?astro&type=style&index=0&lang.css","label":"watch","level":"info"}
+{"message":"[200] / 184ms","label":null,"level":"info"}
+{"message":"[200] / 322ms","label":null,"level":"info"}
