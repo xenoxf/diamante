@@ -53,7 +53,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
 }
 
@@ -69,8 +69,16 @@
 .imagePlaceholder {
   position: relative;
   height: 160px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background: var(--skeleton-cool);
   border-bottom: 1px solid var(--line);
+}
+
+.img {
+  width: 80px;
+  height: auto;
 }
 
 .category {

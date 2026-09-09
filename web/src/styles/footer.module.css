@@ -1,7 +1,7 @@
 /* Footer institucional sobrio: fondo oscuro, texto blanco. */
 
 .footer {
-  background: var(--foreground);
+  background: var(--primary);
   color: var(--on-dark);
 }
 

@@ -21,7 +21,6 @@ const source = readSource(sedes);
       <div class={styles.grid}>
         <figure class={styles.heroFigure}>
           <h2 id="sedes-titulo" class={styles.title}>Nuestras Sedes</h2>
-          <div style="margin: 0 0 12px;"><DataSourceBadge source={source} /></div>
           <img
             class={styles.heroImage}
             src="/niña_apunta.png"
@@ -37,9 +36,7 @@ const source = readSource(sedes);
             <article class={styles.card} aria-labelledby={`sede-${sede.slug}`}>
               <div class={styles.cardBody}>
                 <img class={styles.imgSede} src={imgSrc} alt={'imagen de ' + sede.nombre} loading="lazy" decoding="async" />
-                <h3 id={`sede-${sede.slug}`} class={styles.cardTitle} style="padding:1rem;">{sede.nombre}</h3>
-                <p class={styles.barrio} style="padding:0 1rem;">{sede.barrio}</p>
-                <p class={styles.address} style="padding:0 1rem 1rem;">{sede.direccion}</p>
+           
               </div>
               <iframe
                 class={styles.map}

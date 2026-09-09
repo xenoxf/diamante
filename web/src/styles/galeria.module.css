@@ -140,133 +140,35 @@
 
 /* ---- Masonry estilo Pinterest para la página /galeria ---- */
 .masonry {
-  columns: 320px 3;
-  column-gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.masonryColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* separación vertical entre TODAS las imágenes */
+  min-width: 0;
 }
 
 .mItem {
   display: block;
-  margin: 0 0 1rem;
-  break-inside: avoid;
-  border-radius: 14px;
+  width: 100%;
   overflow: hidden;
+
+  border-radius: 14px;
   background: var(--skeleton);
   box-shadow: 0 4px 16px var(--shade-soft);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
 
-.mItem:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 28px var(--shade-strong);
-}
-
-.mItem:focus-visible {
-  outline: 3px solid var(--primary);
-  outline-offset: 3px;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .mItem img {
+  display: block;
   width: 100%;
   height: auto;
-  display: block;
-}
-
-@media (max-width: 960px) {
-  .card {
-    width: clamp(170px, 38vw, 240px);
-  }
-
-  .track .card:nth-child(3n + 1) {
-    height: 260px;
-  }
-
-  .track .card:nth-child(3n + 2) {
-    height: 200px;
-  }
-
-  .track .card:nth-child(3n) {
-    height: 230px;
-  }
-
-  .trackB .card:nth-child(4n + 1) {
-    height: 210px;
-  }
-
-  .trackB .card:nth-child(4n + 3) {
-    height: 270px;
-  }
-
-  .masonry {
-    columns: 240px 2;
-  }
-}
-
-@media (max-width: 560px) {
-  .section {
-    padding: 48px 0 56px;
-  }
-
-  .inner {
-    padding: 0 16px;
-  }
-
-  .title {
-    font-size: 24px;
-  }
-
-  .marquee {
-    gap: 0.75rem;
-  }
-
-  .card {
-    width: clamp(150px, 52vw, 210px);
-    margin-right: 0.75rem;
-    border-radius: 14px;
-  }
-
-  .track .card:nth-child(3n + 1) {
-    height: 220px;
-  }
-
-  .track .card:nth-child(3n + 2) {
-    height: 170px;
-  }
-
-  .track .card:nth-child(3n) {
-    height: 195px;
-  }
-
-  .trackB .card:nth-child(4n + 1) {
-    height: 180px;
-  }
-
-  .trackB .card:nth-child(4n + 3) {
-    height: 230px;
-  }
-
-  .masonry {
-    columns: 2;
-    column-gap: 0.75rem;
-  }
-
-  .mItem {
-    margin-bottom: 0.75rem;
-    border-radius: 12px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .track,
-  .ph {
-    animation: none;
-  }
-
-  .marquee {
-    overflow-x: auto;
-  }
-
-  .card:hover,
-  .mItem:hover {
-    transform: none;
-  }
 }

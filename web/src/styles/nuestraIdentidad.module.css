@@ -55,9 +55,6 @@
 .card {
   background: var(--surface);
   border: 1px solid var(--line-soft);
-  border-top: 3px solid var(--primary);
-  border-radius: 6px;
-  padding: 20px;
   display: flex;
   flex-direction: column;
 }
@@ -94,22 +91,20 @@
 
 .cardImg {
   width: 100%;
-  height: 200px;
   object-fit: cover;
   display: block;
-  border-radius: 6px;
 }
 
 .cardLink {
   display: block;
-  border-radius: 6px;
   overflow: hidden;
+  height: max-content;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .cardLink:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 @media (max-width: 960px) {

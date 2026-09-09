@@ -37,14 +37,9 @@ const source = readSource(destacadas);
 <section id="noticias" class={styles.section} aria-labelledby="noticias-titulo">
   <div class={styles.container}>
     <h2 id="noticias-titulo" class={styles.title}>Noticias</h2>
-    <div style="margin: 0 0 12px;"><DataSourceBadge source={source} /></div>
-    <p class={styles.intro}>
-      Informaci&oacute;n oficial sobre actividades acad&eacute;micas, culturales y administrativas
-      de la Instituci&oacute;n Educativa El Diamante.
-    </p>
 
     <div class={styles.grid}>
-      {destacadas.map((noticia) => {
+      {destacadas.slice(-3).map((noticia) => {
         const portadaUrl = (noticia as any).portadaUrl ?? getStrapiMediaUrl((noticia as any).portada) ?? null;
         return (
           <article class={styles.card} aria-labelledby={`noticia-${noticia.slug}`}>
@@ -53,12 +48,12 @@ const source = readSource(destacadas);
                 style={`height:160px;background-image:url('${portadaUrl}');background-size:cover;background-position:center;border-bottom:1px solid var(--line);position:relative;`}
                 role="img"
                 aria-label={`Imagen de ${noticia.titulo}`}
-              >
-                <span class={styles.category}>{noticia.categoria}</span>
+                >
+
               </div>
             ) : (
-              <div class={styles.imagePlaceholder} role="img" aria-label={`Imagen de ${noticia.titulo}`}>
-                <span class={styles.category}>{noticia.categoria}</span>
+            <div class={styles.imagePlaceholder} role="img" aria-label={`Imagen de ${noticia.titulo}`}>
+              <img class={styles.img} src="/logo_diamante.png" alt="Escudo del Diamante">
               </div>
             )}
             <div class={styles.cardBody}>
