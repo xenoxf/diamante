@@ -23,7 +23,6 @@ const config: Core.Config.Middlewares = [
       origin: [
         'http://localhost:4321',
         'http://localhost:3000',
-        'https://www.ie-eldiamantecali.edu.co',
         process.env.STRAPI_CORS_ORIGIN || 'http://localhost:4321',
       ].filter(Boolean),
     },
