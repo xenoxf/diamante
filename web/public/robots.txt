@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://www.ie-eldiamantecali.edu.co/sitemap-index.xml

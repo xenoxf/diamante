@@ -76,3 +76,25 @@ const siteUrl = Astro.site?.toString() ?? (Astro.url ? `${Astro.url.protocol}//$
 
 <!-- Favicon fallback handled in Layout; additional SEO tags -->
 <meta name="generator" content={Astro.generator} />
+
+<!-- JSON-LD: EducationalOrganization -->
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "name": "Institución Educativa El Diamante",
+  "url": siteUrl,
+  "logo": `${siteUrl}/favicon.svg`,
+  "description": "Institución Educativa El Diamante, Santiago de Cali. Educación media técnica, convivencia y formación integral.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Santiago de Cali",
+    "addressRegion": "Valle del Cauca",
+    "addressCountry": "CO"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "3.4372",
+    "longitude": "-76.5225"
+  },
+  "sameAs": []
+})} />

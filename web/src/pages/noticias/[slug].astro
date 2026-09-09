@@ -59,7 +59,11 @@ const contenidoHtml: string = noticia?.contenido ?? '';
 const detailSource = readSource((Astro.props as any)?.noticia ?? noticia);
 ---
 
-<Layout>
+<Layout
+  title={noticia ? `${noticia.titulo} — IE El Diamante` : undefined}
+  description={noticia?.resumen?.slice(0, 160) || undefined}
+  image={portadaUrl || undefined}
+>
   <Header />
   <main class="page">
     {noticia ? (
