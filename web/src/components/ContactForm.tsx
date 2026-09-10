@@ -1,8 +1,6 @@
 import { useState } from 'react';
-
-const STRAPI_URL =
-  (typeof import.meta !== 'undefined' && (import.meta as any).env?.PUBLIC_STRAPI_URL) ||
-  'http://localhost:1337';
+import { STRAPI_URL } from '../lib/strapi';
+import styles from '../styles/forms.module.css';
 
 type Status = 'idle' | 'loading' | 'success' | 'error';
 
@@ -45,7 +43,6 @@ export default function ContactForm() {
 
   const handleSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault();
-    // Honeypot: si está lleno, es bot → simular éxito sin enviar
     if (honeypot.trim() !== '') {
       setStatus('success');
       setMessage('Mensaje enviado correctamente. Nos pondremos en contacto pronto.');
@@ -89,7 +86,6 @@ export default function ContactForm() {
 
       setStatus('success');
       setMessage('¡Mensaje enviado correctamente! Un miembro del equipo administrativo dará respuesta al correo indicado.');
-      // Reset form except consent?
       setNombre('');
       setEmail('');
       setAsunto('');
@@ -99,9 +95,8 @@ export default function ContactForm() {
       setErrors({});
     } catch (err: any) {
       console.error('[ContactForm] fetch error', err);
-      // Detect CORS/network
       const msg = err?.message?.includes('Failed to fetch') || err?.message?.includes('NetworkError')
-        ? 'No se pudo conectar con el servidor. Verifique su conexión o intente más tarde. (CORS: asegúrese de que Strapi permita el origen)'
+        ? 'No se pudo conectar con el servidor. Verifique su conexión o intente más tarde.'
         : err?.message || 'Ocurrió un error al enviar el mensaje. Intente nuevamente.';
       setStatus('error');
       setMessage(msg);
@@ -112,11 +107,11 @@ export default function ContactForm() {
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="form"
+      className={styles.form}
       aria-label="Formulario de contacto"
       style={{ position: 'relative' }}
     >
-      {/* Honeypot oculto */}
+      {/* Honeypot */}
       <div
         aria-hidden="true"
         style={{
@@ -140,54 +135,67 @@ export default function ContactForm() {
         />
       </div>
 
-      <div className="field">
-        <label htmlFor="contact-nombre">Nombre completo *</label>
-        <input
-          id="contact-nombre"
-          name="nombre"
-          type="text"
-          required
-          autoComplete="name"
-          aria-label="Nombre completo"
-          aria-required="true"
-          aria-invalid={!!errors.nombre}
-          aria-describedby={errors.nombre ? 'err-contact-nombre' : undefined}
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          placeholder="Ej: María Pérez"
-        />
-        {errors.nombre && (
-          <span id="err-contact-nombre" role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>
-            {errors.nombre}
-          </span>
-        )}
+      <div className={styles.fieldRow}>
+        <div className={styles.field}>
+          <label htmlFor="contact-nombre">
+            Nombre completo
+            <span className={styles.fieldRequired}>*</span>
+          </label>
+          <input
+            id="contact-nombre"
+            name="nombre"
+            type="text"
+            required
+            autoComplete="name"
+            aria-label="Nombre completo"
+            aria-required="true"
+            aria-invalid={!!errors.nombre}
+            aria-describedby={errors.nombre ? 'err-contact-nombre' : undefined}
+            className={errors.nombre ? styles.fieldInputError : ''}
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            placeholder="Ej: María Pérez"
+          />
+          {errors.nombre && (
+            <span id="err-contact-nombre" role="alert" className={styles.fieldError}>
+              {errors.nombre}
+            </span>
+          )}
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="contact-email">
+            Correo electrónico
+            <span className={styles.fieldRequired}>*</span>
+          </label>
+          <input
+            id="contact-email"
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            aria-label="Correo electrónico"
+            aria-required="true"
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? 'err-contact-email' : undefined}
+            className={errors.email ? styles.fieldInputError : ''}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="ejemplo@correo.com"
+          />
+          {errors.email && (
+            <span id="err-contact-email" role="alert" className={styles.fieldError}>
+              {errors.email}
+            </span>
+          )}
+        </div>
       </div>
 
-      <div className="field">
-        <label htmlFor="contact-email">Correo electrónico *</label>
-        <input
-          id="contact-email"
-          name="email"
-          type="email"
-          required
-          autoComplete="email"
-          aria-label="Correo electrónico"
-          aria-required="true"
-          aria-invalid={!!errors.email}
-          aria-describedby={errors.email ? 'err-contact-email' : undefined}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="ejemplo@correo.com"
-        />
-        {errors.email && (
-          <span id="err-contact-email" role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>
-            {errors.email}
-          </span>
-        )}
-      </div>
-
-      <div className="field">
-        <label htmlFor="contact-asunto">Asunto *</label>
+      <div className={styles.field}>
+        <label htmlFor="contact-asunto">
+          Asunto
+          <span className={styles.fieldRequired}>*</span>
+        </label>
         <input
           id="contact-asunto"
           name="asunto"
@@ -198,80 +206,70 @@ export default function ContactForm() {
           aria-required="true"
           aria-invalid={!!errors.asunto}
           aria-describedby={errors.asunto ? 'err-contact-asunto' : undefined}
+          className={errors.asunto ? styles.fieldInputError : ''}
           value={asunto}
           onChange={(e) => setAsunto(e.target.value)}
           placeholder="Ej: Consulta académica"
         />
         {errors.asunto && (
-          <span id="err-contact-asunto" role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>
+          <span id="err-contact-asunto" role="alert" className={styles.fieldError}>
             {errors.asunto}
           </span>
         )}
       </div>
 
-      <div className="field">
-        <label htmlFor="contact-mensaje">Mensaje *</label>
+      <div className={styles.field}>
+        <label htmlFor="contact-mensaje">
+          Mensaje
+          <span className={styles.fieldRequired}>*</span>
+        </label>
         <textarea
           id="contact-mensaje"
           name="mensaje"
-          rows={6}
+          rows={5}
           required
           autoComplete="off"
           aria-label="Mensaje"
           aria-required="true"
           aria-invalid={!!errors.mensaje}
           aria-describedby={errors.mensaje ? 'err-contact-mensaje' : undefined}
+          className={errors.mensaje ? styles.fieldInputError : ''}
           value={mensaje}
           onChange={(e) => setMensaje(e.target.value)}
           placeholder="Describa su consulta con el mayor detalle posible..."
         />
         {errors.mensaje && (
-          <span id="err-contact-mensaje" role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>
+          <span id="err-contact-mensaje" role="alert" className={styles.fieldError}>
             {errors.mensaje}
           </span>
         )}
       </div>
 
-      {/* Captcha placeholder */}
-      <div
-        className="field"
-        style={{
-          border: '1px solid var(--line)',
-          padding: '0.9rem 1rem',
-          background: 'var(--wash)',
-          borderRadius: '6px',
-        }}
-      >
-        <label
-          htmlFor="contact-captcha"
-          style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontWeight: 600 }}
-        >
+      {/* Captcha */}
+      <div className={styles.captcha}>
+        <label htmlFor="contact-captcha" className={styles.captchaLabel}>
           <input
             id="contact-captcha"
             type="checkbox"
             checked={captchaChecked}
             onChange={(e) => setCaptchaChecked(e.target.checked)}
             aria-label="Verificación anti-spam, no soy un robot"
-            style={{ width: '18px', height: '18px' }}
           />
-          <span>No soy un robot (verificación anti-spam placeholder)</span>
+          <span>No soy un robot</span>
         </label>
-        <p style={{ fontSize: '0.78rem', color: 'var(--muted-foreground)', margin: '0.4rem 0 0', lineHeight: 1.5 }}>
+        <p className={styles.captchaNote}>
           * Este es un placeholder. En producción se integrará reCAPTCHA / hCaptcha / Cloudflare Turnstile.
         </p>
         {errors.captcha && (
-          <span role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>
+          <span role="alert" className={styles.fieldError}>
             {errors.captcha}
           </span>
         )}
       </div>
 
-      {/* Consentimiento + aviso privacidad */}
-      <div className="field">
-        <label
-          htmlFor="contact-consentimiento"
-          style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem', cursor: 'pointer', fontWeight: 500, lineHeight: 1.6 }}
-        >
+      {/* Consentimiento */}
+      <div className={styles.field}>
+        <label htmlFor="contact-consentimiento" className={styles.consent}>
           <input
             id="contact-consentimiento"
             name="consentimiento"
@@ -282,52 +280,44 @@ export default function ContactForm() {
             aria-invalid={!!errors.consentimiento}
             checked={consentimiento}
             onChange={(e) => setConsentimiento(e.target.checked)}
-            style={{ marginTop: '0.3rem', width: '18px', height: '18px' }}
           />
           <span>
             Autorizo el tratamiento de mis datos personales conforme a la{' '}
-            <a href="/manual-convivencia" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary-dark)', textDecoration: 'underline' }}>
+            <a href="/manual-convivencia" target="_blank" rel="noopener noreferrer">
               política de privacidad
             </a>{' '}
             y la Ley 1581 de 2012. *
           </span>
         </label>
         {errors.consentimiento && (
-          <span role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>
+          <span role="alert" className={styles.fieldError}>
             {errors.consentimiento}
           </span>
         )}
       </div>
 
       <button
-        className="submit"
+        className={styles.submit}
         type="submit"
         disabled={status === 'loading'}
         aria-busy={status === 'loading'}
         aria-label={status === 'loading' ? 'Enviando mensaje' : 'Enviar mensaje'}
-        style={{ opacity: status === 'loading' ? 0.7 : 1 }}
       >
-        {status === 'loading' ? 'Enviando…' : 'Enviar'}
+        {status === 'loading' && <span className={styles.loadingSpinner} />}
+        {status === 'loading' ? 'Enviando…' : 'Enviar mensaje'}
       </button>
 
       {message && (
         <div
           role={status === 'error' ? 'alert' : 'status'}
           aria-live="polite"
-          style={{
-            padding: '0.9rem 1rem',
-            border: `1px solid ${status === 'success' ? 'var(--primary)' : status === 'error' ? 'var(--destructive)' : 'var(--line)'}`,
-            background: status === 'success' ? 'var(--primary-wash)' : status === 'error' ? '#fef2f2' : 'var(--wash)',
-            color: status === 'error' ? 'var(--destructive)' : 'var(--ink)',
-            lineHeight: 1.6,
-            fontSize: '0.92rem',
-          }}
+          className={`${styles.statusMessage} ${status === 'success' ? styles.statusSuccess : status === 'error' ? styles.statusError : ''}`}
         >
           {message}
         </div>
       )}
 
-      <p style={{ fontSize: '0.78rem', color: 'var(--muted-foreground)', lineHeight: 1.6, margin: 0 }}>
+      <p className={styles.formFooter}>
         Los campos marcados con * son obligatorios. Su información será tratada con confidencialidad y usada exclusivamente para responder su solicitud.
       </p>
     </form>

@@ -1,8 +1,6 @@
 import { useState } from 'react';
-
-const STRAPI_URL =
-  (typeof import.meta !== 'undefined' && (import.meta as any).env?.PUBLIC_STRAPI_URL) ||
-  'http://localhost:1337';
+import { STRAPI_URL } from '../lib/strapi';
+import styles from '../styles/forms.module.css';
 
 type Status = 'idle' | 'loading' | 'success' | 'error';
 
@@ -49,7 +47,6 @@ export default function PqrsfForm() {
         body: fd,
       });
       if (!res.ok) {
-        // 403 si public no tiene permiso upload, no es bloqueante
         console.warn('[PqrsfForm] upload failed', res.status, await res.text().catch(() => ''));
         return null;
       }
@@ -115,10 +112,9 @@ export default function PqrsfForm() {
       setStatus('success');
       setMessage(
         adjunto && !adjuntoId
-          ? 'Solicitud radicada correctamente. Nota: el archivo adjunto no pudo subirse (requiere permisos de Strapi), pero su solicitud fue registrada sin adjunto.'
+          ? 'Solicitud radicada correctamente. Nota: el archivo adjunto no pudo subirse, pero su solicitud fue registrada sin adjunto.'
           : 'Solicitud PQRSF radicada correctamente. Recibirá respuesta en los términos establecidos por la ley (Ley 1755 de 2015).'
       );
-      // reset
       setNombre('');
       setEmail('');
       setTelefono('');
@@ -128,14 +124,13 @@ export default function PqrsfForm() {
       setConsentimiento(false);
       setCaptchaChecked(false);
       setErrors({});
-      // reset file input value via DOM
       const fileInput = document.getElementById('pqrsf-adjunto') as HTMLInputElement | null;
       if (fileInput) fileInput.value = '';
     } catch (err: any) {
       console.error('[PqrsfForm]', err);
       const m =
         err?.message?.includes('Failed to fetch') || err?.message?.includes('NetworkError')
-          ? 'No se pudo conectar con el servidor. Verifique conexión o CORS de Strapi (http://localhost:1337).'
+          ? 'No se pudo conectar con el servidor. Verifique conexión o intente más tarde.'
           : err?.message || 'Error al radicar la solicitud. Intente de nuevo.';
       setStatus('error');
       setMessage(m);
@@ -143,15 +138,18 @@ export default function PqrsfForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="form" aria-label="Formulario PQRSF" style={{ position: 'relative' }}>
+    <form onSubmit={handleSubmit} noValidate className={styles.form} aria-label="Formulario PQRSF" style={{ position: 'relative' }}>
       {/* Honeypot */}
       <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden', opacity: 0 }}>
         <label htmlFor="pqrsf-website">No diligenciar</label>
         <input id="pqrsf-website" name="website" type="text" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
       </div>
 
-      <div className="field">
-        <label htmlFor="pqrsf-tipo">Tipo de solicitud *</label>
+      <div className={styles.field}>
+        <label htmlFor="pqrsf-tipo">
+          Tipo de solicitud
+          <span className={styles.fieldRequired}>*</span>
+        </label>
         <select
           id="pqrsf-tipo"
           name="tipo"
@@ -160,7 +158,6 @@ export default function PqrsfForm() {
           aria-required="true"
           value={tipo}
           onChange={(e) => setTipo(e.target.value as TipoPqrsf)}
-          style={{ font: 'inherit', padding: '0.7rem 0.8rem', border: '1px solid var(--line-faint)', background: 'var(--surface)', color: 'var(--ink)' }}
         >
           <option value="peticion">Petición</option>
           <option value="queja">Queja</option>
@@ -170,94 +167,115 @@ export default function PqrsfForm() {
         </select>
       </div>
 
-      <div className="field">
-        <label htmlFor="pqrsf-nombre">Nombre completo *</label>
-        <input
-          id="pqrsf-nombre"
-          name="nombre"
-          type="text"
-          required
-          autoComplete="name"
-          aria-label="Nombre completo"
-          aria-required="true"
-          aria-invalid={!!errors.nombre}
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          placeholder="Ej: Carlos Gómez"
-        />
-        {errors.nombre && <span role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>{errors.nombre}</span>}
+      <div className={styles.fieldRow}>
+        <div className={styles.field}>
+          <label htmlFor="pqrsf-nombre">
+            Nombre completo
+            <span className={styles.fieldRequired}>*</span>
+          </label>
+          <input
+            id="pqrsf-nombre"
+            name="nombre"
+            type="text"
+            required
+            autoComplete="name"
+            aria-label="Nombre completo"
+            aria-required="true"
+            aria-invalid={!!errors.nombre}
+            className={errors.nombre ? styles.fieldInputError : ''}
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            placeholder="Ej: Carlos Gómez"
+          />
+          {errors.nombre && <span role="alert" className={styles.fieldError}>{errors.nombre}</span>}
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="pqrsf-email">
+            Correo electrónico
+            <span className={styles.fieldRequired}>*</span>
+          </label>
+          <input
+            id="pqrsf-email"
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            aria-label="Correo electrónico"
+            aria-required="true"
+            aria-invalid={!!errors.email}
+            className={errors.email ? styles.fieldInputError : ''}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="ejemplo@correo.com"
+          />
+          {errors.email && <span role="alert" className={styles.fieldError}>{errors.email}</span>}
+        </div>
       </div>
 
-      <div className="field">
-        <label htmlFor="pqrsf-email">Correo electrónico *</label>
-        <input
-          id="pqrsf-email"
-          name="email"
-          type="email"
-          required
-          autoComplete="email"
-          aria-label="Correo electrónico"
-          aria-required="true"
-          aria-invalid={!!errors.email}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="ejemplo@correo.com"
-        />
-        {errors.email && <span role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>{errors.email}</span>}
+      <div className={styles.fieldRow}>
+        <div className={styles.field}>
+          <label htmlFor="pqrsf-telefono">Teléfono (opcional)</label>
+          <input
+            id="pqrsf-telefono"
+            name="telefono"
+            type="tel"
+            autoComplete="tel"
+            aria-label="Teléfono"
+            aria-invalid={!!errors.telefono}
+            className={errors.telefono ? styles.fieldInputError : ''}
+            value={telefono}
+            onChange={(e) => setTelefono(e.target.value)}
+            placeholder="Ej: 302 123 4567"
+          />
+          {errors.telefono && <span role="alert" className={styles.fieldError}>{errors.telefono}</span>}
+        </div>
+
+        <div className={styles.field}>
+          <label htmlFor="pqrsf-asunto">
+            Asunto
+            <span className={styles.fieldRequired}>*</span>
+          </label>
+          <input
+            id="pqrsf-asunto"
+            name="asunto"
+            type="text"
+            required
+            autoComplete="off"
+            aria-label="Asunto"
+            aria-required="true"
+            aria-invalid={!!errors.asunto}
+            className={errors.asunto ? styles.fieldInputError : ''}
+            value={asunto}
+            onChange={(e) => setAsunto(e.target.value)}
+            placeholder="Ej: Solicitud de certificado"
+          />
+          {errors.asunto && <span role="alert" className={styles.fieldError}>{errors.asunto}</span>}
+        </div>
       </div>
 
-      <div className="field">
-        <label htmlFor="pqrsf-telefono">Teléfono (opcional)</label>
-        <input
-          id="pqrsf-telefono"
-          name="telefono"
-          type="tel"
-          autoComplete="tel"
-          aria-label="Teléfono"
-          aria-invalid={!!errors.telefono}
-          value={telefono}
-          onChange={(e) => setTelefono(e.target.value)}
-          placeholder="Ej: 302 123 4567"
-        />
-        {errors.telefono && <span role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>{errors.telefono}</span>}
-      </div>
-
-      <div className="field">
-        <label htmlFor="pqrsf-asunto">Asunto *</label>
-        <input
-          id="pqrsf-asunto"
-          name="asunto"
-          type="text"
-          required
-          autoComplete="off"
-          aria-label="Asunto"
-          aria-required="true"
-          aria-invalid={!!errors.asunto}
-          value={asunto}
-          onChange={(e) => setAsunto(e.target.value)}
-          placeholder="Ej: Solicitud de certificado"
-        />
-        {errors.asunto && <span role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>{errors.asunto}</span>}
-      </div>
-
-      <div className="field">
-        <label htmlFor="pqrsf-descripcion">Descripción detallada *</label>
+      <div className={styles.field}>
+        <label htmlFor="pqrsf-descripcion">
+          Descripción detallada
+          <span className={styles.fieldRequired}>*</span>
+        </label>
         <textarea
           id="pqrsf-descripcion"
           name="descripcion"
-          rows={6}
+          rows={5}
           required
           aria-label="Descripción detallada de la solicitud"
           aria-required="true"
           aria-invalid={!!errors.descripcion}
+          className={errors.descripcion ? styles.fieldInputError : ''}
           value={descripcion}
           onChange={(e) => setDescripcion(e.target.value)}
           placeholder="Describa con detalle su petición, queja, reclamo, sugerencia o felicitación..."
         />
-        {errors.descripcion && <span role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>{errors.descripcion}</span>}
+        {errors.descripcion && <span role="alert" className={styles.fieldError}>{errors.descripcion}</span>}
       </div>
 
-      <div className="field">
+      <div className={styles.field}>
         <label htmlFor="pqrsf-adjunto">Adjunto (opcional, PDF/imagen)</label>
         <input
           id="pqrsf-adjunto"
@@ -265,24 +283,25 @@ export default function PqrsfForm() {
           type="file"
           accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
           aria-label="Archivo adjunto"
+          className={styles.fileInput}
           onChange={(e) => setAdjunto(e.target.files?.[0] ?? null)}
         />
-        <p style={{ fontSize: '0.78rem', color: 'var(--muted-foreground)', margin: 0, lineHeight: 1.5 }}>
+        <p className={styles.fieldHelp}>
           Máximo 5MB. Si el adjunto no se envía, la solicitud se registrará sin archivo y podrá enviar soporte al correo institucional.
         </p>
       </div>
 
-      <div className="field" style={{ border: '1px solid var(--line)', padding: '0.9rem 1rem', background: 'var(--wash)', borderRadius: '6px' }}>
-        <label htmlFor="pqrsf-captcha" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontWeight: 600 }}>
-          <input id="pqrsf-captcha" type="checkbox" checked={captchaChecked} onChange={(e) => setCaptchaChecked(e.target.checked)} aria-label="Verificación anti-spam" style={{ width: '18px', height: '18px' }} />
-          <span>No soy un robot (placeholder)</span>
+      <div className={styles.captcha}>
+        <label htmlFor="pqrsf-captcha" className={styles.captchaLabel}>
+          <input id="pqrsf-captcha" type="checkbox" checked={captchaChecked} onChange={(e) => setCaptchaChecked(e.target.checked)} aria-label="Verificación anti-spam" />
+          <span>No soy un robot</span>
         </label>
-        <p style={{ fontSize: '0.78rem', color: 'var(--muted-foreground)', margin: '0.4rem 0 0' }}>Placeholder: integrar reCAPTCHA / Turnstile en producción.</p>
-        {errors.captcha && <span role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>{errors.captcha}</span>}
+        <p className={styles.captchaNote}>Placeholder: integrar reCAPTCHA / Turnstile en producción.</p>
+        {errors.captcha && <span role="alert" className={styles.fieldError}>{errors.captcha}</span>}
       </div>
 
-      <div className="field">
-        <label htmlFor="pqrsf-consentimiento" style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem', cursor: 'pointer', lineHeight: 1.6 }}>
+      <div className={styles.field}>
+        <label htmlFor="pqrsf-consentimiento" className={styles.consent}>
           <input
             id="pqrsf-consentimiento"
             type="checkbox"
@@ -291,23 +310,23 @@ export default function PqrsfForm() {
             onChange={(e) => setConsentimiento(e.target.checked)}
             aria-label="Autorizo tratamiento de datos para PQRSF"
             aria-required="true"
-            style={{ marginTop: '0.3rem', width: '18px', height: '18px' }}
           />
           <span>
             Autorizo el tratamiento de mis datos personales para la gestión de esta PQRSF, conforme a la{' '}
-            <a href="/manual-convivencia" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary-dark)', textDecoration: 'underline' }}>
+            <a href="/manual-convivencia" target="_blank" rel="noopener noreferrer">
               política de privacidad
             </a>{' '}
             y Ley 1581 de 2012. *
           </span>
         </label>
-        {errors.consentimiento && <span role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>{errors.consentimiento}</span>}
-        <p style={{ fontSize: '0.78rem', color: 'var(--muted-foreground)', margin: '0.6rem 0 0', lineHeight: 1.6 }}>
+        {errors.consentimiento && <span role="alert" className={styles.fieldError}>{errors.consentimiento}</span>}
+        <p className={styles.fieldHelp}>
           Aviso de privacidad: sus datos serán usados exclusivamente para tramitar y responder su solicitud en los términos de la Ley 1755 de 2015. No serán compartidos con terceros sin autorización.
         </p>
       </div>
 
-      <button className="submit" type="submit" disabled={status === 'loading'} aria-busy={status === 'loading'} style={{ opacity: status === 'loading' ? 0.7 : 1 }}>
+      <button className={styles.submit} type="submit" disabled={status === 'loading'} aria-busy={status === 'loading'}>
+        {status === 'loading' && <span className={styles.loadingSpinner} />}
         {status === 'loading' ? 'Radicando…' : 'Radicar PQRSF'}
       </button>
 
@@ -315,14 +334,7 @@ export default function PqrsfForm() {
         <div
           role={status === 'error' ? 'alert' : 'status'}
           aria-live="polite"
-          style={{
-            padding: '0.9rem 1rem',
-            border: `1px solid ${status === 'success' ? 'var(--primary)' : 'var(--destructive)'}`,
-            background: status === 'success' ? 'var(--primary-wash)' : '#fef2f2',
-            color: status === 'error' ? 'var(--destructive)' : 'var(--ink)',
-            lineHeight: 1.6,
-            fontSize: '0.92rem',
-          }}
+          className={`${styles.statusMessage} ${status === 'success' ? styles.statusSuccess : status === 'error' ? styles.statusError : ''}`}
         >
           {message}
         </div>

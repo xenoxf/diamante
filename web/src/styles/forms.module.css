@@ -1,0 +1,414 @@
+/* Modern form styles for Contact, PQRSF, and Denuncia forms */
+
+.form {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  padding: 2rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 640px) {
+  .form {
+    padding: 1.25rem;
+    gap: 1.25rem;
+  }
+}
+
+/* Form header */
+.formHeader {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.formTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+
+.formSubtitle {
+  font-size: 0.95rem;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+
+/* Field groups */
+.field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .fieldRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+
+.fieldRequired {
+  color: var(--destructive);
+  margin-left: 0.2rem;
+}
+
+/* Inputs */
+.field input,
+.field textarea,
+.field select {
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field input:hover,
+.field textarea:hover,
+.field select:hover {
+  border-color: var(--line-faint);
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-wash);
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+  color: var(--line-faint);
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* Select */
+.field select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235B6470' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+/* Error states */
+.fieldInputError {
+  border-color: var(--destructive) !important;
+}
+
+.fieldInputError:focus {
+  box-shadow: 0 0 0 3px rgba(239, 67, 67, 0.1) !important;
+}
+
+.fieldError {
+  color: var(--destructive);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+}
+
+.fieldError::before {
+  content: "!";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: var(--destructive);
+  color: white;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* Help text */
+.fieldHelp {
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+  margin-top: 0.25rem;
+  line-height: 1.5;
+}
+
+/* Checkbox & Radio groups */
+.checkboxGroup {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--wash);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.checkboxGroup input[type="checkbox"],
+.checkboxGroup input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 0.15rem;
+  accent-color: var(--primary);
+  flex-shrink: 0;
+}
+
+.checkboxLabel {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+.checkboxDescription {
+  font-size: 0.85rem;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+  margin-top: 0.35rem;
+}
+
+/* Captcha placeholder */
+.captcha {
+  padding: 1rem 1.25rem;
+  background: var(--wash);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.captchaLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.captchaLabel input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--primary);
+}
+
+.captchaNote {
+  font-size: 0.78rem;
+  color: var(--muted-foreground);
+  margin: 0.5rem 0 0;
+  line-height: 1.5;
+}
+
+/* File input */
+.fileInput {
+  display: block;
+  width: 100%;
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1.5px dashed var(--line);
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.fileInput:hover {
+  border-color: var(--primary);
+  background: var(--primary-wash);
+}
+
+.fileInput::-webkit-file-upload-button {
+  font: inherit;
+  font-weight: 600;
+  color: var(--primary-dark);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 0.75rem;
+}
+
+/* Consent */
+.consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  line-height: 1.6;
+}
+
+.consent input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 0.2rem;
+  accent-color: var(--primary);
+  flex-shrink: 0;
+}
+
+.consent a {
+  color: var(--primary-dark);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.consent a:hover {
+  color: var(--primary-deep);
+}
+
+/* Submit button */
+.submit {
+  justify-self: start;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--on-dark);
+  background: var(--primary);
+  border: none;
+  border-radius: 8px;
+  padding: 0.85rem 2rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 2px 4px rgba(7, 185, 213, 0.2);
+}
+
+.submit:hover:not(:disabled) {
+  background: var(--primary-dark);
+  box-shadow: 0 4px 8px rgba(7, 185, 213, 0.25);
+  transform: translateY(-1px);
+}
+
+.submit:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(7, 185, 213, 0.2);
+}
+
+.submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Status messages */
+.statusMessage {
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+.statusSuccess {
+  background: var(--primary-wash);
+  border: 1px solid var(--primary);
+  color: var(--ink);
+}
+
+.statusError {
+  background: #fef2f2;
+  border: 1px solid var(--destructive);
+  color: var(--destructive);
+}
+
+/* Footer note */
+.formFooter {
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Section divider */
+.sectionDivider {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 0.5rem 0;
+}
+
+/* Anonymous toggle section */
+.anonymousToggle {
+  padding: 1rem 1.25rem;
+  background: var(--wash);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.anonymousToggle label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.anonymousToggle input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--primary);
+}
+
+.anonymousToggle p {
+  font-size: 0.85rem;
+  color: var(--muted-foreground);
+  margin: 0.6rem 0 0;
+  line-height: 1.6;
+}
+
+/* Info box */
+.infoBox {
+  padding: 1rem 1.25rem;
+  background: var(--primary-wash);
+  border: 1px solid var(--primary-pale);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.infoBox strong {
+  color: var(--primary-dark);
+}
+
+/* Warning box */
+.warningBox {
+  padding: 1rem 1.25rem;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #9a3412;
+}
+
+/* Loading spinner */
+.loadingSpinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

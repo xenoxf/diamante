@@ -1,8 +1,6 @@
 import { useState } from 'react';
-
-const STRAPI_URL =
-  (typeof import.meta !== 'undefined' && (import.meta as any).env?.PUBLIC_STRAPI_URL) ||
-  'http://localhost:1337';
+import { STRAPI_URL } from '../lib/strapi';
+import styles from '../styles/forms.module.css';
 
 type Status = 'idle' | 'loading' | 'success' | 'error';
 
@@ -111,7 +109,7 @@ export default function DenunciaForm() {
       setStatus('success');
       setMessage(
         adjuntos && adjuntos.length > 0 && adjuntoIds.length === 0
-          ? 'Denuncia recibida. Nota: los adjuntos no pudieron subirse (requiere permisos en Strapi), pero la denuncia fue registrada. Puede enviar evidencias al correo institucional indicando el radicado.'
+          ? 'Denuncia recibida. Nota: los adjuntos no pudieron subirse, pero la denuncia fue registrada. Puede enviar evidencias al correo institucional indicando el radicado.'
           : 'Denuncia recibida con éxito. Se garantiza la reserva de su identidad y la confidencialidad de la información. Será evaluada por las instancias competentes.'
       );
       setDescripcion('');
@@ -129,7 +127,7 @@ export default function DenunciaForm() {
       console.error('[DenunciaForm]', err);
       const m =
         err?.message?.includes('Failed to fetch') || err?.message?.includes('NetworkError')
-          ? 'No se pudo conectar con el servidor. Verifique conexión o configuración CORS de Strapi.'
+          ? 'No se pudo conectar con el servidor. Verifique conexión o intente más tarde.'
           : err?.message || 'Error al enviar la denuncia. Intente de nuevo.';
       setStatus('error');
       setMessage(m);
@@ -137,99 +135,111 @@ export default function DenunciaForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="form" aria-label="Formulario de denuncia por hechos de corrupción" style={{ position: 'relative' }}>
+    <form onSubmit={handleSubmit} noValidate className={styles.form} aria-label="Formulario de denuncia por hechos de corrupción" style={{ position: 'relative' }}>
+      {/* Honeypot */}
       <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden', opacity: 0 }}>
         <label htmlFor="denuncia-website">No diligenciar</label>
         <input id="denuncia-website" name="website" type="text" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} />
       </div>
 
-      <div className="field" style={{ border: '1px solid var(--line)', padding: '1rem', background: 'var(--wash)' }}>
-        <label htmlFor="denuncia-anonima" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontWeight: 700, cursor: 'pointer' }}>
+      <div className={styles.anonymousToggle}>
+        <label htmlFor="denuncia-anonima">
           <input
             id="denuncia-anonima"
             type="checkbox"
             checked={anonima}
             onChange={(e) => setAnonima(e.target.checked)}
             aria-label="Presentar denuncia de forma anónima"
-            style={{ width: '18px', height: '18px' }}
           />
           Presentar de forma anónima
         </label>
-        <p style={{ fontSize: '0.82rem', color: 'var(--muted-foreground)', margin: '0.5rem 0 0', lineHeight: 1.6 }}>
+        <p>
           Si marca esta opción no es necesario diligenciar nombre ni correo. Se garantiza la reserva de identidad. Si desmarca, podrá dejar datos de contacto para seguimiento.
         </p>
       </div>
 
       {!anonima && (
         <>
-          <div className="field">
-            <label htmlFor="denuncia-nombre">Nombre (opcional si no es anónima)</label>
-            <input
-              id="denuncia-nombre"
-              name="nombre"
-              type="text"
-              autoComplete="name"
-              aria-label="Nombre del denunciante"
-              aria-invalid={!!errors.nombre}
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-              placeholder="Opcional"
-            />
-            {errors.nombre && <span role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>{errors.nombre}</span>}
+          <div className={styles.fieldRow}>
+            <div className={styles.field}>
+              <label htmlFor="denuncia-nombre">Nombre (opcional)</label>
+              <input
+                id="denuncia-nombre"
+                name="nombre"
+                type="text"
+                autoComplete="name"
+                aria-label="Nombre del denunciante"
+                aria-invalid={!!errors.nombre}
+                className={errors.nombre ? styles.fieldInputError : ''}
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                placeholder="Opcional"
+              />
+              {errors.nombre && <span role="alert" className={styles.fieldError}>{errors.nombre}</span>}
+            </div>
+
+            <div className={styles.field}>
+              <label htmlFor="denuncia-email">Correo electrónico (opcional)</label>
+              <input
+                id="denuncia-email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                aria-label="Correo electrónico del denunciante"
+                aria-invalid={!!errors.email}
+                className={errors.email ? styles.fieldInputError : ''}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Opcional para seguimiento"
+              />
+              {errors.email && <span role="alert" className={styles.fieldError}>{errors.email}</span>}
+            </div>
           </div>
 
-          <div className="field">
-            <label htmlFor="denuncia-email">Correo electrónico (opcional)</label>
-            <input
-              id="denuncia-email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              aria-label="Correo electrónico del denunciante"
-              aria-invalid={!!errors.email}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Opcional para seguimiento"
-            />
-            {errors.email && <span role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>{errors.email}</span>}
-          </div>
-
-          <div className="field">
-            <label htmlFor="denuncia-reserva" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer' }}>
+          <div className={styles.field}>
+            <label htmlFor="denuncia-reserva" className={styles.checkboxGroup}>
               <input
                 id="denuncia-reserva"
                 type="checkbox"
                 checked={reservaIdentidad}
                 onChange={(e) => setReservaIdentidad(e.target.checked)}
-                style={{ width: '18px', height: '18px' }}
               />
-              Solicito reserva de identidad
+              <div>
+                <span className={styles.checkboxLabel}>Solicito reserva de identidad</span>
+                <p className={styles.checkboxDescription}>
+                  Su identidad será protegida y no será revelada en el proceso de investigación.
+                </p>
+              </div>
             </label>
           </div>
         </>
       )}
 
-      <div className="field">
-        <label htmlFor="denuncia-descripcion">Descripción detallada de los hechos *</label>
+      <div className={styles.field}>
+        <label htmlFor="denuncia-descripcion">
+          Descripción detallada de los hechos
+          <span className={styles.fieldRequired}>*</span>
+        </label>
         <textarea
           id="denuncia-descripcion"
           name="descripcion"
-          rows={8}
+          rows={6}
           required
           aria-label="Descripción detallada de los hechos denunciados"
           aria-required="true"
           aria-invalid={!!errors.descripcion}
+          className={errors.descripcion ? styles.fieldInputError : ''}
           value={descripcion}
           onChange={(e) => setDescripcion(e.target.value)}
           placeholder="Describa con el mayor detalle posible: qué ocurrió, cuándo, dónde, quiénes estarían involucrados, y cualquier prueba o indicio relevante..."
         />
-        {errors.descripcion && <span role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>{errors.descripcion}</span>}
-        <p style={{ fontSize: '0.78rem', color: 'var(--muted-foreground)', margin: 0, lineHeight: 1.5 }}>
+        {errors.descripcion && <span role="alert" className={styles.fieldError}>{errors.descripcion}</span>}
+        <p className={styles.fieldHelp}>
           Evite incluir datos sensibles innecesarios. No presente denuncias temerarias o falsas; pueden acarrear sanciones legales.
         </p>
       </div>
 
-      <div className="field">
+      <div className={styles.field}>
         <label htmlFor="denuncia-adjuntos">Adjuntos / evidencias (opcional, múltiple)</label>
         <input
           id="denuncia-adjuntos"
@@ -238,24 +248,25 @@ export default function DenunciaForm() {
           multiple
           accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.mp4,.mp3"
           aria-label="Archivos adjuntos de la denuncia"
+          className={styles.fileInput}
           onChange={(e) => setAdjuntos(e.target.files)}
         />
-        <p style={{ fontSize: '0.78rem', color: 'var(--muted-foreground)', margin: 0, lineHeight: 1.5 }}>
+        <p className={styles.fieldHelp}>
           Puede adjuntar documentos, imágenes o grabaciones. Máximo 5MB por archivo. Si no se cargan, la denuncia igualmente se radica y puede enviar evidencias al correo institucional.
         </p>
       </div>
 
-      <div className="field" style={{ border: '1px solid var(--line)', padding: '0.9rem 1rem', background: 'var(--wash)', borderRadius: '6px' }}>
-        <label htmlFor="denuncia-captcha" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', fontWeight: 600 }}>
-          <input id="denuncia-captcha" type="checkbox" checked={captchaChecked} onChange={(e) => setCaptchaChecked(e.target.checked)} aria-label="Verificación anti-spam" style={{ width: '18px', height: '18px' }} />
-          <span>No soy un robot (placeholder)</span>
+      <div className={styles.captcha}>
+        <label htmlFor="denuncia-captcha" className={styles.captchaLabel}>
+          <input id="denuncia-captcha" type="checkbox" checked={captchaChecked} onChange={(e) => setCaptchaChecked(e.target.checked)} aria-label="Verificación anti-spam" />
+          <span>No soy un robot</span>
         </label>
-        <p style={{ fontSize: '0.78rem', color: 'var(--muted-foreground)', margin: '0.4rem 0 0' }}>Placeholder para reCAPTCHA / Turnstile.</p>
-        {errors.captcha && <span role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>{errors.captcha}</span>}
+        <p className={styles.captchaNote}>Placeholder para reCAPTCHA / Turnstile.</p>
+        {errors.captcha && <span role="alert" className={styles.fieldError}>{errors.captcha}</span>}
       </div>
 
-      <div className="field">
-        <label htmlFor="denuncia-consentimiento" style={{ display: 'flex', alignItems: 'flex-start', gap: '0.6rem', cursor: 'pointer', lineHeight: 1.6 }}>
+      <div className={styles.field}>
+        <label htmlFor="denuncia-consentimiento" className={styles.consent}>
           <input
             id="denuncia-consentimiento"
             type="checkbox"
@@ -264,23 +275,23 @@ export default function DenunciaForm() {
             onChange={(e) => setConsentimiento(e.target.checked)}
             aria-label="Autorizo tratamiento de datos para denuncia"
             aria-required="true"
-            style={{ marginTop: '0.3rem', width: '18px', height: '18px' }}
           />
           <span>
             Autorizo el tratamiento de mis datos (si fueron proporcionados) y declaro que la información es veraz, conforme a la{' '}
-            <a href="/manual-convivencia" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary-dark)', textDecoration: 'underline' }}>
+            <a href="/manual-convivencia" target="_blank" rel="noopener noreferrer">
               política de privacidad
             </a>{' '}
             y Ley 1581 de 2012. Entiendo que las denuncias temerarias pueden tener consecuencias legales. *
           </span>
         </label>
-        {errors.consentimiento && <span role="alert" style={{ color: 'var(--destructive)', fontSize: '0.85rem' }}>{errors.consentimiento}</span>}
-        <p style={{ fontSize: '0.78rem', color: 'var(--muted-foreground)', margin: '0.6rem 0 0', lineHeight: 1.6 }}>
+        {errors.consentimiento && <span role="alert" className={styles.fieldError}>{errors.consentimiento}</span>}
+        <p className={styles.fieldHelp}>
           Aviso de privacidad: la denuncia se trata con confidencialidad y reserva. Solo personal autorizado accederá a la información. Este canal no reemplaza denuncia penal ante Fiscalía General de la Nación.
         </p>
       </div>
 
-      <button className="submit" type="submit" disabled={status === 'loading'} aria-busy={status === 'loading'} style={{ opacity: status === 'loading' ? 0.7 : 1 }}>
+      <button className={styles.submit} type="submit" disabled={status === 'loading'} aria-busy={status === 'loading'}>
+        {status === 'loading' && <span className={styles.loadingSpinner} />}
         {status === 'loading' ? 'Enviando…' : 'Enviar denuncia'}
       </button>
 
@@ -288,14 +299,7 @@ export default function DenunciaForm() {
         <div
           role={status === 'error' ? 'alert' : 'status'}
           aria-live="polite"
-          style={{
-            padding: '0.9rem 1rem',
-            border: `1px solid ${status === 'success' ? 'var(--primary)' : 'var(--destructive)'}`,
-            background: status === 'success' ? 'var(--primary-wash)' : '#fef2f2',
-            color: status === 'error' ? 'var(--destructive)' : 'var(--ink)',
-            lineHeight: 1.6,
-            fontSize: '0.92rem',
-          }}
+          className={`${styles.statusMessage} ${status === 'success' ? styles.statusSuccess : status === 'error' ? styles.statusError : ''}`}
         >
           {message}
         </div>
