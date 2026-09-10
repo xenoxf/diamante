@@ -198,16 +198,6 @@ export function mapStrapiSedesToLegacy(list: any[]): Sede[] {
 export function mapStrapiEspecialidadToEspecialidad(raw: any): Especialidad {
   const d = unwrapStrapiEntity<StrapiEspecialidad>(raw);
 
-  const puntosRaw: any[] = (d as any).puntosDestacados ?? (d as any).puntos ?? [];
-  const puntos: string[] = Array.isArray(puntosRaw)
-    ? puntosRaw.map((p: any) => {
-        if (typeof p === 'string') return p;
-        if (p?.texto) return p.texto;
-        if (p?.attributes?.texto) return p.attributes.texto;
-        return String(p ?? '');
-      }).filter(Boolean)
-    : [];
-
   const imagenesRaw: any = (d as any).imagenes ?? (d as any).imagen ?? null;
   let images: string[] = [];
   if (imagenesRaw) {
@@ -221,19 +211,32 @@ export function mapStrapiEspecialidadToEspecialidad(raw: any): Especialidad {
     }
   }
   if (images.length === 0) {
-    // fallback legacy local
     images = [`/tecnica/${d.slug}/${d.slug}_1.jpeg`];
   }
 
-  const planEstudioUrl = getStrapiMediaUrl((d as any).planEstudio ?? null);
+  const documentosRaw: any = (d as any).documentos ?? null;
+  let documentos: { id: string; name: string; url: string; mime: string }[] = [];
+  if (documentosRaw) {
+    const docs = Array.isArray(documentosRaw) ? documentosRaw : (documentosRaw?.data ? documentosRaw.data : [documentosRaw]);
+    documentos = docs.map((m: any) => {
+      const url = getStrapiMediaUrl(m);
+      const entity = m?.attributes ?? m;
+      return {
+        id: String(m?.id ?? entity?.id ?? ''),
+        name: entity?.name ?? entity?.alternativeText ?? 'documento',
+        url: url ?? '',
+        mime: entity?.mime ?? '',
+      };
+    }).filter((d: any) => d.url);
+  }
+
   return {
     slug: d.slug,
     nombre: d.nombre,
-    descripcion: (d as any).descripcion ?? '',
-    puntos,
+    contenido: (d as any).contenido ?? (d as any).descripcion ?? '',
     images,
+    documentos,
     duracion: (d as any).duracion ?? null,
-    planEstudioUrl: planEstudioUrl ?? null,
     orden: (d as any).orden ?? 0,
   };
 }

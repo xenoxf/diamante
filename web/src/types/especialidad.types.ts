@@ -1,10 +1,9 @@
 export interface Especialidad {
   slug: string;
   nombre: string;
-  descripcion: string;
-  puntos: string[];
+  contenido: string;
   images: string[];
+  documentos: { id: string; name: string; url: string; mime: string }[];
   duracion?: string | null;
-  planEstudioUrl?: string | null;
   orden?: number;
 }

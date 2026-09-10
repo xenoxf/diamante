@@ -22,14 +22,9 @@
       "targetField": "nombre",
       "required": true
     },
-    "descripcion": {
-      "type": "text",
-      "required": true
-    },
-    "puntosDestacados": {
-      "type": "component",
-      "repeatable": true,
-      "component": "academico.punto-especialidad"
+    "contenido": {
+      "type": "richtext",
+      "required": false
     },
     "imagenes": {
       "type": "media",
@@ -37,9 +32,9 @@
       "required": false,
       "allowedTypes": ["images"]
     },
-    "planEstudio": {
+    "documentos": {
       "type": "media",
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "allowedTypes": ["images", "files", "videos", "audios"]
     },

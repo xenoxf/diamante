@@ -192,10 +192,9 @@ export interface StrapiSede extends StrapiBaseEntity {
 export interface StrapiEspecialidad extends StrapiBaseEntity {
   nombre: string;
   slug: string;
-  descripcion: string;
-  puntosDestacados?: StrapiPuntoEspecialidad[] | null;
+  contenido?: string;
   imagenes?: StrapiMedia[] | null;
-  planEstudio?: StrapiMedia | null;
+  documentos?: StrapiMedia[] | null;
   duracion?: string | null;
   orden?: number;
   seo?: StrapiSeo | null;

@@ -67,13 +67,11 @@ const source = readSource(especialidades);
                 />
               )}
               <h2>{esp.nombre}</h2>
-              <div set:html={esp.descripcion} />
-              {esp.puntos && esp.puntos.length > 0 && (
-                <ul style="margin:0.75rem 0 1rem 1.25rem;line-height:1.6;">
-                  {esp.puntos.slice(0, 3).map((p) => (
-                    <li>{p}</li>
-                  ))}
-                </ul>
+              <div set:html={esp.contenido} />
+              {esp.documentos && esp.documentos.length > 0 && (
+                <p style="margin:0.75rem 0;font-size:0.88rem;color:var(--primary-dark);font-weight:600;">
+                  📎 {esp.documentos.length} documento{esp.documentos.length > 1 ? 's' : ''} disponible{esp.documentos.length > 1 ? 's' : ''}
+                </p>
               )}
               <a class="link" href={`/especialidades/${esp.slug}`}>Ver especialidad</a>
             </article>
@@ -84,30 +82,3 @@ const source = readSource(especialidades);
   </main>
   <Footer />
 </Layout>
-
-<style>
-  .richtext :global(p) {
-    line-height: 1.8;
-    margin-bottom: 1.25rem;
-  }
-  .richtext :global(h2),
-  .richtext :global(h3) {
-    margin: 2rem 0 1rem;
-    font-size: 1.25rem;
-  }
-  .richtext :global(img) {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-    margin: 1.5rem 0;
-  }
-  .richtext :global(a) {
-    color: var(--primary-dark);
-    text-decoration: underline;
-  }
-  .richtext :global(ul),
-  .richtext :global(ol) {
-    margin: 1rem 0 1.5rem 1.5rem;
-    line-height: 1.7;
-  }
-</style>

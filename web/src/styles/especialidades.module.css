@@ -123,6 +123,16 @@
   border-bottom-color: var(--primary);
 }
 
+.cardLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.cardLink:hover {
+  color: inherit;
+}
+
 @media (max-width: 760px) {
   .section {
     padding: 48px 16px;

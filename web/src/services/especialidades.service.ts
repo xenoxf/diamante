@@ -5,15 +5,17 @@ import { attachSource } from '../lib/data-source';
 import { mapStrapiEspecialidadToEspecialidad } from '../lib/mappers';
 import type { StrapiCollectionResponse } from '../lib/strapi-types';
 
+const populate = {
+  imagenes: { fields: ['url', 'width', 'height', 'formats'] },
+  documentos: { fields: ['url', 'name', 'mime', 'size'] },
+};
+
 export const especialidadesService = {
   async getEspecialidades(): Promise<Especialidad[]> {
     try {
       const res = await fetchStrapi<StrapiCollectionResponse<any>>('/especialidades', {
         params: {
-          populate: {
-            imagenes: { fields: ['url', 'width', 'height', 'formats'] },
-            puntosDestacados: { populate: '*' },
-          },
+          populate,
           sort: ['orden:asc', 'nombre:asc'],
           pagination: { pageSize: 100 },
           status: 'published',
@@ -33,10 +35,7 @@ export const especialidadesService = {
       const res = await fetchStrapi<StrapiCollectionResponse<any>>('/especialidades', {
         params: {
           filters: { slug: { $eq: slug } },
-          populate: {
-            imagenes: { fields: ['url', 'width', 'height'] },
-            puntosDestacados: { populate: '*' },
-          },
+          populate,
           pagination: { pageSize: 1 },
           status: 'published',
         },

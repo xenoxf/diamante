@@ -17,7 +17,6 @@ import type { GalleryImage } from "../../types";
 
 setISRHeaders(Astro.response, { sMaxAge: 300 });
 
-// ISR puro: sin getStaticPaths (Astro lo ignoraba con prerender=false)
 const slugParam = Astro.params.slug as string;
 let especialidad: any = null;
 try {
@@ -27,7 +26,7 @@ try {
     console.warn("[especialidades/[slug]] getEspecialidadBySlug fallback:", err);
 }
 
-const puntos: string[] = especialidad?.puntos ?? [];
+const documentos = especialidad?.documentos ?? [];
 const imagenes: string[] =
     especialidad?.images ??
     getStrapiMediaUrls((especialidad as any)?.imagenes) ??
@@ -48,6 +47,16 @@ const galleryImages: GalleryImage[] = displayImgs.map((src, idx) => ({
     href: src,
 }));
 const detailSource = readSource(especialidad);
+
+function getDocIcon(mime: string) {
+    if (mime.includes('pdf')) return '📄';
+    if (mime.includes('image')) return '🖼️';
+    if (mime.includes('video')) return '🎬';
+    if (mime.includes('audio')) return '🎵';
+    if (mime.includes('word') || mime.includes('document')) return '📝';
+    if (mime.includes('sheet') || mime.includes('excel')) return '📊';
+    return '📎';
+}
 ---
 
 <Layout>
@@ -63,14 +72,28 @@ const detailSource = readSource(especialidad);
                     <div style="margin: 0 0 12px;">
                         <DataSourceBadge source={detailSource} />
                     </div>
-                    <div class="lead" set:html={especialidad.descripcion} />
 
-                    {puntos.length > 0 && (
-                        <div style="margin-top:1.5rem;">
-                            <h2>Puntos destacados</h2>
-                            <ul class="points">
-                                {puntos.map((p) => (
-                                    <li>{p}</li>
+                    {especialidad.contenido && (
+                        <div class="richtext" set:html={especialidad.contenido} />
+                    )}
+
+                    {documentos.length > 0 && (
+                        <div style="margin-top:2rem;">
+                            <h2>Documentos</h2>
+                            <ul class="doc-list">
+                                {documentos.map((doc: any) => (
+                                    <li>
+                                        <a
+                                            href={doc.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="doc-link"
+                                        >
+                                            <span class="doc-icon">{getDocIcon(doc.mime)}</span>
+                                            <span class="doc-name">{doc.name}</span>
+                                            <span class="doc-badge">Abrir</span>
+                                        </a>
+                                    </li>
                                 ))}
                             </ul>
                         </div>
@@ -104,18 +127,6 @@ const detailSource = readSource(especialidad);
                     {especialidad.duracion && (
                         <p class="meta" style="margin-top:1.5rem;">
                             <strong>Duración:</strong> {especialidad.duracion}
-                        </p>
-                    )}
-                    {especialidad.planEstudioUrl && (
-                        <p>
-                            <a
-                                class="link"
-                                href={especialidad.planEstudioUrl}
-                                target="_blank"
-                                rel="noopener"
-                            >
-                                Ver plan de estudio
-                            </a>
                         </p>
                     )}
 
@@ -165,5 +176,50 @@ const detailSource = readSource(especialidad);
   .richtext :global(ol) {
     margin: 1rem 0 1.5rem 1.5rem;
     line-height: 1.7;
+  }
+
+  .doc-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .doc-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    background: var(--wash);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .doc-link:hover {
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(7, 185, 213, 0.12);
+  }
+  .doc-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .doc-name {
+    flex: 1;
+    font-weight: 600;
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .doc-badge {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--primary-dark);
+    background: var(--primary-wash);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    flex-shrink: 0;
   }
 </style>
