@@ -9,6 +9,40 @@ const carruselConfig: CarruselConfig = {
   transitionMs: 1200,
 };
 
+// Fallback picsum SOLO cuando Strapi no está disponible
+const FALLBACK_IDS = ['1015', '1016', '1018', '1019', '1036', '1039', '10', '28'];
+const TARGET_HREF = '/galeria';
+const SIZES = '(max-width: 640px) 640px, (max-width: 1024px) 1024px, (max-width: 1600px) 1600px, 1920px';
+
+function picsumSrc(id: string, w: number, h: number): string {
+  return `https://picsum.photos/id/${id}/${w}/${h}`;
+}
+function picsumSrcSet(id: string): string {
+  return [
+    `${picsumSrc(id, 640, 360)} 640w`,
+    `${picsumSrc(id, 1024, 576)} 1024w`,
+    `${picsumSrc(id, 1600, 900)} 1600w`,
+    `${picsumSrc(id, 1920, 1080)} 1920w`,
+  ].join(', ');
+}
+function picsumFallback(limit: number): CarruselSlide[] {
+  return FALLBACK_IDS.slice(0, limit).map((id) => ({
+    id: `paisaje-${id}`,
+    src: picsumSrc(id, 1920, 1080),
+    srcSet: picsumSrcSet(id),
+    sizes: SIZES,
+    alt: '',
+    href: TARGET_HREF,
+    botonTexto: 'IR',
+    abrirEnNuevaPestana: false,
+    tituloOverlay: null,
+    descripcionOverlay: null,
+    titulo: null,
+    fuente: 'manual' as const,
+    origenImagen: 'manual' as const,
+  }));
+}
+
 export async function getCarruselConfig(signal?: AbortSignal): Promise<CarruselConfig> {
   try {
     const cfgRes: any = await fetchStrapi('/pagina-inicio', {
@@ -164,8 +198,9 @@ async function getCarruselSlides(limit = 8, signal?: AbortSignal, skipConfig = f
     return [];
   } catch (err) {
     if ((signal as any)?.aborted) return [];
-    console.warn('[carruselService.getCarruselSlides] Strapi no disponible:', err);
-    return [];
+    // Strapi no disponible → usar fallback picsum
+    console.warn('[carruselService.getCarruselSlides] Strapi no disponible, usando fallback:', err);
+    return attachSource(picsumFallback(limit), 'fallback');
   }
 }
 
