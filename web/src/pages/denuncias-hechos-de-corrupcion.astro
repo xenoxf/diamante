@@ -30,46 +30,135 @@ const description = 'Canal confidencial para denunciar presuntos hechos de corru
         denuncia puede presentarse de forma anónima y se garantiza la reserva
         de la identidad del denunciante.
       </p>
-      <p class="note">
-        Las denuncias temerarias o falsas pueden acarrear las sanciones
-        previstas en la ley. Este canal no reemplaza las denuncias penales,
-        que deben interponerse ante la Fiscalía General de la Nación.
-      </p>
 
-      <div class="note" style="margin-bottom: 1.5rem; border-left-color: var(--destructive);">
-        <p style="margin: 0; line-height: 1.7;">
-          <strong>Confidencialidad:</strong> solo personal autorizado accederá a su denuncia. Si elige denuncia anónima, no se solicitará ningún dato identificable. Puede adjuntar evidencias (documentos, imágenes) que serán tratadas con reserva. Para más información sobre transparencia, visite
-          <a href={TRANSPARENCIA_URL} target="_blank" rel="noopener noreferrer" style="color: var(--primary-dark); text-decoration: underline;"> transparencia.cali.gov.co</a>.
+      <div class="denuncia-note">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        <p>
+          Las denuncias temerarias o falsas pueden acarrear las sanciones
+          previstas en la ley. Este canal no reemplaza las denuncias penales,
+          que deben interponerse ante la Fiscalía General de la Nación.
         </p>
       </div>
 
-      <section aria-label="Formulario de denuncia">
-        <h2>Formulario de denuncia</h2>
-        <p>Describa los hechos con el mayor detalle posible. Puede hacerlo de forma anónima.</p>
+      <section aria-label="Formulario de denuncia" style="margin-top: 2rem;">
         <DenunciaForm client:load />
         <noscript>
-          <div class="note" role="alert">
-            Este formulario requiere JavaScript para validación y envío seguro a Strapi (<code>POST /api/denuncias-corrupcion</code>). Sin JavaScript, escriba a
-            <a href={`mailto:${config.emailInstitucional}`}>{config.emailInstitucional}</a> con asunto "Denuncia por hechos de corrupción" o use el canal presencial con reserva de identidad.
+          <div class="denuncia-note" role="alert" style="margin-top: 1rem;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <p>
+              Este formulario requiere JavaScript. Sin él, escriba a
+              <a href={`mailto:${config.emailInstitucional}`}>{config.emailInstitucional}</a> con asunto "Denuncia por hechos de corrupción".
+            </p>
           </div>
         </noscript>
       </section>
 
-      <section aria-label="Canales alternos" style="margin-top: 2rem;">
-        <h2>Canales alternos</h2>
-        <ul class="list" role="list">
-          <li>
-            Correo institucional: <a href={`mailto:${config.emailInstitucional}`} style="color: var(--primary-dark); text-decoration: underline;">{config.emailInstitucional}</a> (asunto: Denuncia - reserva de identidad)
-          </li>
-          <li>
-            Presencial: secretaría de cualquiera de nuestras sedes, solicitando reserva de identidad. Horario: <span set:html={config.horarioAtencion ?? 'Lunes a viernes 7:00 - 15:00'} />
-          </li>
-          <li>
-            Entes externos: <a href="https://www.fiscalia.gov.co/" target="_blank" rel="noopener noreferrer" style="color: var(--primary-dark); text-decoration: underline;">Fiscalía General de la Nación</a> para denuncias penales.
-          </li>
-        </ul>
+      <section aria-label="Canales alternos" style="margin-top: 2.5rem;">
+        <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Canales alternos</h2>
+        <div class="denuncia-channels">
+          <a href={`mailto:${config.emailInstitucional}`} class="denuncia-channel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            <div>
+              <span class="denuncia-channel__label">Correo institucional</span>
+              <span class="denuncia-channel__value">{config.emailInstitucional}</span>
+            </div>
+          </a>
+          <a href={TRANSPARENCIA_URL} target="_blank" rel="noopener noreferrer" class="denuncia-channel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+            <div>
+              <span class="denuncia-channel__label">Transparencia</span>
+              <span class="denuncia-channel__value">transparencia.cali.gov.co</span>
+            </div>
+          </a>
+          <a href="https://www.fiscalia.gov.co/" target="_blank" rel="noopener noreferrer" class="denuncia-channel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <div>
+              <span class="denuncia-channel__label">Fiscalía General</span>
+              <span class="denuncia-channel__value">Para denuncias penales</span>
+            </div>
+          </a>
+        </div>
       </section>
     </div>
   </main>
   <Footer />
 </Layout>
+
+<style>
+  .denuncia-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: var(--wash);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+
+  .denuncia-note svg {
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+    opacity: 0.6;
+  }
+
+  .denuncia-note p {
+    margin: 0;
+  }
+
+  .denuncia-note a {
+    color: var(--primary-dark);
+    text-decoration: underline;
+  }
+
+  .denuncia-channels {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .denuncia-channel {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .denuncia-channel:hover {
+    border-color: var(--primary);
+    box-shadow: 0 2px 8px rgba(7, 185, 213, 0.1);
+  }
+
+  .denuncia-channel svg {
+    flex-shrink: 0;
+    color: var(--primary);
+  }
+
+  .denuncia-channel__label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--ink);
+  }
+
+  .denuncia-channel__value {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--muted-foreground);
+    margin-top: 0.15rem;
+  }
+
+  @media (max-width: 640px) {
+    .denuncia-channels {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

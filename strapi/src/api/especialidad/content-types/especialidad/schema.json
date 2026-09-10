@@ -24,26 +24,31 @@
     },
     "contenido": {
       "type": "richtext",
-      "required": false
+      "required": false,
+      "description": "Contenido principal de la especialidad. Use el editor rico para formato (títulos, listas, negritas, etc.)"
     },
     "imagenes": {
       "type": "media",
       "multiple": true,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": ["images"],
+      "description": "Galería de imágenes de la especialidad (se muestra al final de la página)"
     },
     "documentos": {
       "type": "media",
       "multiple": true,
       "required": false,
-      "allowedTypes": ["images", "files", "videos", "audios"]
+      "allowedTypes": ["images", "files", "videos", "audios"],
+      "description": "Documentos adjuntos: planes de estudio, manuales, etc. (PDF, Word, imágenes). Se muestran antes de la galería."
     },
     "duracion": {
-      "type": "string"
+      "type": "string",
+      "description": "Ejemplo: 3 semestres, 2400 horas, 2 años"
     },
     "orden": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "description": "Número de orden para controlar el orden de aparición en la página de especialidades"
     },
     "seo": {
       "type": "component",

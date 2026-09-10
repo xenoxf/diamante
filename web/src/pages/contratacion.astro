@@ -1,15 +1,57 @@
 ---
-export const prerender = true;
+export const prerender = false;
 
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PageHero from '../components/PageHero.astro';
+import DataSourceBadge from '../components/DataSourceBadge.astro';
+import FileViewer from '../components/FileViewer.astro';
+import { contratacionService } from '../services/contratacion.service';
+import { configuracionService } from '../services/configuracion.service';
+import { setISRHeaders } from '../lib/isr';
+import { readSource } from '../lib/data-source';
+import { getStrapiMediaUrl } from '../lib/strapi';
 import '../styles/global.css';
 import '../styles/page.css';
+
+setISRHeaders(Astro.response, { sMaxAge: 300 });
+
+const config = await configuracionService.getConfiguracion();
+let invitaciones: Awaited<ReturnType<typeof contratacionService.getInvitaciones>> = [];
+try {
+  invitaciones = await contratacionService.getInvitaciones();
+} catch {
+  invitaciones = [];
+}
+const source = readSource(invitaciones);
+
+function formatFecha(fecha: string) {
+  if (!fecha) return '';
+  return new Date(fecha + 'T00:00:00').toLocaleDateString('es-CO', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+function formatMonto(monto: number | null) {
+  if (!monto) return null;
+  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(monto);
+}
+
+function estadoBadge(estado: string) {
+  const map: Record<string, { label: string; color: string; bg: string }> = {
+    abierta: { label: 'Abierta', color: '#16a34a', bg: '#dcfce7' },
+    cerrada: { label: 'Cerrada', color: '#6b7280', bg: '#f3f4f6' },
+    adjudicada: { label: 'Adjudicada', color: '#2563eb', bg: '#dbeafe' },
+    desierta: { label: 'Desierta', color: '#d97706', bg: '#fef3c7' },
+  };
+  return map[estado] ?? { label: estado, color: '#6b7280', bg: '#f3f4f6' };
+}
 ---
 
-<Layout>
+<Layout title={`Contratación — ${config.nombreInstitucion}`} description="Invitación pública para procesos de contratación inferiores a 20 SMLMV.">
   <Header />
   <main class="page">
     <PageHero kicker="Transparencia" title="Contratación" />
@@ -20,7 +62,153 @@ import '../styles/page.css';
         cumplimiento de los principios de transparencia y acceso a la
         información pública.
       </p>
+      <div style="margin: 0 0 1rem;"><DataSourceBadge source={source} /></div>
+
+      {invitaciones.length === 0 ? (
+        <div class="empty" role="status">
+          No hay invitaciones de contratación disponibles en este momento.
+        </div>
+      ) : (
+        <div class="inv-list">
+          {invitaciones.map((inv) => {
+            const badge = estadoBadge(inv.estado ?? 'abierta');
+            const docUrl = inv.documentoMediaUrl ?? inv.documentoUrl ?? null;
+            const docMime = docUrl?.endsWith('.pdf') ? 'application/pdf' : '';
+            return (
+              <article class="inv-card">
+                <div class="inv-card__header">
+                  <div class="inv-card__num">{inv.numero}</div>
+                  <span class="inv-card__badge" style={`color:${badge.color};background:${badge.bg}`}>
+                    {badge.label}
+                  </span>
+                </div>
+                <div class="inv-card__body">
+                  <p class="inv-card__objeto">{inv.objeto}</p>
+                  <div class="inv-card__meta">
+                    <span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                      Publicación: {formatFecha(inv.fechaPublicacion ?? inv.fecha)}
+                    </span>
+                    {inv.fechaCierre && (
+                      <span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        Cierre: {formatFecha(inv.fechaCierre)}
+                      </span>
+                    )}
+                    {inv.montoEstimado && (
+                      <span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        {formatMonto(inv.montoEstimado)}
+                      </span>
+                    )}
+                  </div>
+                  {docUrl && (
+                    <a href={docUrl} target="_blank" rel="noopener noreferrer" class="inv-card__doc">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                      Ver documento
+                    </a>
+                  )}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
     </div>
   </main>
   <Footer />
 </Layout>
+
+<style>
+  .inv-list {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .inv-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface);
+    transition: box-shadow 0.2s;
+  }
+
+  .inv-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .inv-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 1.25rem;
+    background: var(--wash);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .inv-card__num {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--ink);
+  }
+
+  .inv-card__badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .inv-card__body {
+    padding: 1rem 1.25rem;
+  }
+
+  .inv-card__objeto {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--ink);
+    margin: 0 0 0.75rem;
+  }
+
+  .inv-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.82rem;
+    color: var(--muted-foreground);
+    margin-bottom: 0.75rem;
+  }
+
+  .inv-card__meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .inv-card__meta svg {
+    opacity: 0.6;
+  }
+
+  .inv-card__doc {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    text-decoration: none;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--primary-pale);
+    border-radius: 6px;
+    background: var(--primary-wash);
+    transition: background 0.2s;
+  }
+
+  .inv-card__doc:hover {
+    background: var(--primary-pale);
+  }
+</style>

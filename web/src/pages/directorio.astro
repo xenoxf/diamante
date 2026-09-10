@@ -33,40 +33,149 @@ const description = 'Directorio de dependencias y coordinaciones de la IE El Dia
       {directorio.length === 0 ? (
         <div class="empty" role="status">No hay entradas de directorio disponibles.</div>
       ) : (
-        <div class="grid" style="margin-top: 1.5rem;" role="list" aria-label="Directorio institucional">
+        <div class="dir-grid" role="list" aria-label="Directorio institucional">
           {directorio.map((entrada) => (
-            <article class="card" role="listitem">
-              <h2 style="font-size: 1.05rem; margin: 0 0 0.3rem;">{entrada.dependencia}</h2>
-              <p class="barrio" style="margin-bottom: 0.6rem;">{entrada.sede}</p>
-              <p style="margin: 0; line-height: 1.7;">
-                <a href={`tel:${entrada.telefono.replace(/\s+/g, '')}`} style="color: var(--primary-dark); text-decoration: underline; font-weight: 700;">{entrada.telefono}</a>
-                <br />
-                <a href={`mailto:${entrada.email}`} style="color: var(--ink-soft); text-decoration: underline;">{entrada.email}</a>
-              </p>
+            <article class="dir-card" role="listitem">
+              <div class="dir-card__header">
+                <h3 class="dir-card__name">{entrada.dependencia}</h3>
+                <span class="dir-card__sede">{entrada.sede}</span>
+              </div>
+              <div class="dir-card__body">
+                <a href={`tel:${entrada.telefono.replace(/\s+/g, '')}`} class="dir-card__phone">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                  {entrada.telefono}
+                </a>
+                <a href={`mailto:${entrada.email}`} class="dir-card__email">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                  {entrada.email}
+                </a>
+              </div>
             </article>
           ))}
         </div>
       )}
 
-      <section aria-label="Sedes" style="margin-top: 2rem;">
-        <h2>Sedes (fuente: sedesService)</h2>
-        <ul class="data" role="list">
-          {sedes.map((sede) => (
-            <li>
-              <strong>{sede.nombre}</strong> — {sede.barrio}
-              <br />
-              <span style="color: var(--ink-soft);">{sede.direccion}</span>
-              <br />
-              <a href={`tel:${sede.telefono.replace(/\s+/g, '')}`} style="color: var(--primary-dark); text-decoration: underline;">{sede.telefono}</a>
-              {' · '}
-              <a href={`mailto:${sede.email}`} style="color: var(--primary-dark); text-decoration: underline;">{sede.email}</a>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {sedes.length > 0 && (
+        <section aria-label="Sedes" style="margin-top: 3rem;">
+          <h2 style="font-size: 1.3rem; margin-bottom: 1rem;">Nuestras Sedes</h2>
+          <div class="dir-grid">
+            {sedes.map((sede) => (
+              <article class="dir-card dir-card--sede">
+                <div class="dir-card__header">
+                  <h3 class="dir-card__name">{sede.nombre}</h3>
+                  <span class="dir-card__sede">{sede.barrio}</span>
+                </div>
+                <div class="dir-card__body">
+                  <p class="dir-card__address">{sede.direccion}</p>
+                  <a href={`tel:${sede.telefono.replace(/\s+/g, '')}`} class="dir-card__phone">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    {sede.telefono}
+                  </a>
+                  <a href={`mailto:${sede.email}`} class="dir-card__email">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                    {sede.email}
+                  </a>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       <p class="back"><a href="/contacto">Ir al formulario de contacto</a></p>
     </div>
   </main>
   <Footer />
 </Layout>
+
+<style>
+  .dir-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .dir-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+    background: var(--surface);
+  }
+
+  .dir-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+  }
+
+  .dir-card__header {
+    padding: 1rem 1.25rem 0.75rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--wash);
+  }
+
+  .dir-card__name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 0.25rem;
+  }
+
+  .dir-card__sede {
+    font-size: 0.82rem;
+    color: var(--primary-dark);
+    font-weight: 600;
+  }
+
+  .dir-card__body {
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .dir-card__address {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .dir-card__phone,
+  .dir-card__email {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    text-decoration: none;
+    color: var(--ink);
+    transition: color 0.2s;
+  }
+
+  .dir-card__phone {
+    font-weight: 600;
+    color: var(--primary-dark);
+  }
+
+  .dir-card__phone:hover,
+  .dir-card__email:hover {
+    color: var(--primary);
+  }
+
+  .dir-card__phone svg,
+  .dir-card__email svg {
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  .dir-card--sede {
+    border-top: 3px solid var(--primary);
+  }
+
+  @media (max-width: 640px) {
+    .dir-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
