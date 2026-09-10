@@ -111,38 +111,38 @@ const nav: NavItem[] = [
 				</span>		</a>
 
 			<nav class={styles.nav} aria-label="Navegación principal">
-				{nav.map((item) =>
-					item.children ? (
-						<div class={styles.dropdown}>
-							<a href={item.href} class={styles.link} aria-haspopup="true">
-								{item.label}
-								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-									<path d="m6 9 6 6 6-6" />
-								</svg>
-							</a>
-							<div class={styles.menu} role="menu">
-								{item.children.map((sub) => {
-									const isExternal = (sub as any).external || sub.href.startsWith('http');
-									return (
-                  <a 
-                      href={item.href}
-											role="menuitem"
-											class={styles.subLink}
-											target={isExternal ? '_blank' : undefined}
-											rel={isExternal ? 'noopener noreferrer' : undefined}
-										>
-											{sub.label}
-										</a>
-									);
-								})}
-							</div>
-						</div>
-					) : (
-						<a class={styles.link} href={item.href}>
+			{nav.map((item) =>
+				item.children ? (
+					<div class={styles.dropdown}>
+						<button type="button" class={styles.link} aria-haspopup="true" aria-expanded="false">
 							{item.label}
-						</a>
-					),
-				)}
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+								<path d="m6 9 6 6 6-6" />
+							</svg>
+						</button>
+						<div class={styles.menu} role="menu">
+							{item.children.map((sub) => {
+								const isExternal = (sub as any).external || sub.href.startsWith('http');
+								return (
+									<a
+										href={sub.href}
+										role="menuitem"
+										class={styles.subLink}
+										target={isExternal ? '_blank' : undefined}
+										rel={isExternal ? 'noopener noreferrer' : undefined}
+									>
+										{sub.label}
+									</a>
+								);
+							})}
+						</div>
+					</div>
+				) : (
+					<a class={styles.link} href={item.href}>
+						{item.label}
+					</a>
+				),
+			)}
 			</nav>
 
 			<div class={styles.actions}>
@@ -180,6 +180,14 @@ const nav: NavItem[] = [
 		header.dataset.open = String(open);
 		menuButton.setAttribute('aria-expanded', String(open));
 		menuButton.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+		if (open) {
+			document.body.style.overflow = 'hidden';
+		} else {
+			document.body.style.overflow = '';
+			header.querySelectorAll('[aria-expanded="true"]').forEach((btn) => {
+				if (btn !== menuButton) btn.setAttribute('aria-expanded', 'false');
+			});
+		}
 	};
 
 	menuButton?.addEventListener('click', () => {
@@ -190,8 +198,23 @@ const nav: NavItem[] = [
 		anchor.addEventListener('click', () => setOpen(false));
 	});
 
+	header?.querySelectorAll('nav [aria-haspopup]').forEach((btn) => {
+		btn.addEventListener('click', () => {
+			const expanded = btn.getAttribute('aria-expanded') === 'true';
+			btn.setAttribute('aria-expanded', String(!expanded));
+		});
+	});
+
 	document.addEventListener('keydown', (event) => {
 		if (event.key === 'Escape') setOpen(false);
+	});
+
+	document.addEventListener('click', (e) => {
+		if (!header || !header.contains(e.target as Node)) {
+			header?.querySelectorAll('[aria-expanded="true"]').forEach((btn) => {
+				btn.setAttribute('aria-expanded', 'false');
+			});
+		}
 	});
 
 	syncScrolled();

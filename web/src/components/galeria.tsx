@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { galeriaService } from '../services/galeria.service';
 import type { GalleryImage } from '../types/landscape.types';
 import styles from '../styles/galeria.module.css';
@@ -44,6 +44,7 @@ interface Props {
 
 export function Galeria({ images: initialImages, count = COUNT }: Props) {
   const [images, setImages] = useState<GalleryImage[]>(initialImages ?? []);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (initialImages && initialImages.length > 0) return;
@@ -54,12 +55,30 @@ export function Galeria({ images: initialImages, count = COUNT }: Props) {
     return () => controller.abort();
   }, [count, initialImages]);
 
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const tracks = el.querySelectorAll(`.${styles.track}`);
+    if (tracks.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        tracks.forEach((track) => {
+          (track as HTMLElement).style.animationPlayState = entry.isIntersecting ? 'running' : 'paused';
+        });
+      },
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [images]);
+
   const half = Math.ceil(images.length / 2);
   const rowA = images.slice(0, half);
   const rowB = images.slice(half);
 
   return (
-    <section id="galeria" className={styles.section} aria-labelledby="galeria-titulo">
+    <section ref={sectionRef} id="galeria" className={styles.section} aria-labelledby="galeria-titulo">
       <div className={styles.inner}>
         <h2 id="galeria-titulo" className={styles.title}>
           Nuestra Galería
