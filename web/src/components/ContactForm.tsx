@@ -10,7 +10,6 @@ interface FormErrors {
   asunto?: string;
   mensaje?: string;
   consentimiento?: string;
-  captcha?: string;
 }
 
 function validateEmail(email: string): boolean {
@@ -23,7 +22,6 @@ export default function ContactForm() {
   const [asunto, setAsunto] = useState('');
   const [mensaje, setMensaje] = useState('');
   const [consentimiento, setConsentimiento] = useState(false);
-  const [captchaChecked, setCaptchaChecked] = useState(false);
   const [honeypot, setHoneypot] = useState('');
   const [status, setStatus] = useState<Status>('idle');
   const [message, setMessage] = useState<string>('');
@@ -36,7 +34,6 @@ export default function ContactForm() {
     if (!asunto.trim() || asunto.trim().length < 3) e.asunto = 'Ingrese el asunto (mínimo 3 caracteres).';
     if (!mensaje.trim() || mensaje.trim().length < 10) e.mensaje = 'El mensaje debe tener al menos 10 caracteres.';
     if (!consentimiento) e.consentimiento = 'Debe aceptar el tratamiento de datos.';
-    if (!captchaChecked) e.captcha = 'Complete la verificación anti-spam.';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -91,7 +88,6 @@ export default function ContactForm() {
       setAsunto('');
       setMensaje('');
       setConsentimiento(false);
-      setCaptchaChecked(false);
       setErrors({});
     } catch (err: any) {
       console.error('[ContactForm] fetch error', err);
@@ -241,28 +237,6 @@ export default function ContactForm() {
         {errors.mensaje && (
           <span id="err-contact-mensaje" role="alert" className={styles.fieldError}>
             {errors.mensaje}
-          </span>
-        )}
-      </div>
-
-      {/* Captcha */}
-      <div className={styles.captcha}>
-        <label htmlFor="contact-captcha" className={styles.captchaLabel}>
-          <input
-            id="contact-captcha"
-            type="checkbox"
-            checked={captchaChecked}
-            onChange={(e) => setCaptchaChecked(e.target.checked)}
-            aria-label="Verificación anti-spam, no soy un robot"
-          />
-          <span>No soy un robot</span>
-        </label>
-        <p className={styles.captchaNote}>
-          * Este es un placeholder. En producción se integrará reCAPTCHA / hCaptcha / Cloudflare Turnstile.
-        </p>
-        {errors.captcha && (
-          <span role="alert" className={styles.fieldError}>
-            {errors.captcha}
           </span>
         )}
       </div>

@@ -19,7 +19,6 @@ export default function PqrsfForm() {
   const [descripcion, setDescripcion] = useState('');
   const [adjunto, setAdjunto] = useState<File | null>(null);
   const [consentimiento, setConsentimiento] = useState(false);
-  const [captchaChecked, setCaptchaChecked] = useState(false);
   const [honeypot, setHoneypot] = useState('');
   const [status, setStatus] = useState<Status>('idle');
   const [message, setMessage] = useState('');
@@ -33,7 +32,6 @@ export default function PqrsfForm() {
     if (!descripcion.trim() || descripcion.trim().length < 15) e.descripcion = 'Descripción debe tener al menos 15 caracteres.';
     if (telefono && telefono.trim().length > 0 && !/^[\d\s+\-()]{7,20}$/.test(telefono.trim())) e.telefono = 'Teléfono inválido (solo dígitos, espacios, +, -).';
     if (!consentimiento) e.consentimiento = 'Debe autorizar el tratamiento de datos.';
-    if (!captchaChecked) e.captcha = 'Complete la verificación anti-spam.';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -122,7 +120,6 @@ export default function PqrsfForm() {
       setDescripcion('');
       setAdjunto(null);
       setConsentimiento(false);
-      setCaptchaChecked(false);
       setErrors({});
       const fileInput = document.getElementById('pqrsf-adjunto') as HTMLInputElement | null;
       if (fileInput) fileInput.value = '';
@@ -289,15 +286,6 @@ export default function PqrsfForm() {
         <p className={styles.fieldHelp}>
           Máximo 5MB. Si el adjunto no se envía, la solicitud se registrará sin archivo y podrá enviar soporte al correo institucional.
         </p>
-      </div>
-
-      <div className={styles.captcha}>
-        <label htmlFor="pqrsf-captcha" className={styles.captchaLabel}>
-          <input id="pqrsf-captcha" type="checkbox" checked={captchaChecked} onChange={(e) => setCaptchaChecked(e.target.checked)} aria-label="Verificación anti-spam" />
-          <span>No soy un robot</span>
-        </label>
-        <p className={styles.captchaNote}>Placeholder: integrar reCAPTCHA / Turnstile en producción.</p>
-        {errors.captcha && <span role="alert" className={styles.fieldError}>{errors.captcha}</span>}
       </div>
 
       <div className={styles.field}>

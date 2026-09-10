@@ -16,7 +16,6 @@ export default function DenunciaForm() {
   const [adjuntos, setAdjuntos] = useState<FileList | null>(null);
   const [reservaIdentidad, setReservaIdentidad] = useState(true);
   const [consentimiento, setConsentimiento] = useState(false);
-  const [captchaChecked, setCaptchaChecked] = useState(false);
   const [honeypot, setHoneypot] = useState('');
   const [status, setStatus] = useState<Status>('idle');
   const [message, setMessage] = useState('');
@@ -30,7 +29,6 @@ export default function DenunciaForm() {
       if (email && email.trim().length > 0 && !validateEmail(email.trim())) e.email = 'Correo electrónico inválido.';
     }
     if (!consentimiento) e.consentimiento = 'Debe aceptar el tratamiento de datos.';
-    if (!captchaChecked) e.captcha = 'Complete la verificación anti-spam.';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -119,7 +117,6 @@ export default function DenunciaForm() {
       }
       setAdjuntos(null);
       setConsentimiento(false);
-      setCaptchaChecked(false);
       setErrors({});
       const fi = document.getElementById('denuncia-adjuntos') as HTMLInputElement | null;
       if (fi) fi.value = '';
@@ -254,15 +251,6 @@ export default function DenunciaForm() {
         <p className={styles.fieldHelp}>
           Puede adjuntar documentos, imágenes o grabaciones. Máximo 5MB por archivo. Si no se cargan, la denuncia igualmente se radica y puede enviar evidencias al correo institucional.
         </p>
-      </div>
-
-      <div className={styles.captcha}>
-        <label htmlFor="denuncia-captcha" className={styles.captchaLabel}>
-          <input id="denuncia-captcha" type="checkbox" checked={captchaChecked} onChange={(e) => setCaptchaChecked(e.target.checked)} aria-label="Verificación anti-spam" />
-          <span>No soy un robot</span>
-        </label>
-        <p className={styles.captchaNote}>Placeholder para reCAPTCHA / Turnstile.</p>
-        {errors.captcha && <span role="alert" className={styles.fieldError}>{errors.captcha}</span>}
       </div>
 
       <div className={styles.field}>
