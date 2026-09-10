@@ -295,6 +295,7 @@ export interface StrapiConfiguracionGeneral extends StrapiBaseEntity {
 export interface StrapiPaginaInicio extends StrapiBaseEntity {
   tituloHero?: string | null;
   carruselConfig?: StrapiCarruselConfig | null;
+  heroSlides?: StrapiSlideCarrusel[] | null;
   seo?: StrapiSeo | null;
 }
 

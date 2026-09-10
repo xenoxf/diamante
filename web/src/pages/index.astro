@@ -10,13 +10,27 @@ import Sedes from '../components/Sedes.astro';
 import Especialidades from '../components/Especialidades.astro';
 import NuestraIdentidad from '../components/NuestraIdentidad.astro';
 import Noticias from '../components/Noticias.astro';
+import { carruselService } from '../services/carrusel.service';
 import '../styles/global.css';
+
+// Hero / CarruselEvents configurable desde Strapi (Página Inicio > heroSlides)
+// Si heroSlides está vacío en Strapi, el servicio hace fallback a colección slides-carrusel.
+// SSR para pintar el Hero sin esperar al cliente; el componente hidrata con client:visible.
+let heroSlides: Awaited<ReturnType<typeof carruselService.getCarruselSlides>> = [];
+let heroConfig: Awaited<ReturnType<typeof carruselService.getCarruselConfig>> | undefined;
+try {
+  heroSlides = await carruselService.getCarruselSlides(8);
+  heroConfig = { ...carruselService.carruselConfig };
+} catch {
+  // build sin Strapi (localhost) -> fallback picsum lo maneja el servicio
+  heroSlides = [];
+}
 ---
 
 <Layout>
 	<Header />
 	<main id="inicio">
-		<CarruselEvents client:visible />
+		<CarruselEvents client:visible slides={heroSlides} config={heroConfig} />
 		<Galeria client:visible />
 		<Sedes />
 		<Especialidades />

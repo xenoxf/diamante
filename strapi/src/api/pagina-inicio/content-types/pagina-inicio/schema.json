@@ -20,6 +20,12 @@
       "repeatable": false,
       "component": "shared.carrusel-config"
     },
+    "heroSlides": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::slide-carrusel.slide-carrusel",
+      "description": "Slides seleccionados para el Hero/Carrusel del home. Si se deja vacío, se usan todos los Slide Carrusel activos ordenados por 'orden'."
+    },
     "seo": {
       "type": "component",
       "repeatable": false,

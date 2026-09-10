@@ -63,9 +63,107 @@ export async function getCarruselConfig(signal?: AbortSignal): Promise<CarruselC
   }
 }
 
+async function fetchHeroSlidesFromPaginaInicio(limit: number, signal?: AbortSignal): Promise<CarruselSlide[] | null> {
+  try {
+    const res: any = await fetchStrapi('/pagina-inicio', {
+      params: {
+        populate: {
+          carruselConfig: { populate: '*' },
+          heroSlides: {
+            sort: ['orden:asc', 'createdAt:asc'],
+            filters: { activo: { $eq: true } },
+            populate: {
+              imagen: { fields: ['url', 'width', 'height', 'formats', 'alternativeText'] },
+              galeria_item: {
+                populate: {
+                  imagen: { fields: ['url', 'width', 'height', 'formats', 'alternativeText'] },
+                  categoria: { fields: ['nombre', 'slug'] },
+                },
+              },
+            },
+          },
+        },
+        status: 'published',
+      },
+      fetchOptions: { signal } as any,
+    });
+    const entity: any = res?.data ?? res;
+    const data: any = entity?.data ?? entity;
+    const unwrapped: any = data?.attributes ?? data;
+    // Sincronizar config si viene
+    const cfg = unwrapped?.carruselConfig;
+    if (cfg?.autoplayMs) carruselConfig.autoplayMs = cfg.autoplayMs;
+    if (cfg?.transitionMs) carruselConfig.transitionMs = cfg.transitionMs;
+
+    const heroRaw: any[] | null = unwrapped?.heroSlides ?? null;
+    if (!Array.isArray(heroRaw) || heroRaw.length === 0) return null;
+    // Filtro cliente por activo (por si Strapi ignoró filters en populate de single)
+    const filtered = heroRaw.filter((h: any) => {
+      const ent = (h as any)?.activo ?? (h as any)?.attributes?.activo;
+      return ent !== false;
+    });
+    // Orden cliente por orden asc + createdAt asc (respaldo si populate sort no aplicó)
+    filtered.sort((a: any, b: any) => {
+      const ao = (a as any)?.orden ?? (a as any)?.attributes?.orden ?? 0;
+      const bo = (b as any)?.orden ?? (b as any)?.attributes?.orden ?? 0;
+      if (ao !== bo) return ao - bo;
+      const at = new Date((a as any)?.createdAt ?? (a as any)?.attributes?.createdAt ?? 0).getTime();
+      const bt = new Date((b as any)?.createdAt ?? (b as any)?.attributes?.createdAt ?? 0).getTime();
+      return at - bt;
+    });
+    const slides = mapStrapiSlidesToCarrusel(filtered).slice(0, limit);
+    if (slides.length === 0) return null;
+    return slides;
+  } catch (e) {
+    // Si pagina-inicio no tiene heroSlides (migración pendiente), ignorar y fallback a colección
+    // console.debug('[carruselService] heroSlides fetch failed, fallback to collection', e);
+    return null;
+  }
+}
+
+async function fetchSlidesFromCollection(limit: number, signal?: AbortSignal): Promise<CarruselSlide[] | null> {
+  // Intento 1: con populate galeria_item (nuevo schema). Si falla por schema no migrado, reintenta sin él.
+  const baseParams: Record<string, any> = {
+    filters: { activo: { $eq: true } },
+    sort: ['orden:asc', 'createdAt:asc'],
+    pagination: { pageSize: limit },
+    status: 'published',
+  };
+  const fullPopulate: Record<string, any> = {
+    imagen: { fields: ['url', 'width', 'height', 'formats', 'alternativeText'] },
+    galeria_item: {
+      populate: {
+        imagen: { fields: ['url', 'width', 'height', 'formats', 'alternativeText'] },
+        categoria: { fields: ['nombre', 'slug'] },
+      },
+    },
+  };
+  const simplePopulate: Record<string, any> = {
+    imagen: { fields: ['url', 'width', 'height', 'formats', 'alternativeText'] },
+  };
+
+  for (const populate of [fullPopulate, simplePopulate]) {
+    try {
+      const res = await fetchStrapi<StrapiCollectionResponse<any>>('/slides-carrusel', {
+        params: { ...baseParams, populate },
+        fetchOptions: { signal } as any,
+      });
+      const data: any[] = (res as any).data ?? [];
+      const slides = mapStrapiSlidesToCarrusel(data).slice(0, limit);
+      if (slides.length > 0) return slides;
+      return [];
+    } catch (err: any) {
+      const msg = String(err?.message ?? '');
+      // Si es error de populate desconocido, probar siguiente variante
+      if (msg.includes('populate') || msg.includes('galeria_item')) continue;
+      throw err;
+    }
+  }
+  return null;
+}
+
 async function getCarruselSlides(limit = 8, signal?: AbortSignal, skipConfig = false): Promise<CarruselSlide[]> {
   try {
-    // Intentar config desde pagina-inicio para autoplay/transition (solo si no se omite)
     if (!skipConfig) {
       try {
         await getCarruselConfig(signal);
@@ -74,29 +172,29 @@ async function getCarruselSlides(limit = 8, signal?: AbortSignal, skipConfig = f
       }
     }
 
-    const res = await fetchStrapi<StrapiCollectionResponse<any>>('/slides-carrusel', {
-      params: {
-        filters: { activo: { $eq: true } },
-        sort: ['orden:asc', 'createdAt:asc'],
-        pagination: { pageSize: limit },
-        populate: {
-          imagen: { fields: ['url', 'width', 'height', 'formats', 'alternativeText'] },
-          galeria_item: {
-            populate: {
-              imagen: { fields: ['url', 'width', 'height', 'formats', 'alternativeText'] },
-              categoria: { fields: ['nombre', 'slug'] },
-            },
-          },
-        },
-        status: 'published',
-      },
-      fetchOptions: { signal } as any,
-    });
-    const data: any[] = (res as any).data ?? [];
-    const slides = mapStrapiSlidesToCarrusel(data).slice(0, limit);
-    if (slides.length >= 2) return attachSource(slides, 'strapi');
-    if (slides.length > 0 && slides.length < limit) {
-      // Completar con fallback picsum si faltan slides
+    // 1. Intentar heroSlides configurados desde Página Inicio (Hero administrable)
+    const heroSlides = await fetchHeroSlidesFromPaginaInicio(limit, signal);
+    if (heroSlides && heroSlides.length >= 1) {
+      // Si el admin seleccionó heroSlides, respetar exactamente esa selección (no mezclar con fallback salvo que falten)
+      if (heroSlides.length >= 2) return attachSource(heroSlides, 'strapi');
+      if (heroSlides.length === 1 && limit > 1) {
+        // Completar con colección si solo hay 1 seleccionado (evitar carrusel de 1)
+        const extra = await fetchSlidesFromCollection(limit - 1, signal);
+        const extraFiltered = (extra ?? []).filter((s) => !heroSlides.some((h) => h.id === s.id));
+        const combined = [...heroSlides, ...extraFiltered].slice(0, limit);
+        if (combined.length >= 2) return attachSource(combined, 'strapi');
+        // si no hay más, completar con picsum
+        const missing = picsumFallback(limit - heroSlides.length);
+        return attachSource([...heroSlides, ...missing].slice(0, limit), 'fallback');
+      }
+      // 1 slide y limit 1
+      return attachSource(heroSlides, 'strapi');
+    }
+
+    // 2. Fallback a colección general slides-carrusel
+    const slides = await fetchSlidesFromCollection(limit, signal);
+    if (slides && slides.length >= 2) return attachSource(slides, 'strapi');
+    if (slides && slides.length > 0 && slides.length < limit) {
       const missing = picsumFallback(limit - slides.length);
       return attachSource([...slides, ...missing].slice(0, limit), 'fallback');
     }
