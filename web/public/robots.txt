@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
+Sitemap: https://diamante-nu.vercel.app/sitemap.xml
 Sitemap: https://diamante-nu.vercel.app/sitemap-index.xml
