@@ -10,7 +10,9 @@ vienen de las variables de global.css. */
 .container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 2.5rem 1.5rem 0;
+  padding: 2rem 1.25rem 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .container--wide {
@@ -19,6 +21,34 @@ vienen de las variables de global.css. */
 
 .container--full {
   max-width: 1300px;
+}
+
+/* Responsive: poco margin/padding, visor nunca se reemplaza por botón */
+@media (max-width: 900px) {
+  .container,
+  .container--wide,
+  .container--full {
+    padding: 1.5rem 1rem 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .container,
+  .container--wide,
+  .container--full {
+    padding: 1rem 0.75rem 0;
+  }
+  .page {
+    padding-bottom: 2rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .container,
+  .container--wide,
+  .container--full {
+    padding: 0.75rem 0.5rem 0;
+  }
 }
 
 .page .container > p {
