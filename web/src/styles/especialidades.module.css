@@ -43,6 +43,7 @@
   margin: 0;
   padding: 0;
 }
+
 .card {
   position: relative;
   background: var(--surface);
@@ -63,6 +64,7 @@
 
 .cardImage {
   width: 100%;
+  max-height: 500px;
   object-fit: cover;
   display: block;
 }
@@ -79,8 +81,10 @@
   font-weight: 700;
   color: var(--ink);
   margin: 0;
-  margin-top: auto; /* ancla el título al fondo */
-}   
+  margin-top: auto;
+  /* ancla el título al fondo */
+}
+
 .cardDesc {
   font-size: 15px;
   line-height: 1.6;
