@@ -236,7 +236,6 @@ export function mapStrapiEspecialidadToEspecialidad(raw: any): Especialidad {
     contenido: (d as any).contenido ?? (d as any).descripcion ?? '',
     images,
     documentos,
-    duracion: (d as any).duracion ?? null,
     orden: (d as any).orden ?? 0,
   };
 }

@@ -41,10 +41,6 @@
       "allowedTypes": ["images", "files", "videos", "audios"],
       "description": "Documentos adjuntos: planes de estudio, manuales, etc. (PDF, Word, imágenes). Se muestran antes de la galería."
     },
-    "duracion": {
-      "type": "string",
-      "description": "Ejemplo: 3 semestres, 2400 horas, 2 años"
-    },
     "orden": {
       "type": "integer",
       "default": 0,

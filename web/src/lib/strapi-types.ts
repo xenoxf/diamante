@@ -195,7 +195,6 @@ export interface StrapiEspecialidad extends StrapiBaseEntity {
   contenido?: string;
   imagenes?: StrapiMedia[] | null;
   documentos?: StrapiMedia[] | null;
-  duracion?: string | null;
   orden?: number;
   seo?: StrapiSeo | null;
 }
