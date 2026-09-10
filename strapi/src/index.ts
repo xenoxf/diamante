@@ -544,6 +544,8 @@ export default {
           'api::mensaje-contacto.mensaje-contacto.create',
           'api::solicitud-pqrsf.solicitud-pqrsf.create',
           'api::denuncia-corrupcion.denuncia-corrupcion.create',
+          // Upload necesario para adjuntos de PQRSF y denuncias
+          'plugin::upload.content-api.upload',
         ];
         for (const action of wantedPermissions) {
           // Find or create permission
