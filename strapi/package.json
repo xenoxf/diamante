@@ -18,6 +18,7 @@
     "@strapi/database": "5.52.3",
     "@strapi/plugin-cloud": "5.52.3",
     "@strapi/plugin-users-permissions": "5.52.3",
+    "@strapi/provider-upload-cloudinary": "^5.53.0",
     "@strapi/strapi": "5.52.3",
     "pg": "^8.23.0",
     "react": "^18.0.0",

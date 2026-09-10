@@ -10,8 +10,8 @@ const config: Core.Config.Middlewares = [
         useDefaults: true,
         directives: {
           'connect-src': ["'self'", 'https:'],
-          'img-src': ["'self'", 'data:', 'blob:', 'https:', 'http://localhost:*'],
-          'media-src': ["'self'", 'data:', 'blob:', 'https:', 'http://localhost:*'],
+          'img-src': ["'self'", 'data:', 'blob:', 'https:', 'http://localhost:*', '*.cloudinary.com'],
+          'media-src': ["'self'", 'data:', 'blob:', 'https:', 'http://localhost:*', '*.cloudinary.com'],
         },
       },
     },
