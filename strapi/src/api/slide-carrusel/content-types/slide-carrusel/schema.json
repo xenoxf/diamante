@@ -13,20 +13,56 @@
   "pluginOptions": {},
   "attributes": {
     "titulo": {
-      "type": "string"
+      "type": "string",
+      "description": "Título interno / overlay opcional"
     },
     "imagen": {
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": ["images"],
+      "description": "Imagen directa (usada si fuente=manual)"
     },
     "alt": {
       "type": "string",
       "required": true
     },
     "enlace": {
-      "type": "string"
+      "type": "string",
+      "description": "Deprecated: usar botonUrl"
+    },
+    "botonUrl": {
+      "type": "string",
+      "description": "URL destino del botón IR. Ej: /galeria, /sedes, /noticias/mi-noticia, #contacto, https://..."
+    },
+    "botonTexto": {
+      "type": "string",
+      "default": "IR",
+      "description": "Texto del botón (default IR)"
+    },
+    "tituloOverlay": {
+      "type": "string",
+      "description": "Título visible sobre la imagen (opcional)"
+    },
+    "descripcionOverlay": {
+      "type": "text",
+      "description": "Subtítulo/descripción overlay (opcional)"
+    },
+    "fuente": {
+      "type": "enumeration",
+      "enum": ["manual", "galeria_item"],
+      "default": "manual",
+      "description": "Origen de la imagen: manual (campo imagen) o galeria_item (toma imagen del ítem de galería)"
+    },
+    "galeria_item": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::galeria-item.galeria-item",
+      "description": "Si fuente=galeria_item, imagen se toma de este ítem"
+    },
+    "abrirEnNuevaPestana": {
+      "type": "boolean",
+      "default": false
     },
     "orden": {
       "type": "integer",

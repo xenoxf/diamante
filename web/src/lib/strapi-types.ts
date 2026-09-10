@@ -242,7 +242,15 @@ export interface StrapiSlideCarrusel extends StrapiBaseEntity {
   titulo?: string | null;
   imagen?: StrapiMedia | null;
   alt: string;
+  /** @deprecated usar botonUrl */
   enlace?: string | null;
+  botonUrl?: string | null;
+  botonTexto?: string | null;
+  tituloOverlay?: string | null;
+  descripcionOverlay?: string | null;
+  fuente?: 'manual' | 'galeria_item' | null;
+  galeria_item?: StrapiGaleriaItem | null;
+  abrirEnNuevaPestana?: boolean | null;
   orden: number;
   activo?: boolean;
 }

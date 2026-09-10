@@ -484,7 +484,32 @@ export function mapStrapiPaginaContactoToCanales(raw: any): CanalAtencion[] {
 
 export function mapStrapiSlideToCarruselSlide(raw: any): CarruselSlide | null {
   const d = unwrapStrapiEntity<StrapiSlideCarrusel>(raw);
-  const media: any = (d as any).imagen;
+
+  // Resolver fuente de imagen: manual (campo imagen) o galeria_item
+  const fuente: 'manual' | 'galeria_item' = (d as any).fuente === 'galeria_item' ? 'galeria_item' : 'manual';
+  let media: any = null;
+  let origenImagen: 'manual' | 'galeria_item' = 'manual';
+
+  if (fuente === 'galeria_item') {
+    const galeriaItem = unwrapRelation<StrapiGaleriaItem>((d as any).galeria_item ?? (d as any).galeriaItem);
+    if (galeriaItem) {
+      const galMedia: any = (galeriaItem as any).imagen ?? (galeriaItem as any).imagenCard ?? null;
+      const galSrc = getStrapiMediaUrl(galMedia);
+      if (galSrc) {
+        media = galMedia;
+        origenImagen = 'galeria_item';
+      }
+    }
+    // Fallback a imagen directa si galeria_item no tiene imagen
+    if (!media) {
+      media = (d as any).imagen;
+      origenImagen = 'manual';
+    }
+  } else {
+    media = (d as any).imagen;
+    origenImagen = 'manual';
+  }
+
   const src = getStrapiMediaUrl(media);
   if (!src) return null;
 
@@ -511,13 +536,27 @@ export function mapStrapiSlideToCarruselSlide(raw: any): CarruselSlide | null {
 
   const id = (d as any).documentId ?? String((d as any).id ?? src);
 
+  // botonUrl tiene prioridad, fallback a enlace legacy
+  const href: string = (d as any).botonUrl ?? (d as any).enlace ?? '/galeria';
+  const botonTexto: string = (d as any).botonTexto ?? 'IR';
+  const abrirEnNuevaPestana: boolean = !!(d as any).abrirEnNuevaPestana;
+  const tituloOverlay: string | null = (d as any).tituloOverlay ?? null;
+  const descripcionOverlay: string | null = (d as any).descripcionOverlay ?? null;
+
   return {
     id: String(id),
     src,
     srcSet,
     sizes,
-    alt: (d as any).alt ?? (d as any).titulo ?? '',
-    href: (d as any).enlace ?? '/galeria',
+    alt: (d as any).alt ?? (d as any).titulo ?? tituloOverlay ?? '',
+    href,
+    botonTexto: botonTexto || 'IR',
+    abrirEnNuevaPestana,
+    tituloOverlay,
+    descripcionOverlay,
+    titulo: (d as any).titulo ?? null,
+    fuente,
+    origenImagen,
   };
 }
 

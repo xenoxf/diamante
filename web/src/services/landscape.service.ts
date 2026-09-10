@@ -87,7 +87,12 @@ async function getLandscapeSlides(limit = 8, signal?: AbortSignal): Promise<Land
         filters: { activo: { $eq: true } },
         sort: ['orden:asc'],
         pagination: { pageSize: limit },
-        populate: { imagen: { fields: ['url', 'width', 'height', 'formats', 'alternativeText'] } },
+        populate: {
+          imagen: { fields: ['url', 'width', 'height', 'formats', 'alternativeText'] },
+          galeria_item: {
+            populate: { imagen: { fields: ['url', 'width', 'height', 'formats', 'alternativeText'] } },
+          },
+        },
         status: 'published',
       },
       fetchOptions: { signal } as any,

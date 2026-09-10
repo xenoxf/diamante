@@ -33,6 +33,13 @@ function picsumFallback(limit: number): CarruselSlide[] {
     sizes: SIZES,
     alt: '',
     href: TARGET_HREF,
+    botonTexto: 'IR',
+    abrirEnNuevaPestana: false,
+    tituloOverlay: null,
+    descripcionOverlay: null,
+    titulo: null,
+    fuente: 'manual' as const,
+    origenImagen: 'manual' as const,
   }));
 }
 
@@ -72,7 +79,15 @@ async function getCarruselSlides(limit = 8, signal?: AbortSignal, skipConfig = f
         filters: { activo: { $eq: true } },
         sort: ['orden:asc', 'createdAt:asc'],
         pagination: { pageSize: limit },
-        populate: { imagen: { fields: ['url', 'width', 'height', 'formats', 'alternativeText'] } },
+        populate: {
+          imagen: { fields: ['url', 'width', 'height', 'formats', 'alternativeText'] },
+          galeria_item: {
+            populate: {
+              imagen: { fields: ['url', 'width', 'height', 'formats', 'alternativeText'] },
+              categoria: { fields: ['nombre', 'slug'] },
+            },
+          },
+        },
         status: 'published',
       },
       fetchOptions: { signal } as any,

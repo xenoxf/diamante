@@ -95,7 +95,7 @@ export function CarruselEvents({ limit = 8, slides: initialSlides, config }: Pro
     <section
       className={styles.carousel}
       aria-roledescription="carrusel"
-      aria-label="Paisajes"
+      aria-label="Carrusel de eventos"
       onMouseEnter={pause}
       onMouseLeave={resume}
       onFocus={pause}
@@ -116,33 +116,65 @@ export function CarruselEvents({ limit = 8, slides: initialSlides, config }: Pro
       }}
     >
       <div className={styles.viewport} aria-busy={!ready}>
-        {list.map((slide, i) => (
-          <div
-            key={slide.id}
-            className={`${styles.slide} ${i === safeIndex ? styles.isActive : ''}`}
-            aria-hidden={i !== safeIndex}
-          >
-            <img
-              className={styles.img}
-              src={slide.src}
-              srcSet={slide.srcSet}
-              sizes={slide.sizes}
-              alt={slide.alt || ''}
-              draggable={false}
-              loading={i === 0 ? 'eager' : 'lazy'}
-              decoding="async"
-              onError={() => markFailed(slide.id)}
-              {...(i === 0 ? { fetchPriority: 'high' as const } : {})}
-            />
-          </div>
-        ))}
+        {list.map((slide, i) => {
+          const hasOverlay = !!(slide.tituloOverlay || slide.descripcionOverlay);
+          return (
+            <div
+              key={slide.id}
+              className={`${styles.slide} ${i === safeIndex ? styles.isActive : ''} ${hasOverlay ? styles.hasOverlay : ''}`}
+              aria-hidden={i !== safeIndex}
+            >
+              <img
+                className={styles.img}
+                src={slide.src}
+                srcSet={slide.srcSet}
+                sizes={slide.sizes}
+                alt={slide.alt || ''}
+                draggable={false}
+                loading={i === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+                onError={() => markFailed(slide.id)}
+                {...(i === 0 ? { fetchPriority: 'high' as const } : {})}
+              />
+              {hasOverlay && (
+                <div className={styles.overlay}>
+                  {slide.tituloOverlay && <h3 className={styles.overlayTitle}>{slide.tituloOverlay}</h3>}
+                  {slide.descripcionOverlay && <p className={styles.overlayDesc}>{slide.descripcionOverlay}</p>}
+                </div>
+              )}
+              {/* degradado para legibilidad si hay overlay */}
+              {hasOverlay && <div className={styles.scrim} aria-hidden="true" />}
+            </div>
+          );
+        })}
       </div>
 
       {current && (
-        <a className={styles.go} href={current.href} aria-label="Ir a galería">
-          IR
+        <a
+          className={styles.go}
+          href={current.href}
+          aria-label={current.tituloOverlay ? `Ir a ${current.tituloOverlay}` : current.botonTexto || 'Ir'}
+          target={current.abrirEnNuevaPestana ? '_blank' : undefined}
+          rel={current.abrirEnNuevaPestana ? 'noopener noreferrer' : undefined}
+        >
+          {current.botonTexto || 'IR'}
           <span aria-hidden="true">›</span>
         </a>
+      )}
+
+      {list.length > 1 && (
+        <div className={styles.dots} role="tablist" aria-label="Selector de slides">
+          {list.map((s, i) => (
+            <button
+              key={`dot-${s.id}`}
+              className={`${styles.dot} ${i === safeIndex ? styles.dotActive : ''}`}
+              aria-label={`Ir a slide ${i + 1}${s.tituloOverlay ? `: ${s.tituloOverlay}` : ''}`}
+              aria-selected={i === safeIndex}
+              role="tab"
+              onClick={() => setIndex(i)}
+            />
+          ))}
+        </div>
       )}
     </section>
   );
