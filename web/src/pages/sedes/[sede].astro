@@ -13,26 +13,14 @@ import '../../styles/page.css';
 
 setISRHeaders(Astro.response, { sMaxAge: 300 });
 
-export async function getStaticPaths() {
-  try {
-    const sedes = await sedesService.getSedes();
-    return sedes.map((s) => ({ params: { sede: s.slug }, props: { sede: s } }));
-  } catch (err) {
-    console.warn('[sedes/[sede] getStaticPaths] fallback:', err);
-    const { sedes: fallback } = await import('../../data/sedes');
-    return fallback.map((s) => ({ params: { sede: s.slug }, props: { sede: s } }));
-  }
-}
-
-let sede: any = (Astro.props as any)?.sede;
+// ISR: no getStaticPaths, Vercel genera bajo demanda y cachea 300s.
+// El fallback local lo maneja el servicio si Strapi no responde.
 const slugParam = Astro.params.sede as string;
-if (!sede || sede.slug !== slugParam) {
-  try {
-    const fetched = await sedesService.getSedeBySlug(String(slugParam));
-    if (fetched) sede = fetched;
-  } catch (err) {
-    console.warn('[sedes/[sede]] getSedeBySlug fallback:', err);
-  }
+let sede: any = null;
+try {
+  sede = await sedesService.getSedeBySlug(String(slugParam));
+} catch (err) {
+  console.warn('[sedes/[sede]] getSedeBySlug fallback:', err);
 }
 
 if (!sede) {

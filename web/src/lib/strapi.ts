@@ -7,16 +7,30 @@
  * - Compatibilidad Strapi 4 (attributes) y Strapi 5 (flat)
  */
 
+function readEnv(name: string): string | undefined {
+  // 1) Runtime Node (Vercel lambda) - process.env
+  try {
+    // @ts-ignore
+    const v = typeof process !== 'undefined' ? (process.env as any)?.[name] : undefined;
+    if (v) return v;
+  } catch {}
+  // 2) Build time Vite - import.meta.env
+  try {
+    // @ts-ignore
+    const v = (import.meta as any)?.env?.[name];
+    if (v) return v;
+  } catch {}
+  return undefined;
+}
+
 export const STRAPI_URL =
-  (typeof import.meta !== 'undefined' &&
-    // @ts-ignore - import.meta.env puede no estar disponible en ciertos contextos
-    (import.meta.env?.PUBLIC_STRAPI_URL || import.meta.env?.STRAPI_URL)) ||
+  readEnv('PUBLIC_STRAPI_URL') ||
+  readEnv('STRAPI_URL') ||
   'http://localhost:1337';
 
 export const STRAPI_TOKEN =
-  (typeof import.meta !== 'undefined' &&
-    // @ts-ignore
-    import.meta.env?.STRAPI_API_TOKEN) ||
+  readEnv('STRAPI_API_TOKEN') ||
+  readEnv('PUBLIC_STRAPI_API_TOKEN') ||
   undefined;
 
 /**
@@ -199,9 +213,17 @@ export async function fetchStrapi<T = any>(
     headers.Authorization = `Bearer ${authToken}`;
   }
 
+  // Timeout corto para no colgar la lambda Vercel (hobby max 10s). 3s es suficiente para Strapi.
+  const userSignal = (fetchOptions as any)?.signal as AbortSignal | undefined;
+  const timeoutSignal: AbortSignal | undefined =
+    userSignal ?? (typeof AbortSignal.timeout === 'function' ? AbortSignal.timeout(3000) : undefined);
+  // Extraer signal de fetchOptions para no duplicar
+  const { signal: _ignored, ...restFetchOptions } = (fetchOptions ?? {}) as any;
+
   const res = await fetch(url, {
     headers,
-    ...fetchOptions,
+    ...restFetchOptions,
+    ...(timeoutSignal ? { signal: timeoutSignal } : {}),
   });
 
   if (!res.ok) {

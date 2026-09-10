@@ -17,43 +17,14 @@ import type { GalleryImage } from "../../types";
 
 setISRHeaders(Astro.response, { sMaxAge: 300 });
 
-export async function getStaticPaths() {
-    try {
-        const especialidades = await especialidadesService.getEspecialidades();
-        return especialidades.map((e) => ({
-            params: { slug: e.slug },
-            props: { especialidad: e },
-        }));
-    } catch (err) {
-        console.warn("[especialidades/[slug] getStaticPaths] fallback:", err);
-        const { especialidades: fallback } =
-            await import("../../data/especialidades");
-        return fallback.map((e) => ({
-            params: { slug: e.slug },
-            props: { especialidad: e },
-        }));
-    }
-}
-
-let especialidad: any = (Astro.props as any)?.especialidad;
+// ISR puro: sin getStaticPaths (Astro lo ignoraba con prerender=false)
 const slugParam = Astro.params.slug as string;
-if (
-    !especialidad ||
-    especialidad.slug !== slugParam ||
-    !especialidad.puntos ||
-    !especialidad.images
-) {
-    try {
-        const fetched = await especialidadesService.getEspecialidadBySlug(
-            String(slugParam),
-        );
-        if (fetched) especialidad = fetched;
-    } catch (err) {
-        console.warn(
-            "[especialidades/[slug]] getEspecialidadBySlug fallback:",
-            err,
-        );
-    }
+let especialidad: any = null;
+try {
+    const fetched = await especialidadesService.getEspecialidadBySlug(String(slugParam));
+    if (fetched) especialidad = fetched;
+} catch (err) {
+    console.warn("[especialidades/[slug]] getEspecialidadBySlug fallback:", err);
 }
 
 const puntos: string[] = especialidad?.puntos ?? [];
@@ -76,9 +47,7 @@ const galleryImages: GalleryImage[] = displayImgs.map((src, idx) => ({
     alt: `${especialidad?.nombre ?? "Especialidad"} imagen ${idx + 1}`,
     href: src,
 }));
-const detailSource = readSource(
-    (Astro.props as any)?.especialidad ?? especialidad,
-);
+const detailSource = readSource(especialidad);
 ---
 
 <Layout>

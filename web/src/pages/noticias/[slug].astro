@@ -15,28 +15,14 @@ import '../../styles/page.css';
 
 setISRHeaders(Astro.response, { sMaxAge: 300 });
 
-export async function getStaticPaths() {
-  try {
-    const noticias = await noticiasService.getNoticias();
-    return noticias.map((n) => ({ params: { slug: n.slug }, props: { noticia: n } }));
-  } catch (err) {
-    console.warn('[noticias/[slug] getStaticPaths] fallback:', err);
-    const { noticias: fallback } = await import('../../data/noticias');
-    return fallback.map((n) => ({ params: { slug: n.slug }, props: { noticia: n } }));
-  }
-}
-
+// ISR puro: sin getStaticPaths, Vercel resuelve cualquier slug bajo demanda
 const { slug } = Astro.params;
-let noticia: any = (Astro.props as any)?.noticia;
-
-// Fallback: buscar por slug via servicio (incluye contenido, portada, galeria)
-if (!noticia || !noticia.contenido) {
-  try {
-    const fetched = await noticiasService.getNoticiaBySlug(String(slug));
-    if (fetched) noticia = fetched;
-  } catch (err) {
-    console.warn('[noticias/[slug]] getNoticiaBySlug fallback:', err);
-  }
+let noticia: any = null;
+try {
+  const fetched = await noticiasService.getNoticiaBySlug(String(slug));
+  if (fetched) noticia = fetched;
+} catch (err) {
+  console.warn('[noticias/[slug]] getNoticiaBySlug fallback:', err);
 }
 
 // Si aún no existe (slug inexistente), fallback 404 suave
@@ -56,7 +42,7 @@ const galeriaUrls: string[] =
     : []);
 
 const contenidoHtml: string = noticia?.contenido ?? '';
-const detailSource = readSource((Astro.props as any)?.noticia ?? noticia);
+const detailSource = readSource(noticia);
 ---
 
 <Layout

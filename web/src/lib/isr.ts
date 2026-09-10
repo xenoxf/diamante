@@ -1,13 +1,12 @@
 /**
- * Helper ISR (Incremental Static Regeneration) para Astro con adapter Node.
+ * Helper ISR (Incremental Static Regeneration) para Astro hybrid + Vercel.
  *
- * Decisión 8 del usuario: usar ISR.
- * - Las páginas con `export const prerender = true` se generan en build (SSG).
- * - Con `output: 'server'`, las rutas dinámicas NO prerenderizadas
- *   (o nuevos slugs creados en Strapi tras el build) se renderizan
- *   bajo demanda y se cachean según estas cabeceras.
- * - `s-maxage` + `stale-while-revalidate` = comportamiento ISR:
- *   sirve cache fresco X seg, luego revalida en background.
+ * Con `output: 'hybrid'`:
+ * - `prerender = true`  -> SSG en build, CDN eterno.
+ * - `prerender = false` -> ISR: Vercel renderiza bajo demanda y cachea según
+ *   `Cache-Control` / `CDN-Cache-Control` + `adapter.vercel.isr.expiration`.
+ *
+ * Uso: `setISRHeaders(Astro.response, { sMaxAge: 300 })` en frontmatter de páginas ISR.
  */
 
 export interface ISROptions {
@@ -24,15 +23,16 @@ export function isrCacheControl(opts: ISROptions = {}): string {
   return `public, max-age=${maxAge}, s-maxage=${sMaxAge}, stale-while-revalidate=${staleWhileRevalidate}`;
 }
 
-/** Aplica cabeceras ISR a la respuesta actual (llamar en frontmatter Astro). */
+/** Aplica cabeceras ISR de forma segura (no lanza si response es inmutable en prerender). */
 export function setISRHeaders(
   response: Response,
   opts: ISROptions = {},
 ): void {
   try {
-    response.headers.set('Cache-Control', isrCacheControl(opts));
-    response.headers.set('CDN-Cache-Control', isrCacheControl(opts));
+    const value = isrCacheControl(opts);
+    response.headers.set('Cache-Control', value);
+    response.headers.set('CDN-Cache-Control', value);
   } catch {
-    // response puede ser inmutable en prerender: ignorar
+    // prerender estático: response inmutable, ignorar
   }
 }
