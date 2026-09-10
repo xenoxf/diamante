@@ -39,6 +39,9 @@ export function CarruselEvents({ limit = 8, slides: initialSlides, config }: Pro
     return () => controller.abort();
   }, [limit, initialSlides]);
 
+  // No renderizar si no hay slides
+  if (list.length === 0) return null;
+
   const stop = useCallback(() => {
     if (timer.current !== null) {
       window.clearInterval(timer.current);

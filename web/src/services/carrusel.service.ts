@@ -9,40 +9,6 @@ const carruselConfig: CarruselConfig = {
   transitionMs: 1200,
 };
 
-// Fallback picsum ids si Strapi no tiene slides con imagen
-const FALLBACK_IDS = ['1015', '1016', '1018', '1019', '1036', '1039', '10', '28'];
-const TARGET_HREF = '/galeria';
-const SIZES = '(max-width: 640px) 640px, (max-width: 1024px) 1024px, (max-width: 1600px) 1600px, 1920px';
-
-function picsumSrc(id: string, w: number, h: number): string {
-  return `https://picsum.photos/id/${id}/${w}/${h}`;
-}
-function picsumSrcSet(id: string): string {
-  return [
-    `${picsumSrc(id, 640, 360)} 640w`,
-    `${picsumSrc(id, 1024, 576)} 1024w`,
-    `${picsumSrc(id, 1600, 900)} 1600w`,
-    `${picsumSrc(id, 1920, 1080)} 1920w`,
-  ].join(', ');
-}
-function picsumFallback(limit: number): CarruselSlide[] {
-  return FALLBACK_IDS.slice(0, limit).map((id) => ({
-    id: `paisaje-${id}`,
-    src: picsumSrc(id, 1920, 1080),
-    srcSet: picsumSrcSet(id),
-    sizes: SIZES,
-    alt: '',
-    href: TARGET_HREF,
-    botonTexto: 'IR',
-    abrirEnNuevaPestana: false,
-    tituloOverlay: null,
-    descripcionOverlay: null,
-    titulo: null,
-    fuente: 'manual' as const,
-    origenImagen: 'manual' as const,
-  }));
-}
-
 export async function getCarruselConfig(signal?: AbortSignal): Promise<CarruselConfig> {
   try {
     const cfgRes: any = await fetchStrapi('/pagina-inicio', {
@@ -175,7 +141,7 @@ async function getCarruselSlides(limit = 8, signal?: AbortSignal, skipConfig = f
     // 1. Intentar heroSlides configurados desde Página Inicio (Hero administrable)
     const heroSlides = await fetchHeroSlidesFromPaginaInicio(limit, signal);
     if (heroSlides && heroSlides.length >= 1) {
-      // Si el admin seleccionó heroSlides, respetar exactamente esa selección (no mezclar con fallback salvo que falten)
+      // Si el admin seleccionó heroSlides, respetar exactamente esa selección
       if (heroSlides.length >= 2) return attachSource(heroSlides, 'strapi');
       if (heroSlides.length === 1 && limit > 1) {
         // Completar con colección si solo hay 1 seleccionado (evitar carrusel de 1)
@@ -183,9 +149,7 @@ async function getCarruselSlides(limit = 8, signal?: AbortSignal, skipConfig = f
         const extraFiltered = (extra ?? []).filter((s) => !heroSlides.some((h) => h.id === s.id));
         const combined = [...heroSlides, ...extraFiltered].slice(0, limit);
         if (combined.length >= 2) return attachSource(combined, 'strapi');
-        // si no hay más, completar con picsum
-        const missing = picsumFallback(limit - heroSlides.length);
-        return attachSource([...heroSlides, ...missing].slice(0, limit), 'fallback');
+        return attachSource(heroSlides, 'strapi');
       }
       // 1 slide y limit 1
       return attachSource(heroSlides, 'strapi');
@@ -194,15 +158,14 @@ async function getCarruselSlides(limit = 8, signal?: AbortSignal, skipConfig = f
     // 2. Fallback a colección general slides-carrusel
     const slides = await fetchSlidesFromCollection(limit, signal);
     if (slides && slides.length >= 2) return attachSource(slides, 'strapi');
-    if (slides && slides.length > 0 && slides.length < limit) {
-      const missing = picsumFallback(limit - slides.length);
-      return attachSource([...slides, ...missing].slice(0, limit), 'fallback');
-    }
-    throw new Error('Sin suficientes slides Strapi');
+    if (slides && slides.length > 0) return attachSource(slides, 'strapi');
+    
+    // Sin slides de Strapi
+    return [];
   } catch (err) {
     if ((signal as any)?.aborted) return [];
-    console.warn('[carruselService.getCarruselSlides] fallback picsum:', err);
-    return attachSource(picsumFallback(limit), 'fallback');
+    console.warn('[carruselService.getCarruselSlides] Strapi no disponible:', err);
+    return [];
   }
 }
 
