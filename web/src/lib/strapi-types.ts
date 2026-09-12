@@ -304,3 +304,15 @@ export interface StrapiPaginaAdmisiones extends StrapiBaseEntity {
   listasUtiles?: StrapiListaUtilesItem[] | null;
   seo?: StrapiSeo | null;
 }
+
+export interface StrapiPaginaConexiones extends StrapiBaseEntity {
+  enlaces?: StrapiEnlace[] | null;
+  seo?: StrapiSeo | null;
+}
+
+export interface StrapiPaginaInvitacionesHome extends StrapiBaseEntity {
+  imagen?: StrapiMedia | null;
+  textoAlternativo?: string | null;
+  enlace?: string | null;
+  seo?: StrapiSeo | null;
+}

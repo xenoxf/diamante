@@ -1,0 +1,42 @@
+---
+import { invitacionesHomeService } from '../services/invitaciones-home.service';
+import { renderRichText } from '../lib/markdown';
+
+let data: any = null;
+try {
+  data = await invitacionesHomeService.getInvitacionesHome();
+} catch (err) {
+  console.warn('[Invitaciones] Strapi fallback', err);
+  data = null;
+}
+
+const imagenUrl = data?.imagenUrl ?? 'https://www.ie-eldiamantecali.edu.co/wp-content/uploads/2025/09/I.E.-El-Diamante-Cali-1920-x-700-px-1024x373.png';
+const textoAlternativo = data?.textoAlternativo ?? null;
+const enlace = data?.enlace ?? '/contratacion';
+---
+
+<a href={enlace} class="container-invitaciones">
+    {textoAlternativo ? (
+        <div class="texto-rico" set:html={renderRichText(textoAlternativo)}></div>
+    ) : (
+        <img class="img" src={imagenUrl} alt="Ir a invitaciones a contratacion">
+    )}
+</a>
+
+<style>
+    .container-invitaciones{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        border-top: 1px solid var(--border);
+        padding: 1rem 0;
+    }
+    .texto-rico{
+        width: 100%;
+        max-width: 1024px;
+    }
+    .texto-rico :global(img){
+        width: 100%;
+        height: auto;
+    }
+</style>

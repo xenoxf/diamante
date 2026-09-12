@@ -597,6 +597,56 @@ export function mapStrapiSlidesToLandscape(list: any[]): LandscapeSlide[] {
 }
 
 // ---------------------------------------------------------------------------
+// Conexiones Especiales (Home)
+// ---------------------------------------------------------------------------
+
+export interface ConexionEnlace {
+  id: string;
+  label: string;
+  url: string;
+  icono?: string | null;
+  externo?: boolean;
+  abrirEnNuevaPestana?: boolean;
+}
+
+export function mapStrapiConexionesToEnlaces(raw: any): ConexionEnlace[] {
+  const d = unwrapStrapiEntity<any>(raw);
+  if (!d) return [];
+  const enlacesRaw: any[] = (d as any)?.enlaces ?? [];
+  if (!Array.isArray(enlacesRaw) || enlacesRaw.length === 0) return [];
+  return enlacesRaw.map((e, i) => {
+    const ee = unwrapStrapiEntity<any>(e);
+    return {
+      id: String(ee?.id ?? ee?.documentId ?? i),
+      label: ee?.label ?? '',
+      url: ee?.url ?? '#',
+      icono: ee?.icono ?? null,
+      externo: ee?.externo ?? false,
+      abrirEnNuevaPestana: ee?.abrirEnNuevaPestana ?? false,
+    };
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Invitaciones Home (Home)
+// ---------------------------------------------------------------------------
+
+export interface InvitacionesHomeData {
+  imagenUrl: string | null;
+  textoAlternativo: string | null;
+  enlace: string;
+}
+
+export function mapStrapiInvitacionesHomeToLegacy(raw: any): InvitacionesHomeData {
+  const d = unwrapStrapiEntity<any>(raw);
+  return {
+    imagenUrl: getStrapiMediaUrl((d as any).imagen) ?? null,
+    textoAlternativo: (d as any).textoAlternativo ?? null,
+    enlace: (d as any).enlace ?? '/contratacion',
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Export helpers for testing
 // ---------------------------------------------------------------------------
 
