@@ -37,6 +37,7 @@ const source = readSource(destacadas);
 <section id="noticias" class={styles.section} aria-labelledby="noticias-titulo">
   <div class={styles.container}>
     <h2 id="noticias-titulo" class={styles.title}>Noticias</h2>
+    <div class="rule" aria-hidden="true"></div>
 
     <div class={styles.grid}>
       {destacadas.slice(-3).map((noticia) => {

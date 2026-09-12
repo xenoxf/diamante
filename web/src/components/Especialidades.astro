@@ -6,11 +6,13 @@ import { readSource } from "../lib/data-source";
 import DataSourceBadge from "./DataSourceBadge.astro";
 import EspecialidadCarousel from "./EspecialidadCarousel.tsx";
 
-let especialidades: Awaited<ReturnType<typeof especialidadesService.getEspecialidades>> = [];
+let especialidades: Awaited<
+  ReturnType<typeof especialidadesService.getEspecialidades>
+> = [];
 try {
   especialidades = await especialidadesService.getEspecialidades();
 } catch (err) {
-  console.warn('[Especialidades.astro] fallback:', err);
+  console.warn("[Especialidades.astro] fallback:", err);
   const { especialidades: fallback } = await import("../data/especialidades");
   especialidades = fallback;
 }
@@ -27,21 +29,20 @@ const source = readSource(especialidades);
       Nuestras Especialidades Técnicas
     </h2>
     <div style="margin: 0 0 12px;"><DataSourceBadge source={source} /></div>
-    <div class={styles.rule} aria-hidden="true"></div>
+    <div class="rule" aria-hidden="true"></div>
     <ul class={styles.grid}>
       {
         especialidades.map((item) => {
           const imgs = item.images?.length
             ? item.images
-            : ([getStrapiMediaUrl((item as any).imagenes)].filter(Boolean) as string[]);
+            : ([getStrapiMediaUrl((item as any).imagenes)].filter(
+                Boolean,
+              ) as string[]);
           const fallbackSingle = `/tecnica/${item.slug}/${item.slug}_1.jpeg`;
           const list = imgs.length > 0 ? imgs : [fallbackSingle];
           return (
             <li>
-              <a
-                href={`/especialidades/${item.slug}`}
-                class={styles.cardLink}
-              >
+              <a href={`/especialidades/${item.slug}`} class={styles.cardLink}>
                 <article class={styles.card}>
                   <EspecialidadCarousel
                     images={list}
@@ -61,3 +62,12 @@ const source = readSource(especialidades);
     </ul>
   </div>
 </section>
+
+<style is:global>
+  .rule {
+    width: 56px;
+    height: 3px;
+    background: var(--primary);
+    margin: 0 0 32px;
+  }
+</style>
