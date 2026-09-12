@@ -103,6 +103,7 @@ export interface StrapiEnlace {
   id?: number;
   label: string;
   url: string;
+  icono?: StrapiMedia | null;
   externo?: boolean;
   abrirEnNuevaPestana?: boolean;
 }

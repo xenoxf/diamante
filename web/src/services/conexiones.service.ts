@@ -6,7 +6,7 @@ export interface ConexionEnlace {
   id: string;
   label: string;
   url: string;
-  icono?: string | null;
+  iconoUrl?: string | null;
   externo?: boolean;
   abrirEnNuevaPestana?: boolean;
 }
@@ -16,7 +16,7 @@ const fallbackEnlaces: ConexionEnlace[] = [
     id: '1',
     label: 'Instagram',
     url: 'https://www.instagram.com/ieeldiamantecali/',
-    icono: null,
+    iconoUrl: null,
     externo: true,
     abrirEnNuevaPestana: true,
   },
@@ -24,7 +24,7 @@ const fallbackEnlaces: ConexionEnlace[] = [
     id: '2',
     label: 'Facebook',
     url: 'https://www.facebook.com/IEElDiamante/',
-    icono: null,
+    iconoUrl: null,
     externo: true,
     abrirEnNuevaPestana: true,
   },
@@ -32,7 +32,7 @@ const fallbackEnlaces: ConexionEnlace[] = [
     id: '3',
     label: 'YouTube',
     url: 'https://www.youtube.com/@InstitucionEducativaElDiaman',
-    icono: null,
+    iconoUrl: null,
     externo: true,
     abrirEnNuevaPestana: true,
   },
@@ -40,7 +40,7 @@ const fallbackEnlaces: ConexionEnlace[] = [
     id: '4',
     label: 'WhatsApp',
     url: 'https://chat.whatsapp.com/G2wFsFQOGCbLqEOYg0RWDH',
-    icono: null,
+    iconoUrl: null,
     externo: true,
     abrirEnNuevaPestana: true,
   },
@@ -52,7 +52,11 @@ export const conexionesService = {
       const res = await fetchStrapi<StrapiSingleResponse<any>>('/pagina-conexiones', {
         params: {
           populate: {
-            enlaces: '*',
+            enlaces: {
+              populate: {
+                icono: { fields: ['url', 'width', 'height'] },
+              },
+            },
           },
           status: 'published',
         },
@@ -69,7 +73,7 @@ export const conexionesService = {
         id: String(e.id ?? e.documentId ?? ''),
         label: e.label ?? '',
         url: e.url ?? '#',
-        icono: e.icono ?? null,
+        iconoUrl: getStrapiMediaUrl(e.icono) ?? null,
         externo: e.externo ?? false,
         abrirEnNuevaPestana: e.abrirEnNuevaPestana ?? false,
       }));

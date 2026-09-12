@@ -604,7 +604,7 @@ export interface ConexionEnlace {
   id: string;
   label: string;
   url: string;
-  icono?: string | null;
+  iconoUrl?: string | null;
   externo?: boolean;
   abrirEnNuevaPestana?: boolean;
 }
@@ -620,7 +620,7 @@ export function mapStrapiConexionesToEnlaces(raw: any): ConexionEnlace[] {
       id: String(ee?.id ?? ee?.documentId ?? i),
       label: ee?.label ?? '',
       url: ee?.url ?? '#',
-      icono: ee?.icono ?? null,
+      iconoUrl: getStrapiMediaUrl(ee?.icono) ?? null,
       externo: ee?.externo ?? false,
       abrirEnNuevaPestana: ee?.abrirEnNuevaPestana ?? false,
     };

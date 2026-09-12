@@ -33,7 +33,7 @@
       "allowedTypes": ["images"]
     },
     "valoresIntroduccion": {
-      "type": "text"
+      "type": "richtext"
     },
     "valoresImagen": {
       "type": "media",
@@ -53,7 +53,7 @@
       "allowedTypes": ["images", "files"]
     },
     "organigramaDescripcion": {
-      "type": "text"
+      "type": "richtext"
     },
     "seo": {
       "type": "component",

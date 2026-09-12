@@ -17,7 +17,7 @@
       "required": true
     },
     "descripcion": {
-      "type": "text"
+      "type": "richtext"
     },
     "imagen": {
       "type": "media",

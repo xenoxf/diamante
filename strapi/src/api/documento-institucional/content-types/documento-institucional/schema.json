@@ -22,7 +22,7 @@
       "required": true
     },
     "descripcion": {
-      "type": "text",
+      "type": "richtext",
       "required": true
     },
     "categoria": {

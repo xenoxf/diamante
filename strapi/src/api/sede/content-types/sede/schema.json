@@ -60,7 +60,7 @@
       "default": 0
     },
     "horarioAtencion": {
-      "type": "text"
+      "type": "richtext"
     },
     "seo": {
       "type": "component",

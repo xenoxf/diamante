@@ -14,6 +14,12 @@
       "type": "string",
       "required": true
     },
+    "icono": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
     "externo": {
       "type": "boolean",
       "default": false
