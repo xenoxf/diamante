@@ -1,4 +1,9 @@
 ---
+/**
+ * Visor único de archivos del sitio.
+ * TODAS las páginas que muestren un documento/archivo de Strapi o local
+ * deben usar este componente (PDF, Imagen o Enlace).
+ */
 interface Props {
   src: string;
   title?: string;
@@ -12,30 +17,34 @@ const { src, title = 'Documento', format: formatProp, height = '840px' } = Astro
 
 const isImage = formatProp === 'Imagen' || /\.(png|jpe?g|webp|gif|svg)(\?|$)/i.test(src);
 const isPdf = formatProp === 'PDF' || /\.pdf(\?|#|$)/i.test(src);
+// Enlace externo o formato no embebible: no se usa iframe, se muestra tarjeta de apertura.
+const isLink = formatProp === 'Enlace' || (!isImage && !isPdf);
 const viewerSrc = isPdf ? `${src}#view=FitH` : src;
+const badgeLabel = isPdf ? 'PDF' : isImage ? 'Imagen' : 'Enlace';
 ---
 
 <div class="fv" style={`--fv-h:${height}`}>
   <div class="fv__toolbar">
     <div class="fv__meta">
       <span class="fv__title">{title}</span>
-      {isPdf && <span class="fv__badge">PDF</span>}
-      {isImage && <span class="fv__badge">Imagen</span>}
+      <span class="fv__badge">{badgeLabel}</span>
     </div>
     <div class="fv__actions">
       <a class="fv__btn fv__btn--ghost" href={src} target="_blank" rel="noopener noreferrer">
         Abrir en pestaña nueva
       </a>
-      <a class="fv__btn fv__btn--primary" href={src} download>
-        Descargar
-      </a>
+      {!isLink && (
+        <a class="fv__btn fv__btn--primary" href={src} download>
+          Descargar
+        </a>
+      )}
     </div>
   </div>
 
   <div class="fv__frameWrap">
     {isImage ? (
       <img class="fv__img" src={src} alt={title} loading="lazy" decoding="async" />
-    ) : (
+    ) : isPdf ? (
       <iframe
         class="fv__frame"
         src={viewerSrc}
@@ -43,6 +52,13 @@ const viewerSrc = isPdf ? `${src}#view=FitH` : src;
         loading="lazy"
         allow="fullscreen"
       ></iframe>
+    ) : (
+      <div class="fv__linkCard">
+        <p class="fv__linkText">Este documento es un enlace externo.</p>
+        <a class="fv__btn fv__btn--primary" href={src} target="_blank" rel="noopener noreferrer">
+          Abrir {title}
+        </a>
+      </div>
     )}
   </div>
 
@@ -167,6 +183,26 @@ const viewerSrc = isPdf ? `${src}#view=FitH` : src;
     display: block;
   }
 
+  .fv__linkCard {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.9rem;
+    padding: 2rem 1.25rem;
+    background: var(--surface);
+    text-align: center;
+  }
+
+  .fv__linkText {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--ink-soft, #555);
+    line-height: 1.6;
+  }
+
   .fv__fallback {
     font-size: 0.78rem;
     color: var(--ink-faint);
@@ -264,6 +300,7 @@ const viewerSrc = isPdf ? `${src}#view=FitH` : src;
   /* Garantía: nunca ocultar iframe/img por breakpoint */
   .fv__frame,
   .fv__img,
+  .fv__linkCard,
   .fv__frameWrap {
     display: block !important;
     visibility: visible !important;

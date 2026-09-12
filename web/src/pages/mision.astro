@@ -6,6 +6,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PageHero from '../components/PageHero.astro';
 import { identidadService } from '../services/identidad.service';
+import { renderRichText } from '../lib/markdown';
 import '../styles/global.css';
 import '../styles/page.css';
 
@@ -18,7 +19,7 @@ try {
 }
 
 const fallbackMision = `<p>La <strong>Institución Educativa El Diamante</strong> se reconoce pluriétnica y multicultural. Forma estudiantes con calidad humana y competencias técnicas, a través de la participación de los actores educativos y con el apoyo de diferentes instituciones educativas a nivel local, regional, nacional y del entorno de la comuna 13.</p><p>Este trabajo articulado permite a los estudiantes la construcción de relaciones sociales dinámicas y prósperas para el desarrollo de competencias que faciliten el acceso al campo laboral o a la educación superior.</p>`;
-const html = misionHtml ?? fallbackMision;
+const html = renderRichText(misionHtml ?? fallbackMision);
 ---
 
 <Layout>

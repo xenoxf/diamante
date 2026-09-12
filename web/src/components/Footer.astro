@@ -2,6 +2,7 @@
 import { sedes as sedesFallback } from '../data/sedes';
 import { configuracionService } from '../services/configuracion.service';
 import { sedesService } from '../services/sedes.service';
+import { renderRichText } from '../lib/markdown';
 import styles from '../styles/footer.module.css';
 
 // Consumir Strapi para footer dinámico: emailInstitucional, telefonoPrincipal, enlacesGobierno, avisoLegalFooter y sedes.
@@ -32,7 +33,7 @@ const avisoLegal = config.avisoLegalFooter ?? '© 2026 Institución Educativa El
           <a class={styles.link} href={`tel:${config.telefonoPrincipal.replace(/\s+/g, '')}`}>{config.telefonoPrincipal}</a>
         )}
         {config.horarioAtencion && (
-          <p class={styles.text} set:html={config.horarioAtencion} />
+          <p class={styles.text} set:html={renderRichText(config.horarioAtencion)} />
         )}
         <p class={styles.text}>Rectoría Institucional</p>
       </div>

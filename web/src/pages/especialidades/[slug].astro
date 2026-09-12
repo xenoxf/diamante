@@ -6,10 +6,12 @@ import Header from "../../components/Header.astro";
 import Footer from "../../components/Footer.astro";
 import PageHero from "../../components/PageHero.astro";
 import DataSourceBadge from "../../components/DataSourceBadge.astro";
+import FileViewer from "../../components/FileViewer.astro";
 import { especialidadesService } from "../../services/especialidades.service";
 import { getStrapiMediaUrls } from "../../lib/strapi";
 import { setISRHeaders } from "../../lib/isr";
 import { readSource } from "../../lib/data-source";
+import { renderRichText } from "../../lib/markdown";
 import Masonry from "../../components/mansory";
 import "../../styles/global.css";
 import "../../styles/page.css";
@@ -47,16 +49,6 @@ const galleryImages: GalleryImage[] = displayImgs.map((src, idx) => ({
     href: src,
 }));
 const detailSource = readSource(especialidad);
-
-function getDocIcon(mime: string) {
-    if (mime.includes('pdf')) return '📄';
-    if (mime.includes('image')) return '🖼️';
-    if (mime.includes('video')) return '🎬';
-    if (mime.includes('audio')) return '🎵';
-    if (mime.includes('word') || mime.includes('document')) return '📝';
-    if (mime.includes('sheet') || mime.includes('excel')) return '📊';
-    return '📎';
-}
 ---
 
 <Layout>
@@ -74,28 +66,21 @@ function getDocIcon(mime: string) {
                     </div>
 
                     {especialidad.contenido && (
-                        <div class="richtext" set:html={especialidad.contenido} />
+                        <div class="richtext" set:html={renderRichText(especialidad.contenido)} />
                     )}
 
                     {documentos.length > 0 && (
                         <div style="margin-top:2rem;">
                             <h2>Documentos</h2>
-                            <ul class="doc-list">
+                            <div style="display:grid;gap:1rem;margin-top:1rem;">
                                 {documentos.map((doc: any) => (
-                                    <li>
-                                        <a
-                                            href={doc.url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            class="doc-link"
-                                        >
-                                            <span class="doc-icon">{getDocIcon(doc.mime)}</span>
-                                            <span class="doc-name">{doc.name}</span>
-                                            <span class="doc-badge">Abrir</span>
-                                        </a>
-                                    </li>
+                                    <FileViewer
+                                        src={doc.url}
+                                        title={doc.name ?? 'Documento'}
+                                        height="520px"
+                                    />
                                 ))}
-                            </ul>
+                            </div>
                         </div>
                     )}
 
@@ -171,49 +156,40 @@ function getDocIcon(mime: string) {
     margin: 1rem 0 1.5rem 1.5rem;
     line-height: 1.7;
   }
-
-  .doc-list {
-    list-style: none;
-    padding: 0;
-    margin: 1rem 0;
-    display: grid;
-    gap: 0.75rem;
+  .richtext :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.92rem;
   }
-  .doc-link {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.85rem 1rem;
-    background: var(--wash);
+  .richtext :global(th),
+  .richtext :global(td) {
     border: 1px solid var(--line);
-    border-radius: 8px;
-    text-decoration: none;
-    color: var(--ink);
-    transition: border-color 0.2s, box-shadow 0.2s;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
   }
-  .doc-link:hover {
-    border-color: var(--primary);
-    box-shadow: 0 2px 8px rgba(7, 185, 213, 0.12);
-  }
-  .doc-icon {
-    font-size: 1.4rem;
-    flex-shrink: 0;
-  }
-  .doc-name {
-    flex: 1;
-    font-weight: 600;
-    font-size: 0.95rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .doc-badge {
-    font-size: 0.78rem;
+  .richtext :global(th) {
+    background: var(--wash);
     font-weight: 700;
-    color: var(--primary-dark);
-    background: var(--primary-wash);
-    padding: 0.25rem 0.6rem;
-    border-radius: 4px;
-    flex-shrink: 0;
+  }
+  .richtext :global(blockquote) {
+    border-left: 3px solid var(--primary);
+    margin: 1.5rem 0;
+    padding: 0.5rem 1rem;
+    color: var(--ink-soft);
+    background: var(--wash);
+    border-radius: 0 8px 8px 0;
+  }
+  .richtext :global(pre) {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+  .richtext :global(code) {
+    font-family: ui-monospace, monospace;
+    font-size: 0.88em;
   }
 </style>

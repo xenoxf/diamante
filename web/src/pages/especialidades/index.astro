@@ -10,6 +10,7 @@ import Masonry from '../../components/mansory';
 import { especialidadesService } from '../../services/especialidades.service';
 import { getStrapiMediaUrl } from '../../lib/strapi';
 import { readSource } from '../../lib/data-source';
+import { renderRichText } from '../../lib/markdown';
 import { setISRHeaders } from '../../lib/isr';
 import type { GalleryImage } from '../../types';
 import '../../styles/global.css';
@@ -67,7 +68,7 @@ const source = readSource(especialidades);
                 />
               )}
               <h2>{esp.nombre}</h2>
-              <div set:html={esp.contenido} />
+              <div set:html={renderRichText(esp.contenido)} />
               {esp.documentos && esp.documentos.length > 0 && (
                 <p style="margin:0.75rem 0;font-size:0.88rem;color:var(--primary-dark);font-weight:600;">
                   📎 {esp.documentos.length} documento{esp.documentos.length > 1 ? 's' : ''} disponible{esp.documentos.length > 1 ? 's' : ''}

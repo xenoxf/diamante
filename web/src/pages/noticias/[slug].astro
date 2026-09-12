@@ -9,6 +9,7 @@ import { noticiasService } from '../../services/noticias.service';
 import { getStrapiMediaUrl } from '../../lib/strapi';
 import { setISRHeaders } from '../../lib/isr';
 import { readSource } from '../../lib/data-source';
+import { renderRichText } from '../../lib/markdown';
 import DataSourceBadge from '../../components/DataSourceBadge.astro';
 import '../../styles/global.css';
 import '../../styles/page.css';
@@ -41,7 +42,7 @@ const galeriaUrls: string[] =
     ? (noticia as any).galeria.map((m: any) => getStrapiMediaUrl(m)).filter(Boolean)
     : []);
 
-const contenidoHtml: string = noticia?.contenido ?? '';
+const contenidoHtml: string = renderRichText(noticia?.contenido ?? '');
 const detailSource = readSource(noticia);
 ---
 
@@ -146,5 +147,41 @@ const detailSource = readSource(noticia);
   .richtext :global(ol) {
     margin: 1rem 0 1.5rem 1.5rem;
     line-height: 1.7;
+  }
+  .richtext :global(blockquote) {
+    border-left: 3px solid var(--primary);
+    margin: 1.5rem 0;
+    padding: 0.5rem 1rem;
+    color: var(--ink-soft);
+    background: var(--wash);
+    border-radius: 0 8px 8px 0;
+  }
+  .richtext :global(pre) {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+  .richtext :global(code) {
+    font-family: ui-monospace, monospace;
+    font-size: 0.88em;
+  }
+  .richtext :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.92rem;
+  }
+  .richtext :global(th),
+  .richtext :global(td) {
+    border: 1px solid var(--line);
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+  }
+  .richtext :global(th) {
+    background: var(--wash);
+    font-weight: 700;
   }
 </style>

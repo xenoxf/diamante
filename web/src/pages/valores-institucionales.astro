@@ -7,6 +7,7 @@ import Footer from "../components/Footer.astro";
 import PageHero from "../components/PageHero.astro";
 import { identidadService } from "../services/identidad.service";
 import { getStrapiMediaUrl } from "../lib/strapi";
+import { renderRichText } from "../lib/markdown";
 import "../styles/global.css";
 
 let valoresIntroduccion: string | null = null;
@@ -76,12 +77,12 @@ const imgSrc = valoresImagenUrl ?? '/identidad/valores.png';
       <div class="container-valores">
         <h4>VALORES INSTITUCIONALES</h4>
 
-        <p>{intro}</p>
+        <p set:html={renderRichText(intro)}></p>
 
         {lista.map((v) => (
           <>
             <h4>{v.titulo}</h4>
-            <p>{v.descripcion}</p>
+            <p set:html={renderRichText(v.descripcion)}></p>
           </>
         ))}
       </div>

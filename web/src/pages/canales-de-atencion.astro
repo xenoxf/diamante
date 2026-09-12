@@ -7,6 +7,7 @@ import Footer from '../components/Footer.astro';
 import PageHero from '../components/PageHero.astro';
 import { ciudadaniaService } from '../services/ciudadania.service';
 import { configuracionService } from '../services/configuracion.service';
+import { renderRichText } from '../lib/markdown';
 import '../styles/global.css';
 import '../styles/page.css';
 
@@ -35,7 +36,7 @@ const description = 'Canales de atención de la IE El Diamante: presencial, tele
           {canales.map((canal) => (
             <li>
               <strong>{canal.nombre}</strong>
-              <span style="display: block; margin-top: 0.25rem; line-height: 1.6; color: var(--ink-soft);">{canal.detalle}</span>
+              <span style="display: block; margin-top: 0.25rem; line-height: 1.6; color: var(--ink-soft);" set:html={renderRichText(canal.detalle)}></span>
             </li>
           ))}
         </ul>
@@ -43,7 +44,7 @@ const description = 'Canales de atención de la IE El Diamante: presencial, tele
 
       <div class="note" style="margin-top: 1.5rem;">
         <p style="margin: 0; line-height: 1.7;">
-          Horario de atención: <span set:html={config.horarioAtencion ?? 'Lunes a viernes 7:00 - 15:00'} />
+          Horario de atención: <span set:html={renderRichText(config.horarioAtencion ?? 'Lunes a viernes 7:00 - 15:00')} />
           <br />
           Correo institucional: <a href={`mailto:${config.emailInstitucional}`} style="color: var(--primary-dark); text-decoration: underline;">{config.emailInstitucional}</a>
           {config.telefonoPrincipal && <> · Tel. <a href={`tel:${config.telefonoPrincipal.replace(/\s+/g, '')}`} style="color: var(--primary-dark); text-decoration: underline;">{config.telefonoPrincipal}</a></>}

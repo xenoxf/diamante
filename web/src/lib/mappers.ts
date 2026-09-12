@@ -7,6 +7,7 @@
  */
 
 import { getStrapiMediaUrl, unwrapStrapiEntity } from './strapi';
+import { stripRichText } from './markdown';
 import type {
   StrapiCategoriaGaleria,
   StrapiCategoriaNoticia,
@@ -38,10 +39,7 @@ import type { GalleryImage, LandscapeSlide } from '../types/landscape.types';
 
 function stripHtml(html: string | null | undefined): string {
   if (!html) return '';
-  return html
-    .replace(/<[^>]*>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+  return stripRichText(html);
 }
 
 function formatFechaStrapi(iso: string | null | undefined): string {

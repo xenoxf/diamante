@@ -7,6 +7,7 @@ import Footer from '../components/Footer.astro';
 import PageHero from '../components/PageHero.astro';
 import FileViewer from '../components/FileViewer.astro';
 import { institucionalService } from '../services/institucional.service';
+import { renderRichText } from '../lib/markdown';
 import '../styles/global.css';
 import '../styles/page.css';
 
@@ -40,14 +41,7 @@ const displayDoc = doc ?? ficha;
       {displayDoc ? (
         <>
           <h2 style="margin-top:2rem">{displayDoc.titulo}</h2>
-          {displayDoc.descripcion && <p class="intro">{displayDoc.descripcion}</p>}
-          {displayDoc.formato === 'Enlace' ? (
-            <p>
-              <a href={displayDoc.url} target="_blank" rel="noopener noreferrer" class="link">
-                Abrir {displayDoc.titulo}
-              </a>
-            </p>
-          ) : null}
+          {displayDoc.descripcion && <p class="intro" set:html={renderRichText(displayDoc.descripcion)}></p>}
           <FileViewer src={displayDoc.url} title={displayDoc.titulo} format={displayDoc.formato} />
         </>
       ) : (

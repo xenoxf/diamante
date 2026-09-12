@@ -11,7 +11,6 @@ import { contratacionService } from '../services/contratacion.service';
 import { configuracionService } from '../services/configuracion.service';
 import { setISRHeaders } from '../lib/isr';
 import { readSource } from '../lib/data-source';
-import { getStrapiMediaUrl } from '../lib/strapi';
 import '../styles/global.css';
 import '../styles/page.css';
 
@@ -73,7 +72,6 @@ function estadoBadge(estado: string) {
           {invitaciones.map((inv) => {
             const badge = estadoBadge(inv.estado ?? 'abierta');
             const docUrl = inv.documentoMediaUrl ?? inv.documentoUrl ?? null;
-            const docMime = docUrl?.endsWith('.pdf') ? 'application/pdf' : '';
             return (
               <article class="inv-card">
                 <div class="inv-card__header">
@@ -103,10 +101,9 @@ function estadoBadge(estado: string) {
                     )}
                   </div>
                   {docUrl && (
-                    <a href={docUrl} target="_blank" rel="noopener noreferrer" class="inv-card__doc">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                      Ver documento
-                    </a>
+                    <div class="inv-card__viewer">
+                      <FileViewer src={docUrl} title={`Documento ${inv.numero}`} height="520px" />
+                    </div>
                   )}
                 </div>
               </article>
@@ -193,22 +190,7 @@ function estadoBadge(estado: string) {
     opacity: 0.6;
   }
 
-  .inv-card__doc {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--primary-dark);
-    text-decoration: none;
-    padding: 0.4rem 0.75rem;
-    border: 1px solid var(--primary-pale);
-    border-radius: 6px;
-    background: var(--primary-wash);
-    transition: background 0.2s;
-  }
-
-  .inv-card__doc:hover {
-    background: var(--primary-pale);
+  .inv-card__viewer {
+    margin-top: 0.75rem;
   }
 </style>
