@@ -110,30 +110,64 @@
   overflow: hidden;
 }
 
-/* Zona IR: único elemento visible además de la foto */
-.go {
+/* ── Barra de acciones: dots centrados + botón IR a la derecha ── */
+.containerActions {
   position: absolute;
   z-index: 3;
+  left: clamp(1rem, 4vw, 2.5rem);
   right: clamp(1rem, 4vw, 2.5rem);
-  bottom: calc(clamp(1rem, 4vw, 2.5rem) + env(safe-area-inset-bottom, 0px));
+  bottom: calc(clamp(0.85rem, 1.8vw, 1.35rem) + env(safe-area-inset-bottom, 0px));
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  pointer-events: none;
+}
+
+.containerActions > * {
+  pointer-events: auto;
+}
+
+/* Cuando hay un solo hijo (solo dots o solo botón) lo centra */
+.containerActions:has(> :only-child) {
+  grid-template-columns: 1fr;
+  justify-items: center;
+}
+.containerActions:has(> :only-child) > * {
+  grid-column: 1;
+  justify-self: center;
+}
+
+/* Botón IR — ahora es item de grid, no absolute */
+.go {
+  grid-column: 3;
+  justify-self: end;
+  position: relative;
+  right: auto;
+  bottom: auto;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.45rem;
-  min-height: 52px;
-  padding: 0.8rem 1.7rem;
+  min-height: 46px;
+  padding: 0.7rem 1.45rem;
   border-radius: 999px;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.13em;
+  white-space: nowrap;
+  flex-shrink: 0;
   color: var(--on-dark);
   background: var(--glass);
   border: 1px solid var(--glass-border);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  text-decoration: none;
   transition:
     background-color 0.25s ease,
     transform 0.25s ease,
-    border-color 0.25s ease;
+    border-color 0.25s ease,
+    color 0.25s ease;
 }
 
 .go span {
@@ -145,6 +179,7 @@
 .go:hover {
   background: var(--primary);
   border-color: var(--primary);
+  color: var(--on-dark);
   transform: translateY(-2px);
 }
 
@@ -157,39 +192,66 @@
   outline-offset: 3px;
 }
 
-/* Dots indicadores */
+/* Dots — centrados en columna 2, no absolute */
 .dots {
-  position: absolute;
-  z-index: 3;
-  left: 50%;
-  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
-  transform: translateX(-50%);
+  grid-column: 2;
+  justify-self: center;
+  position: relative;
+  left: auto;
+  right: auto;
+  bottom: auto;
+  transform: none;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.7rem;
+  justify-content: center;
+  gap: 0.38rem;
+  padding: 0.38rem 0.6rem;
   border-radius: 999px;
   background: rgba(0, 0, 0, 0.28);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  max-width: 100%;
+  flex-wrap: wrap;
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
+  position: relative;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
   border-radius: 999px;
   border: none;
   padding: 0;
-  background: rgba(255, 255, 255, 0.55);
+  background: transparent;
   cursor: pointer;
-  transition:
-    width 0.25s ease,
-    background-color 0.25s ease;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.dotActive {
+.dot::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  transition:
+    width 0.25s ease,
+    background-color 0.25s ease,
+    transform 0.2s ease;
+}
+
+.dotActive::after {
   width: 22px;
   background: #fff;
+}
+
+.dot:hover::after {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.dot:active::after {
+  transform: scale(0.9);
 }
 
 .dot:focus-visible {
@@ -230,16 +292,61 @@
     font-size: 0.9rem;
   }
 
+  .containerActions {
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    gap: 0.6rem;
+    /* en móvil muy estrecho mantenemos grid pero más compacto */
+    grid-template-columns: 1fr auto 1fr;
+  }
+
   .go {
-    min-height: 56px;
-    padding: 0.9rem 1.9rem;
-    font-size: 16px;
-    right: 1rem;
-    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    min-height: 42px;
+    padding: 0.6rem 1.15rem;
+    font-size: 12.5px;
+    letter-spacing: 0.11em;
   }
 
   .dots {
-    bottom: calc(5.4rem + env(safe-area-inset-bottom, 0px));
+    gap: 0.32rem;
+    padding: 0.32rem 0.5rem;
+  }
+
+  .dot {
+    width: 20px;
+    height: 20px;
+  }
+
+  .dot::after {
+    width: 7px;
+    height: 7px;
+  }
+
+  .dotActive::after {
+    width: 18px;
+  }
+}
+
+/* Móvil muy pequeño: evita overflow */
+@media (max-width: 380px) {
+  .containerActions {
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem;
+  }
+
+  .dots {
+    grid-column: 1;
+    justify-self: start;
+  }
+
+  .go {
+    grid-column: 2;
+  }
+
+  /* si hay un solo hijo, vuelve a centrar */
+  .containerActions:has(> :only-child) {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -251,21 +358,20 @@
   }
 
   .go {
-    min-height: 48px;
-    padding: 0.65rem 1.4rem;
+    min-height: 38px;
+    padding: 0.5rem 1rem;
   }
 
   .overlay {
     bottom: calc(3.6rem + env(safe-area-inset-bottom, 0px));
   }
 
-  .dots {
-    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  .containerActions {
+    bottom: calc(0.6rem + env(safe-area-inset-bottom, 0px));
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   .slide,
   .isActive,
   .isActive .img {

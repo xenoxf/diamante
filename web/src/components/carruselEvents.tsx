@@ -149,33 +149,36 @@ export function CarruselEvents({ limit = 8, slides: initialSlides, config }: Pro
         })}
       </div>
 
-      {current && (
-        <a
-          className={styles.go}
-          href={current.href}
-          aria-label={current.tituloOverlay ? `Ir a ${current.tituloOverlay}` : current.botonTexto || 'Ir'}
-          target={current.abrirEnNuevaPestana ? '_blank' : undefined}
-          rel={current.abrirEnNuevaPestana ? 'noopener noreferrer' : undefined}
-        >
-          {current.botonTexto || 'IR'}
-          <span aria-hidden="true">›</span>
-        </a>
-      )}
+      <div className={styles.containerActions}>
+        {current && (
+          <a
+            className={styles.go}
+            href={current.href}
+            aria-label={current.tituloOverlay ? `Ir a ${current.tituloOverlay}` : current.botonTexto || 'Ir'}
+            target={current.abrirEnNuevaPestana ? '_blank' : undefined}
+            rel={current.abrirEnNuevaPestana ? 'noopener noreferrer' : undefined}
+          >
+            {current.botonTexto || 'IR'}
+            <span aria-hidden="true">›</span>
+          </a>
+        )}
 
-      {list.length > 1 && (
-        <div className={styles.dots} role="tablist" aria-label="Selector de slides">
-          {list.map((s, i) => (
-            <button
-              key={`dot-${s.id}`}
-              className={`${styles.dot} ${i === safeIndex ? styles.dotActive : ''}`}
-              aria-label={`Ir a slide ${i + 1}${s.tituloOverlay ? `: ${s.tituloOverlay}` : ''}`}
-              aria-selected={i === safeIndex}
-              role="tab"
-              onClick={() => setIndex(i)}
-            />
-          ))}
-        </div>
-      )}
+        {list.length > 1 && (
+          <div className={styles.dots} role="tablist" aria-label="Selector de slides">
+            {list.map((s, i) => (
+              <button
+                key={`dot-${s.id}`}
+                className={`${styles.dot} ${i === safeIndex ? styles.dotActive : ''}`}
+                aria-label={`Ir a slide ${i + 1}${s.tituloOverlay ? `: ${s.tituloOverlay}` : ''}`}
+                aria-selected={i === safeIndex}
+                role="tab"
+                onClick={() => setIndex(i)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
     </section>
   );
 }
