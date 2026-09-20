@@ -34,17 +34,74 @@ const defaultIconSvg = "data:image/svg+xml,%3c?xml%20version=%271.0%27%20encodin
         justify-content: center;
         padding: 1rem 0;
         border-top: 1px solid var(--border);
+        background: var(--surface);
     }
     .img {
         width: 80px;
+        height: auto;
+        object-fit: contain;
+        display: block;
+    }
+
+    .conexion {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    .conexion:hover {
+        transform: translateY(-2px);
+        opacity: 0.9;
+    }
+    .conexion:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 3px;
+        border-radius: 6px;
     }
 
     .list {
-        width: fit-content;
-        display: flex;
         width: 100%;
+        max-width: var(--max-width);
+        display: flex;
+        flex-wrap: wrap;
         padding: 0 1rem;
         justify-content: center;
-        gap: 3rem;
+        align-items: center;
+        gap: 2rem 3rem;
+    }
+
+    @media (max-width: 960px) {
+        .list {
+            gap: 1.25rem 1.5rem;
+        }
+        .img {
+            width: 68px;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .container {
+            padding: 0.85rem 0;
+        }
+        .list {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 0.75rem 0.5rem;
+            justify-items: center;
+        }
+        .img {
+            width: 56px;
+            max-width: 100%;
+        }
+    }
+
+    @media (max-width: 380px) {
+        .list {
+            gap: 0.6rem 0.35rem;
+        }
+        .img {
+            width: 48px;
+        }
     }
 </style>

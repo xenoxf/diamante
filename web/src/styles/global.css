@@ -124,8 +124,8 @@ a {
 
 @media (max-width: 960px) {
   :root {
-    --header-h: 76px;
-    /* en móvil se oculta la topbar */
+    --header-h: 64px;
+    /* en móvil se oculta la topbar y mainbar es 64px */
   }
 }
 
