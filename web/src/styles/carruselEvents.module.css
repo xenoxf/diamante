@@ -127,38 +127,64 @@
   justify-content: center;
 }
 
-/* Botón IR — pill claro */
+/* =========================================================
+   GO BUTTON
+   ========================================================= */
+
 .go {
+  --go-bg: #fff;
+  --go-fg: var(--foreground);
+  --go-arrow-bg: #16181d;
+  --go-arrow-fg: #fff;
+  --go-hover-bg: var(--primary);
+  --go-hover-fg: #fff;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.65rem;
+
   min-height: 44px;
-  min-width: 0;
   max-width: 320px;
-  padding: 0.65rem 1.25rem;
+  padding: 0.55rem 0.65rem 0.55rem 1.15rem;
+
+  border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 999px;
-  font-size: 13px;
+
+  color: var(--go-fg);
+  background: var(--go-bg);
+
+  font-size: 0.8rem;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  line-height: 1;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  flex-shrink: 0;
-  color: #16181d;
-  background: #fff;
-  border: 1px solid #fff;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
   text-decoration: none;
+
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.08),
+    0 8px 18px rgba(0, 0, 0, 0.12);
+
+  flex-shrink: 0;
+  overflow: hidden;
+
   transition:
-    background-color 0.2s ease,
-    transform 0.2s ease,
-    color 0.2s ease;
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
 }
 
-/* Viewport del texto: recorta y detecta overflow */
+/* ---------------------------------------------------------
+   Texto
+   --------------------------------------------------------- */
+
 .goViewport {
   display: block;
   min-width: 0;
   flex: 1 1 auto;
+
   overflow: hidden;
   text-align: center;
 }
@@ -166,53 +192,61 @@
 .goTrack {
   display: inline-flex;
   align-items: center;
+
   max-width: 100%;
+
   will-change: transform;
 }
 
 .goText {
   display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
   max-width: 100%;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-/* Segunda copia oculta salvo marquee */
+/* Segunda copia: solo existe visualmente durante marquee */
 .goTrack .goText[aria-hidden='true'] {
   display: none;
 }
 
-/* Estado marquee: scroll infinito suave dentro del botón */
+/* ---------------------------------------------------------
+   Marquee
+   --------------------------------------------------------- */
+
 .go[data-marquee='true'] .goViewport {
   text-align: left;
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent 0,
-    #000 14px,
-    #000 calc(100% - 14px),
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to right,
-    transparent 0,
-    #000 14px,
-    #000 calc(100% - 14px),
-    transparent 100%
-  );
+
+  -webkit-mask-image: linear-gradient(to right,
+      transparent 0,
+      #000 12px,
+      #000 calc(100% - 12px),
+      transparent 100%);
+
+  mask-image: linear-gradient(to right,
+      transparent 0,
+      #000 12px,
+      #000 calc(100% - 12px),
+      transparent 100%);
 }
 
 .go[data-marquee='true'] .goTrack {
   width: max-content;
   max-width: none;
+
   animation: goMarquee var(--go-marquee-duration, 6s) linear infinite;
 }
 
 .go[data-marquee='true'] .goText {
   max-width: none;
+
   overflow: visible;
   text-overflow: clip;
-  padding-right: var(--go-marquee-gap, 2rem);
+
+  padding-right: var(--go-marquee-gap, 2.5rem);
 }
 
 .go[data-marquee='true'] .goTrack .goText[aria-hidden='true'] {
@@ -221,64 +255,101 @@
 
 @keyframes goMarquee {
   from {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
   }
+
   to {
-    transform: translateX(-50%);
+    transform: translate3d(-50%, 0, 0);
   }
 }
 
-/* Pausa al interactuar para permitir leer el texto completo */
+/* ---------------------------------------------------------
+   Arrow
+   --------------------------------------------------------- */
+
+.goArrow {
+  display: inline-grid;
+  place-items: center;
+
+  width: 1.9rem;
+  height: 1.9rem;
+
+  border-radius: 50%;
+
+  background: var(--go-arrow-bg);
+  color: var(--go-arrow-fg);
+
+  font-size: 1.15rem;
+  font-weight: 500;
+  line-height: 1;
+
+  flex: 0 0 auto;
+
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+/* ---------------------------------------------------------
+   Estados
+   --------------------------------------------------------- */
+
+.go:hover {
+  background: var(--go-hover-bg);
+  border-color: var(--go-hover-bg);
+  color: var(--go-hover-fg);
+
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    0 12px 24px rgba(0, 0, 0, 0.16);
+
+  transform: translateY(-1px);
+}
+
+.go:hover .goArrow {
+  background: #fff;
+  color: var(--primary-deep, #055f6e);
+
+  transform: translateX(2px);
+}
+
+.go:active {
+  transform: translateY(0) scale(0.985);
+
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.go:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------
+   Marquee: pausa para lectura
+   --------------------------------------------------------- */
+
 .go[data-marquee='true']:hover .goTrack,
 .go[data-marquee='true']:focus-visible .goTrack,
 .go[data-marquee='true']:focus-within .goTrack {
   animation-play-state: paused;
 }
 
-.go span {
-  display: inline-grid;
-  place-items: center;
-  width: 1.35em;
-  height: 1.35em;
-  border-radius: 999px;
-  font-size: 1.05em;
-  line-height: 1;
-  background: #16181d;
-  color: #fff;
-  flex-shrink: 0;
-}
+/* ---------------------------------------------------------
+   Reduced motion
+   --------------------------------------------------------- */
 
-.goArrow {
-  display: inline-grid;
-  place-items: center;
-  width: 1.35em;
-  height: 1.35em;
-  border-radius: 999px;
-  font-size: 1.05em;
-  line-height: 1;
-  background: #16181d;
-  color: #fff;
-  flex-shrink: 0;
-}
+@media (prefers-reduced-motion: reduce) {
 
-.go:hover {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: #fff;
-}
+  .go,
+  .goArrow {
+    transition: none;
+  }
 
-.go:hover .goArrow {
-  background: #fff;
-  color: var(--primary-deep, #055f6e);
-}
-
-.go:active {
-  transform: scale(0.98);
-}
-
-.go:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
+  .go[data-marquee='true'] .goTrack {
+    animation: none;
+  }
 }
 
 /* Dots — pastilla clara */

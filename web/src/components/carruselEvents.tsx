@@ -24,61 +24,98 @@ interface GoButtonProps {
  * - Velocidad constante (~45px/s), distancia = ancho de una copia.
  * - Respeta prefers-reduced-motion.
  */
-function GoButton({ href, label, ariaLabel, openInNewTab }: GoButtonProps) {
+function GoButton({
+  href,
+  label,
+  ariaLabel,
+  openInNewTab,
+}: GoButtonProps) {
   const viewportRef = useRef<HTMLSpanElement>(null);
   const firstTextRef = useRef<HTMLSpanElement>(null);
   const linkRef = useRef<HTMLAnchorElement>(null);
+
   const [marquee, setMarquee] = useState(false);
   const [duration, setDuration] = useState(6);
 
   useLayoutEffect(() => {
     if (typeof window === 'undefined') return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    );
+
+    if (reduceMotion.matches) {
       setMarquee(false);
       return;
     }
 
     const viewport = viewportRef.current;
     const first = firstTextRef.current;
+    const link = linkRef.current;
+
     if (!viewport || !first) return;
 
-    const PX_PER_SECOND = 45;
-    const MIN_S = 3;
-    const MAX_S = 14;
+    const PX_PER_SECOND = 42;
+    const MIN_DURATION = 4;
+    const MAX_DURATION = 14;
 
-    const check = () => {
-      // Medición real de desborde: scrollWidth = ancho total del texto,
-      // clientWidth = ancho visible del viewport del botón.
-      // Funciona tanto en estado ellipsis como en marquee, y reacciona
-      // a cambios de longitud del texto (Strapi) y de pantalla.
-      const viewportW = viewport.clientWidth;
-      const textW = Math.max(first.scrollWidth, first.offsetWidth);
-      const needs = viewportW > 0 && textW > viewportW + 1;
-      setMarquee(needs);
-      if (needs && textW > 0) {
-        const secs = Math.min(MAX_S, Math.max(MIN_S, textW / PX_PER_SECOND));
-        setDuration(secs);
+    const checkOverflow = () => {
+      const viewportWidth = viewport.clientWidth;
+      const textWidth = first.scrollWidth;
+
+      if (!viewportWidth || !textWidth) {
+        setMarquee(false);
+        return;
+      }
+
+      const overflowing = textWidth > viewportWidth + 1;
+
+      setMarquee(overflowing);
+
+      if (overflowing) {
+        const distance = textWidth + 40;
+
+        const nextDuration = Math.min(
+          MAX_DURATION,
+          Math.max(
+            MIN_DURATION,
+            distance / PX_PER_SECOND
+          )
+        );
+
+        setDuration(nextDuration);
       }
     };
 
-    check();
+    // Primera medición
+    checkOverflow();
 
-    let ro: ResizeObserver | null = null;
+    // Detecta cambios de tamaño del botón/texto
+    let resizeObserver: ResizeObserver | null = null;
+
     if (typeof ResizeObserver !== 'undefined') {
-      ro = new ResizeObserver(check);
-      ro.observe(viewport);
-      if (linkRef.current) ro.observe(linkRef.current);
-      ro.observe(document.documentElement);
+      resizeObserver = new ResizeObserver(checkOverflow);
+
+      resizeObserver.observe(viewport);
+
+      if (link) {
+        resizeObserver.observe(link);
+      }
     }
-    window.addEventListener('resize', check);
-    // Re-medir cuando cargan fuentes (cambia el ancho real del texto)
-    document.fonts?.ready.then(check).catch(() => {});
-    const t = window.setTimeout(check, 60);
+
+    // Fallback / cambios de viewport
+    window.addEventListener('resize', checkOverflow);
+
+    // Espera a que las fuentes terminen de cargar.
+    // Esto es importante porque una fuente distinta puede
+    // cambiar bastante el ancho real del texto.
+    document.fonts?.ready
+      .then(checkOverflow)
+      .catch(() => { });
 
     return () => {
-      ro?.disconnect();
-      window.removeEventListener('resize', check);
-      window.clearTimeout(t);
+      resizeObserver?.disconnect();
+      window.removeEventListener('resize', checkOverflow);
     };
   }, [label]);
 
@@ -87,29 +124,52 @@ function GoButton({ href, label, ariaLabel, openInNewTab }: GoButtonProps) {
       ref={linkRef}
       className={styles.go}
       href={href}
-      aria-label={ariaLabel}
+      aria-label={ariaLabel || label}
       title={label}
       target={openInNewTab ? '_blank' : undefined}
-      rel={openInNewTab ? 'noopener noreferrer' : undefined}
+      rel={
+        openInNewTab
+          ? 'noopener noreferrer'
+          : undefined
+      }
       data-marquee={marquee ? 'true' : 'false'}
-      style={{ ['--go-marquee-duration' as string]: `${duration}s` }}
+      style={{
+        ['--go-marquee-duration' as string]:
+          `${duration}s`,
+      }}
     >
-      <span ref={viewportRef} className={styles.goViewport}>
+      <span
+        ref={viewportRef}
+        className={styles.goViewport}
+      >
         <span className={styles.goTrack}>
-          <span ref={firstTextRef} className={styles.goText}>
+          <span
+            ref={firstTextRef}
+            className={styles.goText}
+          >
             {label}
           </span>
-          <span className={styles.goText} aria-hidden="true">
+
+          <span
+            className={styles.goText}
+            aria-hidden="true"
+          >
             {label}
           </span>
         </span>
       </span>
-      <span className={styles.goArrow} aria-hidden="true">
+
+      <span
+        className={styles.goArrow}
+        aria-hidden="true"
+      >
         ›
       </span>
     </a>
   );
 }
+
+
 
 export function CarruselEvents({ limit = 8, slides: initialSlides, config }: Props) {
   const [slides, setSlides] = useState<CarruselSlide[]>(initialSlides ?? []);
