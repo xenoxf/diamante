@@ -111,16 +111,22 @@ const nav: NavItem[] = [
 				</span>		</a>
 
 			<nav class={styles.nav} aria-label="Navegación principal">
-			{nav.map((item) =>
+			{nav.map((item, idx) =>
 				item.children ? (
 					<div class={styles.dropdown}>
-						<button type="button" class={styles.link} aria-haspopup="true" aria-expanded="false">
+						<button
+							type="button"
+							class={styles.link}
+							aria-haspopup="true"
+							aria-expanded="false"
+							aria-controls={`submenu-${idx}`}
+						>
 							{item.label}
 							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 								<path d="m6 9 6 6 6-6" />
 							</svg>
 						</button>
-						<div class={styles.menu} role="menu">
+						<div id={`submenu-${idx}`} class={styles.menu} role="menu" aria-label={item.label}>
 							{item.children.map((sub) => {
 								const isExternal = (sub as any).external || sub.href.startsWith('http');
 								return (
@@ -175,6 +181,12 @@ const nav: NavItem[] = [
 		header.dataset.scrolled = String(window.scrollY > 8);
 	};
 
+	const closeAllAccordions = (except: Element | null = null) => {
+		header?.querySelectorAll('nav [aria-haspopup][aria-expanded="true"]').forEach((btn) => {
+			if (btn !== except) btn.setAttribute('aria-expanded', 'false');
+		});
+	};
+
 	const setOpen = (open: boolean) => {
 		if (!header || !menuButton) return;
 		header.dataset.open = String(open);
@@ -184,9 +196,7 @@ const nav: NavItem[] = [
 			document.body.style.overflow = 'hidden';
 		} else {
 			document.body.style.overflow = '';
-			header.querySelectorAll('[aria-expanded="true"]').forEach((btn) => {
-				if (btn !== menuButton) btn.setAttribute('aria-expanded', 'false');
-			});
+			closeAllAccordions();
 		}
 	};
 
@@ -198,6 +208,8 @@ const nav: NavItem[] = [
 		anchor.addEventListener('click', () => setOpen(false));
 	});
 
+	// Acordeón simple: cada pestaña alterna solo su submenu.
+	// Sin cierres automáticos ni animaciones para no mover el resto.
 	header?.querySelectorAll('nav [aria-haspopup]').forEach((btn) => {
 		btn.addEventListener('click', () => {
 			const expanded = btn.getAttribute('aria-expanded') === 'true';
@@ -206,14 +218,16 @@ const nav: NavItem[] = [
 	});
 
 	document.addEventListener('keydown', (event) => {
-		if (event.key === 'Escape') setOpen(false);
+		if (event.key === 'Escape') {
+			const anyAccordion = header?.querySelector('nav [aria-haspopup][aria-expanded="true"]');
+			if (anyAccordion) closeAllAccordions();
+			else setOpen(false);
+		}
 	});
 
 	document.addEventListener('click', (e) => {
 		if (!header || !header.contains(e.target as Node)) {
-			header?.querySelectorAll('[aria-expanded="true"]').forEach((btn) => {
-				btn.setAttribute('aria-expanded', 'false');
-			});
+			closeAllAccordions();
 		}
 	});
 

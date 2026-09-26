@@ -188,9 +188,11 @@
 }
 
 .dropdown:hover .menu,
-.dropdown:focus-within .menu {
+.dropdown:focus-within .menu,
+.dropdown > button[aria-expanded='true'] + .menu {
   opacity: 1;
   visibility: visible;
+  transform: translate(-50%, 0);
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
@@ -306,6 +308,12 @@
     display: none;
     flex-direction: column;
     align-items: stretch;
+    /* CRÍTICO: la regla base de escritorio usa justify-content: center.
+       En columna con contenido más alto que el contenedor, eso empuja
+       los primeros links fuera de la caja (offsetTop negativo) y no es
+       recuperable con scroll: al expandirse una sección desaparecían
+       los links de arriba. Mobile siempre alineado al inicio. */
+    justify-content: flex-start;
     height: auto;
     max-height: calc(100svh - 76px);
     overflow-y: auto;
@@ -322,37 +330,57 @@
   }
 
   .link {
+    width: 100%;
     padding: 0.9rem 1.5rem;
     border-bottom: 1px solid var(--border);
     text-decoration: none;
     justify-content: space-between;
+    text-align: left;
   }
 
   .link svg {
-    transition: transform 0.2s ease;
+    flex-shrink: 0;
+    transition: none;
   }
 
-  [aria-expanded="true"] > svg {
+  .dropdown > [aria-expanded='true'] > svg {
     transform: rotate(180deg);
   }
 
   .dropdown {
     flex-direction: column;
+    flex-shrink: 0;
   }
 
   .menu {
     position: static;
     transform: none;
-    opacity: 1;
-    visibility: visible;
     box-shadow: none;
     border: 0;
-    overflow-y: auto;
     border-left: 3px solid var(--primary);
     margin: 0 1.5rem;
     padding: 0;
     background: var(--background);
-    max-height: 50svh;
+    /* Acordeón simple sin animación: evita desplazamientos y
+       que los links de arriba queden tapados al expandir. */
+    display: none;
+    max-height: none;
+    opacity: 1;
+    visibility: visible;
+    overflow: visible;
+    transition: none;
+  }
+
+  /* Solo se muestra el grupo con aria-expanded="true".
+     El botón padre siempre queda visible arriba de su lista. */
+  .dropdown > button[aria-expanded='true'] + .menu {
+    display: block;
+    transform: none;
+    max-height: none;
+    opacity: 1;
+    visibility: visible;
+    overflow: visible;
+    transition: none;
   }
 
   .subLink {

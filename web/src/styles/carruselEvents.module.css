@@ -134,6 +134,7 @@
   justify-content: center;
   gap: 0.5rem;
   min-height: 44px;
+  min-width: 0;
   max-width: 320px;
   padding: 0.65rem 1.25rem;
   border-radius: 999px;
@@ -141,9 +142,6 @@
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
   flex-shrink: 0;
   color: #16181d;
   background: #fff;
@@ -156,7 +154,101 @@
     color 0.2s ease;
 }
 
+/* Viewport del texto: recorta y detecta overflow */
+.goViewport {
+  display: block;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-align: center;
+}
+
+.goTrack {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  will-change: transform;
+}
+
+.goText {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Segunda copia oculta salvo marquee */
+.goTrack .goText[aria-hidden='true'] {
+  display: none;
+}
+
+/* Estado marquee: scroll infinito suave dentro del botón */
+.go[data-marquee='true'] .goViewport {
+  text-align: left;
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 14px,
+    #000 calc(100% - 14px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 14px,
+    #000 calc(100% - 14px),
+    transparent 100%
+  );
+}
+
+.go[data-marquee='true'] .goTrack {
+  width: max-content;
+  max-width: none;
+  animation: goMarquee var(--go-marquee-duration, 6s) linear infinite;
+}
+
+.go[data-marquee='true'] .goText {
+  max-width: none;
+  overflow: visible;
+  text-overflow: clip;
+  padding-right: var(--go-marquee-gap, 2rem);
+}
+
+.go[data-marquee='true'] .goTrack .goText[aria-hidden='true'] {
+  display: block;
+}
+
+@keyframes goMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Pausa al interactuar para permitir leer el texto completo */
+.go[data-marquee='true']:hover .goTrack,
+.go[data-marquee='true']:focus-visible .goTrack,
+.go[data-marquee='true']:focus-within .goTrack {
+  animation-play-state: paused;
+}
+
 .go span {
+  display: inline-grid;
+  place-items: center;
+  width: 1.35em;
+  height: 1.35em;
+  border-radius: 999px;
+  font-size: 1.05em;
+  line-height: 1;
+  background: #16181d;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.goArrow {
   display: inline-grid;
   place-items: center;
   width: 1.35em;
@@ -175,7 +267,7 @@
   color: #fff;
 }
 
-.go:hover span {
+.go:hover .goArrow {
   background: #fff;
   color: var(--primary-deep, #055f6e);
 }
@@ -357,6 +449,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .go[data-marquee='true'] .goTrack {
+    animation: none;
+  }
 
   .slide,
   .isActive,

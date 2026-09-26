@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { carruselService } from '../services/carrusel.service';
 import type { CarruselSlide, CarruselConfig } from '../types/carrusel.types';
 import styles from '../styles/carruselEvents.module.css';
@@ -7,6 +7,108 @@ interface Props {
   limit?: number;
   slides?: CarruselSlide[];
   config?: CarruselConfig;
+}
+
+interface GoButtonProps {
+  href: string;
+  label: string;
+  ariaLabel: string;
+  openInNewTab?: boolean;
+}
+
+/**
+ * Botón IR con marquee automático infinito cuando el texto de Strapi
+ * desborda el ancho disponible (según longitud del texto + viewport).
+ * - Mide overflow real con scrollWidth vs clientWidth + ResizeObserver.
+ * - Solo anima si hay desborde; si no, ellipsis clásico.
+ * - Velocidad constante (~45px/s), distancia = ancho de una copia.
+ * - Respeta prefers-reduced-motion.
+ */
+function GoButton({ href, label, ariaLabel, openInNewTab }: GoButtonProps) {
+  const viewportRef = useRef<HTMLSpanElement>(null);
+  const firstTextRef = useRef<HTMLSpanElement>(null);
+  const linkRef = useRef<HTMLAnchorElement>(null);
+  const [marquee, setMarquee] = useState(false);
+  const [duration, setDuration] = useState(6);
+
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setMarquee(false);
+      return;
+    }
+
+    const viewport = viewportRef.current;
+    const first = firstTextRef.current;
+    if (!viewport || !first) return;
+
+    const PX_PER_SECOND = 45;
+    const MIN_S = 3;
+    const MAX_S = 14;
+
+    const check = () => {
+      // Medición real de desborde: scrollWidth = ancho total del texto,
+      // clientWidth = ancho visible del viewport del botón.
+      // Funciona tanto en estado ellipsis como en marquee, y reacciona
+      // a cambios de longitud del texto (Strapi) y de pantalla.
+      const viewportW = viewport.clientWidth;
+      const textW = Math.max(first.scrollWidth, first.offsetWidth);
+      const needs = viewportW > 0 && textW > viewportW + 1;
+      setMarquee(needs);
+      if (needs && textW > 0) {
+        const secs = Math.min(MAX_S, Math.max(MIN_S, textW / PX_PER_SECOND));
+        setDuration(secs);
+      }
+    };
+
+    check();
+
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(check);
+      ro.observe(viewport);
+      if (linkRef.current) ro.observe(linkRef.current);
+      ro.observe(document.documentElement);
+    }
+    window.addEventListener('resize', check);
+    // Re-medir cuando cargan fuentes (cambia el ancho real del texto)
+    document.fonts?.ready.then(check).catch(() => {});
+    const t = window.setTimeout(check, 60);
+
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener('resize', check);
+      window.clearTimeout(t);
+    };
+  }, [label]);
+
+  return (
+    <a
+      ref={linkRef}
+      className={styles.go}
+      href={href}
+      aria-label={ariaLabel}
+      title={label}
+      target={openInNewTab ? '_blank' : undefined}
+      rel={openInNewTab ? 'noopener noreferrer' : undefined}
+      data-marquee={marquee ? 'true' : 'false'}
+      style={{ ['--go-marquee-duration' as string]: `${duration}s` }}
+    >
+      <span ref={viewportRef} className={styles.goViewport}>
+        <span className={styles.goTrack}>
+          <span ref={firstTextRef} className={styles.goText}>
+            {label}
+          </span>
+          <span className={styles.goText} aria-hidden="true">
+            {label}
+          </span>
+        </span>
+      </span>
+      <span className={styles.goArrow} aria-hidden="true">
+        ›
+      </span>
+    </a>
+  );
 }
 
 export function CarruselEvents({ limit = 8, slides: initialSlides, config }: Props) {
@@ -151,16 +253,13 @@ export function CarruselEvents({ limit = 8, slides: initialSlides, config }: Pro
 
       <div className={styles.containerActions}>
         {current && (
-          <a
-            className={styles.go}
+          <GoButton
+            key={current.id}
             href={current.href}
-            aria-label={current.tituloOverlay ? `Ir a ${current.tituloOverlay}` : current.botonTexto || 'Ir'}
-            target={current.abrirEnNuevaPestana ? '_blank' : undefined}
-            rel={current.abrirEnNuevaPestana ? 'noopener noreferrer' : undefined}
-          >
-            {current.botonTexto || 'IR'}
-            <span aria-hidden="true">›</span>
-          </a>
+            label={current.botonTexto || 'IR'}
+            ariaLabel={current.tituloOverlay ? `Ir a ${current.tituloOverlay}` : current.botonTexto || 'Ir'}
+            openInNewTab={current.abrirEnNuevaPestana}
+          />
         )}
 
         {list.length > 1 && (
