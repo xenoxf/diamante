@@ -19,7 +19,7 @@ function Track({ images, extraClass }: { images: GalleryImage[]; extraClass: str
             className={styles.card}
             aria-hidden={dup || undefined}
             tabIndex={dup ? -1 : undefined}
-            aria-label={dup ? undefined : 'Ver galería'}
+            aria-label={dup ? undefined : img.titulo ? `Ver galería: ${img.titulo}` : 'Ver galería'}
           >
             <img
               className={styles.shot}
@@ -80,10 +80,12 @@ export function Galeria({ images: initialImages, count = COUNT }: Props) {
   return (
     <section ref={sectionRef} id="galeria" className={styles.section} aria-labelledby="galeria-titulo">
       <div className={styles.inner}>
-        <h2 id="galeria-titulo" className={styles.title}>
-          Nuestra Galería
+        <div className={styles.titleBlock}>
+          <h2 id="galeria-titulo" className={styles.title}>
+            Nuestra Galería
+          </h2>
           <div className={styles.rule} aria-hidden="true" />
-        </h2>
+        </div>
         <a className={styles.link} href="/galeria">Ver galeria completa</a>
         
       </div>

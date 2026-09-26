@@ -67,9 +67,10 @@ export default function Masonry({ fotos }: MasonryProps) {
             <a
               key={foto.id ?? foto.src}
               className={styles.mItem}
+              href={foto.href || foto.src}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Abrir fotografía en tamaño completo"
+              aria-label={foto.alt ? `Abrir fotografía en tamaño completo: ${foto.alt}` : 'Abrir fotografía en tamaño completo'}
             >
               <img
                 src={foto.src}

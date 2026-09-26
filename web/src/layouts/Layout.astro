@@ -18,16 +18,22 @@ interface Props {
   image?: string | null;
   noIndex?: boolean;
   keywords?: string | null;
+  ogType?: 'website' | 'article';
+  publishedTime?: string | null;
+  jsonLd?: Record<string, any> | null;
 }
 
 const {
-  title = 'IE El Diamante — Institución Educativa El Diamante',
+  title = 'Institución Educativa El Diamante | Cali, Colombia',
   description = 'Institución Educativa El Diamante, Santiago de Cali. Educación media técnica, convivencia y formación integral.',
   seo = null,
   canonical = null,
   image = null,
   noIndex = false,
   keywords = null,
+  ogType = 'website',
+  publishedTime = null,
+  jsonLd = null,
 } = Astro.props as Props;
 
 // Permitir que seo.metaTitle/metaDescription tengan prioridad sobre props
@@ -50,9 +56,24 @@ const effectiveDescription = (seo?.metaDescription || description) as string;
 			image={image}
 			noIndex={noIndex}
 			keywords={keywords}
+			ogType={ogType}
+			publishedTime={publishedTime}
+			jsonLd={jsonLd}
 		/>
+		<!--
+			Cocoon A11y: capa complementaria de preferencias de accesibilidad
+			(voz, tamaño, contraste, dyslexia, daltonismo, pausa de animaciones).
+			NO sustituye una base HTML semántica y accesible: es una ayuda adicional
+			configurable por cada visitante. Se carga UNA sola vez desde este layout global.
+		-->
+		<script
+			is:inline
+			src="https://cdn.jsdelivr.net/gh/ammarahamed/cocoon-a11y@latest/a11y.min.js"
+			defer></script>
 	</head>
 	<body>
+		<!-- Skip link: único punto de entrada al contenido principal por teclado -->
+		<a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
 		<slot />
 	</body>
 </html>
@@ -67,5 +88,25 @@ const effectiveDescription = (seo?.metaDescription || description) as string;
     display: flex;
     flex-direction: column;
     justify-content: center;
+	}
+
+	/* Visible solo al recibir foco (teclado) */
+	.skip-link {
+		position: absolute;
+		top: 0;
+		left: -9999px;
+		z-index: 200;
+		background: var(--surface);
+		color: var(--primary-deep);
+		font-weight: 700;
+		padding: 0.75rem 1.25rem;
+		border: 2px solid var(--primary);
+		border-radius: 0 0 8px 0;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+
+	.skip-link:focus {
+		left: 0;
 	}
 </style>

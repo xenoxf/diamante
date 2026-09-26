@@ -7,7 +7,7 @@ import Footer from "../components/Footer.astro";
 import PageHero from "../components/PageHero.astro";
 import { identidadService } from "../services/identidad.service";
 import { getStrapiMediaUrl } from "../lib/strapi";
-import { renderRichText } from "../lib/markdown";
+import { renderRichText, stripRichText } from "../lib/markdown";
 import "../styles/global.css";
 
 let valoresIntroduccion: string | null = null;
@@ -59,9 +59,12 @@ const lista = valores.length > 0 ? valores : fallbackValores;
 const imgSrc = valoresImagenUrl ?? '/identidad/valores.png';
 ---
 
-<Layout>
+<Layout
+  title={`Valores institucionales — Institución Educativa El Diamante`}
+  description={stripRichText(intro).slice(0, 160)}
+>
   <Header />
-  <main class="page">
+  <main class="page" id="contenido-principal">
     <PageHero
       kicker="Identidad institucional"
       title="Valores institucionales"
@@ -70,18 +73,18 @@ const imgSrc = valoresImagenUrl ?? '/identidad/valores.png';
       <img
         class="img"
         src={imgSrc}
-        alt="imagen referente a los valores institucionales"
+        alt=""
         loading="lazy"
         decoding="async"
       />
       <div class="container-valores">
-        <h4>VALORES INSTITUCIONALES</h4>
+        <h2>VALORES INSTITUCIONALES</h2>
 
         <p set:html={renderRichText(intro)}></p>
 
         {lista.map((v) => (
           <>
-            <h4>{v.titulo}</h4>
+            <h3>{v.titulo}</h3>
             <p set:html={renderRichText(v.descripcion)}></p>
           </>
         ))}
@@ -126,7 +129,8 @@ const imgSrc = valoresImagenUrl ?? '/identidad/valores.png';
   max-width: 850px;
 }
 
-.container-valores h4 {
+.container-valores h2,
+.container-valores h3 {
   margin: 0 0 0.65rem;
 
   color: var(--foreground);
@@ -144,7 +148,7 @@ const imgSrc = valoresImagenUrl ?? '/identidad/valores.png';
 }
 
 /* Título principal */
-.container-valores h4:first-child {
+.container-valores h2:first-child {
   margin-bottom: 0.8rem;
 
   font-size: 1rem;
@@ -153,7 +157,7 @@ const imgSrc = valoresImagenUrl ?? '/identidad/valores.png';
   letter-spacing: 0.02em;
 }
 
-.container-valores h4:first-child + p {
+.container-valores h2:first-child + p {
   margin-bottom: 2rem;
 }
 
@@ -193,7 +197,8 @@ const imgSrc = valoresImagenUrl ?? '/identidad/valores.png';
     max-width: 100%;
   }
 
-  .container-valores h4 {
+  .container-valores h2,
+  .container-valores h3 {
     font-size: 0.95rem;
   }
 

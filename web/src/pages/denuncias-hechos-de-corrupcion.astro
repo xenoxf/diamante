@@ -21,7 +21,7 @@ const description = 'Canal confidencial para denunciar presuntos hechos de corru
 
 <Layout title={pageTitle} description={description} seo={seo}>
   <Header />
-  <main class="page">
+  <main class="page" id="contenido-principal">
     <PageHero kicker="Servicios a la ciudadanía" title="Denuncias por hechos de corrupción" />
     <div class="container">
       <p class="lead">
@@ -32,7 +32,7 @@ const description = 'Canal confidencial para denunciar presuntos hechos de corru
       </p>
 
       <div class="denuncia-note">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
         <p>
           Las denuncias temerarias o falsas pueden acarrear las sanciones
           previstas en la ley. Este canal no reemplaza las denuncias penales,
@@ -44,7 +44,7 @@ const description = 'Canal confidencial para denunciar presuntos hechos de corru
         <DenunciaForm client:load />
         <noscript>
           <div class="denuncia-note" role="alert" style="margin-top: 1rem;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
             <p>
               Este formulario requiere JavaScript. Sin él, escriba a
               <a href={`mailto:${config.emailInstitucional}`}>{config.emailInstitucional}</a> con asunto "Denuncia por hechos de corrupción".
@@ -57,21 +57,21 @@ const description = 'Canal confidencial para denunciar presuntos hechos de corru
         <h2 style="font-size: 1.1rem; margin-bottom: 1rem;">Canales alternos</h2>
         <div class="denuncia-channels">
           <a href={`mailto:${config.emailInstitucional}`} class="denuncia-channel">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
             <div>
               <span class="denuncia-channel__label">Correo institucional</span>
               <span class="denuncia-channel__value">{config.emailInstitucional}</span>
             </div>
           </a>
           <a href={TRANSPARENCIA_URL} target="_blank" rel="noopener noreferrer" class="denuncia-channel">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
             <div>
               <span class="denuncia-channel__label">Transparencia</span>
               <span class="denuncia-channel__value">transparencia.cali.gov.co</span>
             </div>
           </a>
           <a href="https://www.fiscalia.gov.co/" target="_blank" rel="noopener noreferrer" class="denuncia-channel">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             <div>
               <span class="denuncia-channel__label">Fiscalía General</span>
               <span class="denuncia-channel__value">Para denuncias penales</span>

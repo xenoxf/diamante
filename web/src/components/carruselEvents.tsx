@@ -124,7 +124,6 @@ function GoButton({
       ref={linkRef}
       className={styles.go}
       href={href}
-      aria-label={ariaLabel || label}
       title={label}
       target={openInNewTab ? '_blank' : undefined}
       rel={
@@ -147,6 +146,11 @@ function GoButton({
             ref={firstTextRef}
             className={styles.goText}
           >
+            {/* Contexto solo para tecnología de asistencia: el nombre
+                accesible sigue conteniendo el texto visible (WCAG 2.5.3). */}
+            {ariaLabel && ariaLabel !== label && (
+              <span className={styles.srOnly}>{ariaLabel}: </span>
+            )}
             {label}
           </span>
 
@@ -300,7 +304,7 @@ export function CarruselEvents({ limit = 8, slides: initialSlides, config }: Pro
               />
               {hasOverlay && (
                 <div className={styles.overlay}>
-                  {slide.tituloOverlay && <h3 className={styles.overlayTitle}>{slide.tituloOverlay}</h3>}
+                  {slide.tituloOverlay && <h2 className={styles.overlayTitle}>{slide.tituloOverlay}</h2>}
                   {slide.descripcionOverlay && <p className={styles.overlayDesc}>{slide.descripcionOverlay}</p>}
                 </div>
               )}
@@ -323,14 +327,13 @@ export function CarruselEvents({ limit = 8, slides: initialSlides, config }: Pro
         )}
 
         {list.length > 1 && (
-          <div className={styles.dots} role="tablist" aria-label="Selector de slides">
+          <div className={styles.dots}>
             {list.map((s, i) => (
               <button
                 key={`dot-${s.id}`}
                 className={`${styles.dot} ${i === safeIndex ? styles.dotActive : ''}`}
                 aria-label={`Ir a slide ${i + 1}${s.tituloOverlay ? `: ${s.tituloOverlay}` : ''}`}
-                aria-selected={i === safeIndex}
-                role="tab"
+                aria-current={i === safeIndex ? 'true' : undefined}
                 onClick={() => setIndex(i)}
               />
             ))}

@@ -11,7 +11,7 @@ import { especialidadesService } from "../../services/especialidades.service";
 import { getStrapiMediaUrls } from "../../lib/strapi";
 import { setISRHeaders } from "../../lib/isr";
 import { readSource } from "../../lib/data-source";
-import { renderRichText } from "../../lib/markdown";
+import { renderRichText, stripRichText } from "../../lib/markdown";
 import Masonry from "../../components/mansory";
 import "../../styles/global.css";
 import "../../styles/page.css";
@@ -45,15 +45,19 @@ const galleryImages: GalleryImage[] = displayImgs.map((src, idx) => ({
     src,
     width: 800,
     height: 600,
-    alt: `${especialidad?.nombre ?? "Especialidad"} imagen ${idx + 1}`,
+    /* Ilustrativa: el <h1> de la página ya nombra la especialidad. */
+    alt: '',
     href: src,
 }));
 const detailSource = readSource(especialidad);
 ---
 
-<Layout>
+<Layout
+    title={especialidad ? `${especialidad.nombre} — Institución Educativa El Diamante` : `Especialidad — Institución Educativa El Diamante`}
+    description={stripRichText(especialidad?.contenido ?? '').slice(0, 160) || undefined}
+>
     <Header />
-    <main class="page">
+    <main class="page" id="contenido-principal">
         {especialidad ? (
             <>
                 <PageHero
@@ -95,10 +99,12 @@ const detailSource = readSource(especialidad);
                                     style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));"
                                 >
                                     {displayImgs.map((src, idx) => (
+                                        /* El encabezado de la tarjeta ya nombra la
+                                           especialidad: la imagen no repite. */
                                         <img
                                             class="figure-img"
                                             src={src}
-                                            alt={`${especialidad.nombre} imagen ${idx + 1}`}
+                                            alt=""
                                             loading="lazy"
                                             decoding="async"
                                             style="height:200px;object-fit:cover;"

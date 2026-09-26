@@ -7,6 +7,7 @@ import Footer from '../components/Footer.astro';
 import PageHero from '../components/PageHero.astro';
 import FileViewer from '../components/FileViewer.astro';
 import { institucionalService } from '../services/institucional.service';
+import { stripRichText } from '../lib/markdown';
 import '../styles/global.css';
 import '../styles/page.css';
 
@@ -23,9 +24,15 @@ if (!doc) {
 }
 ---
 
-<Layout>
+<Layout
+  title={`Proyecto ambiental — Institución Educativa El Diamante`}
+  description={
+    stripRichText(doc?.descripcion ?? '').slice(0, 160) ||
+    'Proyecto ambiental escolar de la Institución Educativa El Diamante.'
+  }
+>
   <Header />
-  <main class="page">
+  <main class="page" id="contenido-principal">
     <PageHero kicker="Medio ambiente" title="Proyecto ambiental" />
     <div class="container">
       {doc ? (

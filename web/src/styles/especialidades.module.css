@@ -133,6 +133,15 @@
   color: inherit;
 }
 
+/* Área activable de toda la tarjeta sin anidar controles dentro del enlace:
+   el <a> real vive solo en el título y se extiende con un pseudoelemento
+   (la card ya es position: relative). */
+.cardLink::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
 @media (max-width: 760px) {
   .section {
     padding: 48px 16px;

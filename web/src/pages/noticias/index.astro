@@ -53,9 +53,12 @@ if (pagination && page > pagination.pageCount) {
 const source = readSource(noticias);
 ---
 
-<Layout>
+<Layout
+  title="Noticias — Institución Educativa El Diamante"
+  description="Información oficial sobre actividades académicas, culturales y administrativas de la Institución Educativa El Diamante."
+>
   <Header />
-  <main class="page">
+  <main class="page" id="contenido-principal">
     <PageHero kicker="Actualidad" title="Noticias" />
     <div class="container container--wide">
       <p class="lead">
@@ -86,7 +89,9 @@ const source = readSource(noticias);
                     style="width:100%;height:180px;background:var(--wash);border:1px solid var(--line);border-radius:6px;margin-bottom:1rem;"
                   />
                 )}
-                <p class="meta">{noticia.fecha} · {noticia.categoria}</p>
+                <p class="meta">
+                  <time datetime={noticia.fechaRaw ?? undefined}>{noticia.fecha}</time> · {noticia.categoria}
+                </p>
                 <h2>{noticia.titulo}</h2>
                 <p class="summary">{noticia.resumen}</p>
                 <a class="link" href={`/noticias/${noticia.slug}`}>Leer noticia</a>

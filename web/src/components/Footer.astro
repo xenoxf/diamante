@@ -26,16 +26,18 @@ const avisoLegal = config.avisoLegalFooter ?? '© 2026 Institución Educativa El
     <div class={styles.grid}>
       <div class={styles.column}>
         <h2 class={styles.heading}>Instituci&oacute;n</h2>
-        <p class={styles.name}>{config.nombreInstitucion}</p>
-        <p class={styles.text}>{config.direccionPrincipal ?? 'Santiago de Cali, Colombia'}</p>
-        <a class={styles.link} href={`mailto:${emailInstitucional}`}>{emailInstitucional}</a>
-        {config.telefonoPrincipal && (
-          <a class={styles.link} href={`tel:${config.telefonoPrincipal.replace(/\s+/g, '')}`}>{config.telefonoPrincipal}</a>
-        )}
-        {config.horarioAtencion && (
-          <p class={styles.text} set:html={renderRichText(config.horarioAtencion)} />
-        )}
-        <p class={styles.text}>Rectoría Institucional</p>
+        <address class={styles.address}>
+          <p class={styles.name}>{config.nombreInstitucion}</p>
+          <p class={styles.text}>{config.direccionPrincipal ?? 'Santiago de Cali, Colombia'}</p>
+          <a class={styles.link} href={`mailto:${emailInstitucional}`}>{emailInstitucional}</a>
+          {config.telefonoPrincipal && (
+            <a class={styles.link} href={`tel:${config.telefonoPrincipal.replace(/\s+/g, '')}`}>{config.telefonoPrincipal}</a>
+          )}
+          {config.horarioAtencion && (
+            <p class={styles.text} set:html={renderRichText(config.horarioAtencion)} />
+          )}
+          <p class={styles.text}>Rectoría Institucional</p>
+        </address>
       </div>
 
       <div class={styles.column}>

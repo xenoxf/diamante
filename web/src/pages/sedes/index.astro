@@ -20,9 +20,12 @@ try {
 }
 ---
 
-<Layout>
+<Layout
+  title="Sedes — Institución Educativa El Diamante"
+  description="La Institución Educativa El Diamante presta el servicio educativo en sus sedes ubicadas en Santiago de Cali. Consulte los datos de contacto de cada sede."
+>
   <Header />
-  <main class="page">
+  <main class="page" id="contenido-principal">
     <PageHero kicker="Nuestra institución" title="Sedes" />
     <div class="container container--wide">
       <p class="lead">
@@ -40,7 +43,7 @@ try {
               {bannerUrl && bannerUrl !== displayImg ? (
                 <img
                   src={bannerUrl}
-                  alt={`Banner de ${sede.nombre}`}
+                  alt=""
                   loading="lazy"
                   decoding="async"
                   style="width:100%;height:120px;object-fit:cover;border-radius:6px;margin-bottom:1rem;display:block;"

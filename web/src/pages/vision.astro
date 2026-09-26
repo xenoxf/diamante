@@ -6,7 +6,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PageHero from '../components/PageHero.astro';
 import { identidadService } from '../services/identidad.service';
-import { renderRichText } from '../lib/markdown';
+import { renderRichText, stripRichText } from '../lib/markdown';
 import '../styles/global.css';
 import '../styles/page.css';
 
@@ -22,9 +22,12 @@ const fallbackVision = `<p>La <strong>Institución Educativa El Diamante</strong
 const html = renderRichText(visionHtml ?? fallbackVision);
 ---
 
-<Layout>
+<Layout
+  title={`Visión — Institución Educativa El Diamante`}
+  description={stripRichText(visionHtml ?? fallbackVision).slice(0, 160)}
+>
   <Header />
-  <main class="page">
+  <main class="page" id="contenido-principal">
     <PageHero kicker="Identidad institucional" title="Visión" />
     <div class="container">
       <div set:html={html}></div>

@@ -146,7 +146,6 @@ export default function DenunciaForm() {
             type="checkbox"
             checked={anonima}
             onChange={(e) => setAnonima(e.target.checked)}
-            aria-label="Presentar denuncia de forma anónima"
           />
           Presentar de forma anónima
         </label>
@@ -165,14 +164,14 @@ export default function DenunciaForm() {
                 name="nombre"
                 type="text"
                 autoComplete="name"
-                aria-label="Nombre del denunciante"
                 aria-invalid={!!errors.nombre}
+                aria-describedby={errors.nombre ? 'err-denuncia-nombre' : undefined}
                 className={errors.nombre ? styles.fieldInputError : ''}
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
                 placeholder="Opcional"
               />
-              {errors.nombre && <span role="alert" className={styles.fieldError}>{errors.nombre}</span>}
+              {errors.nombre && <span id="err-denuncia-nombre" role="alert" className={styles.fieldError}>{errors.nombre}</span>}
             </div>
 
             <div className={styles.field}>
@@ -182,14 +181,14 @@ export default function DenunciaForm() {
                 name="email"
                 type="email"
                 autoComplete="email"
-                aria-label="Correo electrónico del denunciante"
                 aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? 'err-denuncia-email' : undefined}
                 className={errors.email ? styles.fieldInputError : ''}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Opcional para seguimiento"
               />
-              {errors.email && <span role="alert" className={styles.fieldError}>{errors.email}</span>}
+              {errors.email && <span id="err-denuncia-email" role="alert" className={styles.fieldError}>{errors.email}</span>}
             </div>
           </div>
 
@@ -222,16 +221,15 @@ export default function DenunciaForm() {
           name="descripcion"
           rows={6}
           required
-          aria-label="Descripción detallada de los hechos denunciados"
-          aria-required="true"
           aria-invalid={!!errors.descripcion}
+          aria-describedby={[errors.descripcion ? 'err-denuncia-descripcion' : null, 'ayuda-denuncia-descripcion'].filter(Boolean).join(' ')}
           className={errors.descripcion ? styles.fieldInputError : ''}
           value={descripcion}
           onChange={(e) => setDescripcion(e.target.value)}
           placeholder="Describa con el mayor detalle posible: qué ocurrió, cuándo, dónde, quiénes estarían involucrados, y cualquier prueba o indicio relevante..."
         />
-        {errors.descripcion && <span role="alert" className={styles.fieldError}>{errors.descripcion}</span>}
-        <p className={styles.fieldHelp}>
+        {errors.descripcion && <span id="err-denuncia-descripcion" role="alert" className={styles.fieldError}>{errors.descripcion}</span>}
+        <p id="ayuda-denuncia-descripcion" className={styles.fieldHelp}>
           Evite incluir datos sensibles innecesarios. No presente denuncias temerarias o falsas; pueden acarrear sanciones legales.
         </p>
       </div>
@@ -244,11 +242,11 @@ export default function DenunciaForm() {
           type="file"
           multiple
           accept=".pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx,.mp4,.mp3"
-          aria-label="Archivos adjuntos de la denuncia"
+          aria-describedby="ayuda-denuncia-adjuntos"
           className={styles.fileInput}
           onChange={(e) => setAdjuntos(e.target.files)}
         />
-        <p className={styles.fieldHelp}>
+        <p id="ayuda-denuncia-adjuntos" className={styles.fieldHelp}>
           Puede adjuntar documentos, imágenes o grabaciones. Máximo 5MB por archivo. Si no se cargan, la denuncia igualmente se radica y puede enviar evidencias al correo institucional.
         </p>
       </div>
@@ -259,10 +257,10 @@ export default function DenunciaForm() {
             id="denuncia-consentimiento"
             type="checkbox"
             required
+            aria-invalid={!!errors.consentimiento}
+            aria-describedby={[errors.consentimiento ? 'err-denuncia-consentimiento' : null, 'ayuda-denuncia-consentimiento'].filter(Boolean).join(' ')}
             checked={consentimiento}
             onChange={(e) => setConsentimiento(e.target.checked)}
-            aria-label="Autorizo tratamiento de datos para denuncia"
-            aria-required="true"
           />
           <span>
             Autorizo el tratamiento de mis datos (si fueron proporcionados) y declaro que la información es veraz, conforme a la{' '}
@@ -272,8 +270,8 @@ export default function DenunciaForm() {
             y Ley 1581 de 2012. Entiendo que las denuncias temerarias pueden tener consecuencias legales. *
           </span>
         </label>
-        {errors.consentimiento && <span role="alert" className={styles.fieldError}>{errors.consentimiento}</span>}
-        <p className={styles.fieldHelp}>
+        {errors.consentimiento && <span id="err-denuncia-consentimiento" role="alert" className={styles.fieldError}>{errors.consentimiento}</span>}
+        <p id="ayuda-denuncia-consentimiento" className={styles.fieldHelp}>
           Aviso de privacidad: la denuncia se trata con confidencialidad y reserva. Solo personal autorizado accederá a la información. Este canal no reemplaza denuncia penal ante Fiscalía General de la Nación.
         </p>
       </div>

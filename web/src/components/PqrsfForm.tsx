@@ -151,8 +151,6 @@ export default function PqrsfForm() {
           id="pqrsf-tipo"
           name="tipo"
           required
-          aria-label="Tipo de solicitud PQRSF"
-          aria-required="true"
           value={tipo}
           onChange={(e) => setTipo(e.target.value as TipoPqrsf)}
         >
@@ -176,15 +174,14 @@ export default function PqrsfForm() {
             type="text"
             required
             autoComplete="name"
-            aria-label="Nombre completo"
-            aria-required="true"
             aria-invalid={!!errors.nombre}
+            aria-describedby={errors.nombre ? 'err-pqrsf-nombre' : undefined}
             className={errors.nombre ? styles.fieldInputError : ''}
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
             placeholder="Ej: Carlos Gómez"
           />
-          {errors.nombre && <span role="alert" className={styles.fieldError}>{errors.nombre}</span>}
+          {errors.nombre && <span id="err-pqrsf-nombre" role="alert" className={styles.fieldError}>{errors.nombre}</span>}
         </div>
 
         <div className={styles.field}>
@@ -198,15 +195,14 @@ export default function PqrsfForm() {
             type="email"
             required
             autoComplete="email"
-            aria-label="Correo electrónico"
-            aria-required="true"
             aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? 'err-pqrsf-email' : undefined}
             className={errors.email ? styles.fieldInputError : ''}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="ejemplo@correo.com"
           />
-          {errors.email && <span role="alert" className={styles.fieldError}>{errors.email}</span>}
+          {errors.email && <span id="err-pqrsf-email" role="alert" className={styles.fieldError}>{errors.email}</span>}
         </div>
       </div>
 
@@ -218,14 +214,14 @@ export default function PqrsfForm() {
             name="telefono"
             type="tel"
             autoComplete="tel"
-            aria-label="Teléfono"
             aria-invalid={!!errors.telefono}
+            aria-describedby={errors.telefono ? 'err-pqrsf-telefono' : undefined}
             className={errors.telefono ? styles.fieldInputError : ''}
             value={telefono}
             onChange={(e) => setTelefono(e.target.value)}
             placeholder="Ej: 302 123 4567"
           />
-          {errors.telefono && <span role="alert" className={styles.fieldError}>{errors.telefono}</span>}
+          {errors.telefono && <span id="err-pqrsf-telefono" role="alert" className={styles.fieldError}>{errors.telefono}</span>}
         </div>
 
         <div className={styles.field}>
@@ -239,15 +235,14 @@ export default function PqrsfForm() {
             type="text"
             required
             autoComplete="off"
-            aria-label="Asunto"
-            aria-required="true"
             aria-invalid={!!errors.asunto}
+            aria-describedby={errors.asunto ? 'err-pqrsf-asunto' : undefined}
             className={errors.asunto ? styles.fieldInputError : ''}
             value={asunto}
             onChange={(e) => setAsunto(e.target.value)}
             placeholder="Ej: Solicitud de certificado"
           />
-          {errors.asunto && <span role="alert" className={styles.fieldError}>{errors.asunto}</span>}
+          {errors.asunto && <span id="err-pqrsf-asunto" role="alert" className={styles.fieldError}>{errors.asunto}</span>}
         </div>
       </div>
 
@@ -261,15 +256,14 @@ export default function PqrsfForm() {
           name="descripcion"
           rows={5}
           required
-          aria-label="Descripción detallada de la solicitud"
-          aria-required="true"
           aria-invalid={!!errors.descripcion}
+          aria-describedby={errors.descripcion ? 'err-pqrsf-descripcion' : undefined}
           className={errors.descripcion ? styles.fieldInputError : ''}
           value={descripcion}
           onChange={(e) => setDescripcion(e.target.value)}
           placeholder="Describa con detalle su petición, queja, reclamo, sugerencia o felicitación..."
         />
-        {errors.descripcion && <span role="alert" className={styles.fieldError}>{errors.descripcion}</span>}
+        {errors.descripcion && <span id="err-pqrsf-descripcion" role="alert" className={styles.fieldError}>{errors.descripcion}</span>}
       </div>
 
       <div className={styles.field}>
@@ -279,11 +273,11 @@ export default function PqrsfForm() {
           name="adjunto"
           type="file"
           accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
-          aria-label="Archivo adjunto"
+          aria-describedby="ayuda-pqrsf-adjunto"
           className={styles.fileInput}
           onChange={(e) => setAdjunto(e.target.files?.[0] ?? null)}
         />
-        <p className={styles.fieldHelp}>
+        <p id="ayuda-pqrsf-adjunto" className={styles.fieldHelp}>
           Máximo 5MB. Si el adjunto no se envía, la solicitud se registrará sin archivo y podrá enviar soporte al correo institucional.
         </p>
       </div>
@@ -294,10 +288,10 @@ export default function PqrsfForm() {
             id="pqrsf-consentimiento"
             type="checkbox"
             required
+            aria-invalid={!!errors.consentimiento}
+            aria-describedby={[errors.consentimiento ? 'err-pqrsf-consentimiento' : null, 'ayuda-pqrsf-consentimiento'].filter(Boolean).join(' ')}
             checked={consentimiento}
             onChange={(e) => setConsentimiento(e.target.checked)}
-            aria-label="Autorizo tratamiento de datos para PQRSF"
-            aria-required="true"
           />
           <span>
             Autorizo el tratamiento de mis datos personales para la gestión de esta PQRSF, conforme a la{' '}
@@ -307,8 +301,8 @@ export default function PqrsfForm() {
             y Ley 1581 de 2012. *
           </span>
         </label>
-        {errors.consentimiento && <span role="alert" className={styles.fieldError}>{errors.consentimiento}</span>}
-        <p className={styles.fieldHelp}>
+        {errors.consentimiento && <span id="err-pqrsf-consentimiento" role="alert" className={styles.fieldError}>{errors.consentimiento}</span>}
+        <p id="ayuda-pqrsf-consentimiento" className={styles.fieldHelp}>
           Aviso de privacidad: sus datos serán usados exclusivamente para tramitar y responder su solicitud en los términos de la Ley 1755 de 2015. No serán compartidos con terceros sin autorización.
         </p>
       </div>

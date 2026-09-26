@@ -29,9 +29,12 @@ try {
 const source = readSource(especialidades);
 ---
 
-<Layout>
+<Layout
+  title="Especialidades — Institución Educativa El Diamante"
+  description="La Institución Educativa El Diamante ofrece formación en distintas especialidades de la educación media, orientadas a la continuidad educativa y a la vinculación al mundo productivo."
+>
   <Header />
-  <main class="page">
+  <main class="page" id="contenido-principal">
     <PageHero kicker="Oferta académica" title="Especialidades" />
     <div class="container container--wide">
       <p class="lead">
@@ -51,7 +54,9 @@ const source = readSource(especialidades);
             src,
             width: 800,
             height: 600,
-            alt: `${esp.nombre} imagen ${idx + 1}`,
+            /* El <h2> de la tarjeta nombra la especialidad: la imagen es
+               ilustrativa y el CMS no entrega texto alternativo. */
+            alt: '',
             href: src,
           }));
           return (

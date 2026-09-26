@@ -44,25 +44,51 @@ const galeriaUrls: string[] =
 
 const contenidoHtml: string = renderRichText(noticia?.contenido ?? '');
 const detailSource = readSource(noticia);
+
+// --- SEO técnico: solo datos que ya trae la noticia de Strapi ---------
+const INSTITUCION = 'Institución Educativa El Diamante';
+const siteOrigin = (Astro.site?.toString() ?? Astro.url.origin).replace(/\/$/, '');
+const articleUrl = `${siteOrigin}/noticias/${noticia?.slug ?? slug}`;
+const newsJsonLd = noticia
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'NewsArticle',
+      mainEntityOfPage: { '@type': 'WebPage', '@id': articleUrl },
+      url: articleUrl,
+      headline: noticia.titulo,
+      description: noticia.resumen || undefined,
+      ...(noticia.categoria ? { articleSection: noticia.categoria } : {}),
+      ...(portadaUrl ? { image: [portadaUrl] } : {}),
+      ...(noticia.fechaRaw ? { datePublished: noticia.fechaRaw, dateModified: noticia.fechaRaw } : {}),
+      author: { '@type': 'Organization', name: INSTITUCION },
+      publisher: { '@type': 'Organization', name: INSTITUCION },
+    }
+  : null;
 ---
 
 <Layout
-  title={noticia ? `${noticia.titulo} — IE El Diamante` : undefined}
+  title={noticia ? `${noticia.titulo} — ${INSTITUCION}` : undefined}
   description={noticia?.resumen?.slice(0, 160) || undefined}
   image={portadaUrl || undefined}
+  canonical={noticia ? articleUrl : undefined}
+  ogType="article"
+  publishedTime={noticia?.fechaRaw ?? null}
+  jsonLd={newsJsonLd}
 >
   <Header />
-  <main class="page">
+  <main class="page" id="contenido-principal">
     {noticia ? (
       <>
         <PageHero kicker={noticia.categoria} title={noticia.titulo} />
         <div class="container">
           <div style="margin: 0 0 12px;"><DataSourceBadge source={detailSource} /></div>
-          <p class="meta">{noticia.fecha} · {noticia.categoria}</p>
+          <p class="meta">
+            <time datetime={noticia.fechaRaw ?? undefined}>{noticia.fecha}</time> · {noticia.categoria}
+          </p>
           <p class="lead lead--strong">{noticia.resumen}</p>
 
           {portadaUrl && (
-            <p>
+            <figure>
               <img
                 class="figure-img"
                 src={portadaUrl}
@@ -70,7 +96,7 @@ const detailSource = readSource(noticia);
                 loading="lazy"
                 decoding="async"
               />
-            </p>
+            </figure>
           )}
 
           {contenidoHtml ? (
@@ -96,10 +122,12 @@ const detailSource = readSource(noticia);
               <h2>Galería</h2>
               <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));">
                 {galeriaUrls.map((src) => (
+                  /* Sin alt descriptivo: el CMS no entrega texto alternativo y el
+                     encabezado de la sección ya da el contexto. No se inventa. */
                   <img
                     class="figure-img"
                     src={src}
-                    alt={`Imagen de ${noticia.titulo}`}
+                    alt=""
                     loading="lazy"
                     decoding="async"
                     style="height:180px;object-fit:cover;"

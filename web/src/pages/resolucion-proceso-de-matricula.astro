@@ -7,7 +7,7 @@ import Footer from '../components/Footer.astro';
 import PageHero from '../components/PageHero.astro';
 import FileViewer from '../components/FileViewer.astro';
 import { institucionalService } from '../services/institucional.service';
-import { renderRichText } from '../lib/markdown';
+import { renderRichText, stripRichText } from '../lib/markdown';
 import '../styles/global.css';
 import '../styles/page.css';
 
@@ -33,9 +33,12 @@ if (!doc) {
 const displayDoc = doc ?? ficha;
 ---
 
-<Layout>
+<Layout
+  title={`Resolución del proceso de matrícula — Institución Educativa El Diamante`}
+  description={stripRichText(displayDoc?.descripcion ?? '').slice(0, 160) || undefined}
+>
   <Header />
-  <main class="page">
+  <main class="page" id="contenido-principal">
     <PageHero kicker="Transparencia" title="Resolución del proceso de matrícula" />
     <div class="container">
       {displayDoc ? (

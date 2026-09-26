@@ -29,29 +29,58 @@ const autoCrumbs: Crumb[] = (() => {
 })();
 
 const hasCrumbs = autoCrumbs.length > 0;
+
+// Migas de pan reales de la página (ya visibles) para el dato estructurado.
+// No se agregan rutas nuevas: solo se representa la jerarquía que ya existe.
+const crumbItems = [
+  { label: 'Inicio', href: '/' },
+  ...autoCrumbs.map((c) => ({ label: c.label, href: c.href ?? null })),
+];
+
+const siteOrigin = Astro.site?.toString().replace(/\/$/, '') ?? Astro.url.origin;
+const toAbsolute = (href: string) => {
+  if (/^https?:\/\//i.test(href)) return href;
+  return `${siteOrigin}${href.startsWith('/') ? href : `/${href}`}`;
+};
+
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: crumbItems.map((c, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: c.label,
+    ...(c.href ? { item: toAbsolute(c.href) } : {}),
+  })),
+};
 ---
 
 <section class="page-hero">
   <div class="page-hero__inner">
     <nav class="page-hero__breadcrumb" aria-label="Miga de pan">
-      <a href="/" class="page-hero__link">Inicio</a>
-      {
-        autoCrumbs.map((c) => (
-          <>
-            <span class="page-hero__sep" aria-hidden="true">/</span>
-            {c.href ? (
-              <a href={c.href} class="page-hero__link">{c.label}</a>
-            ) : (
-              <span class="page-hero__current" aria-current={c === autoCrumbs[autoCrumbs.length - 1] ? 'page' : undefined}>
-                {c.label}
-              </span>
-            )}
-          </>
-        ))
-      }
+      <ol class="page-hero__list">
+        <li class="page-hero__item">
+          <a href="/" class="page-hero__link">Inicio</a>
+        </li>
+        {
+          autoCrumbs.map((c) => (
+            <li class="page-hero__item">
+              <span class="page-hero__sep" aria-hidden="true">/</span>
+              {c.href ? (
+                <a href={c.href} class="page-hero__link">{c.label}</a>
+              ) : (
+                <span class="page-hero__current" aria-current={c === autoCrumbs[autoCrumbs.length - 1] ? 'page' : undefined}>
+                  {c.label}
+                </span>
+              )}
+            </li>
+          ))
+        }
+      </ol>
     </nav>
     <h1 class="page-hero__title">{title}</h1>
   </div>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbJsonLd)} />
 </section>
 
 <style>
@@ -67,13 +96,26 @@ const hasCrumbs = autoCrumbs.length > 0;
   }
 
   .page-hero__breadcrumb {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: var(--ink-faint);
+  }
+
+  /* Lista de migas: se muestran igual que antes (flex + gap), sin viñetas. */
+  .page-hero__list {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.45rem;
-    font-size: 0.8125rem;
-    line-height: 1.4;
-    color: var(--ink-faint);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .page-hero__item {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
   }
 
   .page-hero__link {

@@ -1,5 +1,6 @@
 ---
 import { getStrapiMediaUrl } from '../lib/strapi';
+import { configuracionService } from '../services/configuracion.service';
 
 interface SeoData {
   metaTitle?: string | null;
@@ -19,6 +20,13 @@ interface Props {
   noIndex?: boolean;
   keywords?: string | null;
   siteName?: string;
+  /** 'website' por defecto; 'article' en fichas de noticias. */
+  ogType?: 'website' | 'article';
+  /** Fecha ISO para el dato estructurado de noticia. */
+  publishedTime?: string | null;
+  modifiedTime?: string | null;
+  /** Dato estructurado adicional de la página (noticia, especialidad...). */
+  jsonLd?: Record<string, any> | null;
 }
 
 const {
@@ -29,18 +37,22 @@ const {
   image: imageProp,
   noIndex: noIndexProp,
   keywords: keywordsProp,
-  siteName = 'IE El Diamante',
+  siteName = 'Institución Educativa El Diamante',
+  ogType = 'website',
+  publishedTime = null,
+  modifiedTime = null,
+  jsonLd = null,
 } = Astro.props as Props;
 
 // Priorizar: prop explícito > seo meta > fallback
-const title = (seo?.metaTitle?.trim() || titleProp?.trim() || 'IE El Diamante — Institución Educativa El Diamante') as string;
+const title = (seo?.metaTitle?.trim() || titleProp?.trim() || 'Institución Educativa El Diamante | Cali, Colombia') as string;
 const descriptionRaw = seo?.metaDescription?.trim() || descProp?.trim() || 'Institución Educativa El Diamante, Santiago de Cali. Educación media técnica, convivencia y formación integral.';
 const description = descriptionRaw.slice(0, 160);
 const keywords = (seo?.keywords?.trim() || keywordsProp?.trim() || null) as string | null;
-const canonical = (seo?.canonicalURL?.trim() || canonicalProp?.trim() || null) as string | null;
+const canonicalPropResolved = (seo?.canonicalURL?.trim() || canonicalProp?.trim() || null) as string | null;
 const shouldNoIndex = seo?.noIndex ?? noIndexProp ?? false;
 
-// Imagen OG: prop > seo.metaImage > fallback null
+// Imagen OG: prop > seo.metaImage > logo institucional del sitio
 let ogImage: string | null = null;
 if (imageProp) {
   ogImage = imageProp;
@@ -48,9 +60,58 @@ if (imageProp) {
   ogImage = getStrapiMediaUrl(seo.metaImage);
 }
 
-// canonical final: si no viene, construir desde Astro.url si está disponible
-const computedCanonical = canonical ?? (Astro.url ? Astro.url.href : null);
-const siteUrl = Astro.site?.toString() ?? (Astro.url ? `${Astro.url.protocol}//${Astro.url.host}` : undefined);
+const siteUrl = (Astro.site?.toString() ?? (Astro.url ? Astro.url.origin : '')).replace(/\/$/, '');
+
+// canonical: URL real y preferida de la página, sin query string ni hash
+// (las variantes paginadas no se consolidation como páginas distintas).
+const autoCanonical = Astro.url ? `${Astro.url.origin}${Astro.url.pathname}` : null;
+const computedCanonical = canonicalPropResolved ?? autoCanonical;
+
+// Resolver rutas relativas de la imagen OG contra el dominio del sitio
+const absoluteUrl = (value: string) =>
+  /^(https?:)?\/\//i.test(value)
+    ? value.startsWith('//')
+      ? `https:${value}`
+      : value
+    : `${siteUrl}${value.startsWith('/') ? value : `/${value}`}`;
+
+const ogImageFinal = ogImage ? absoluteUrl(ogImage) : `${siteUrl}/logo_diamante.png`;
+
+// --- Datos estructurados de la institución ---------------------------
+// Solo información que YA existe en el proyecto (configuración general de
+// Strapi / valores de respaldo del propio sitio). Si un dato no existe,
+// se omite: nunca se inventa.
+const config = configuracionService.fallback;
+const streetAddress = (config.direccionPrincipal ?? '').split(',')[0]?.trim() || null;
+const sameAs = (config.redesSociales ?? [])
+  .map((r) => r?.url)
+  .filter((u): u is string => typeof u === 'string' && /^https?:\/\//i.test(u));
+
+const organization: Record<string, any> = {
+  '@context': 'https://schema.org',
+  '@type': 'EducationalOrganization',
+  name: config.nombreInstitucion,
+  url: siteUrl,
+  logo: `${siteUrl}/logo_diamante.png`,
+  email: config.emailInstitucional,
+  address: {
+    '@type': 'PostalAddress',
+    ...(streetAddress ? { streetAddress } : {}),
+    addressLocality: 'Cali',
+    addressRegion: 'Valle del Cauca',
+    addressCountry: 'CO',
+  },
+  contactPoint: [
+    {
+      '@type': 'ContactPoint',
+      contactType: 'Recepción / secretaría',
+      // El horario del CMS llega como texto enriquecido: no se convierte a
+      // datos estructurados para no publicar un valor inventado o inválido.
+      ...(config.telefonoPrincipal ? { telephone: config.telefonoPrincipal } : {}),
+    },
+  ],
+  ...(sameAs.length > 0 ? { sameAs } : {}),
+};
 ---
 
 <title>{title}</title>
@@ -60,41 +121,29 @@ const siteUrl = Astro.site?.toString() ?? (Astro.url ? `${Astro.url.protocol}//$
 {computedCanonical && <link rel="canonical" href={computedCanonical} />}
 
 <!-- Open Graph -->
-<meta property="og:type" content="website" />
+<meta property="og:type" content={ogType} />
 <meta property="og:site_name" content={siteName} />
+<meta property="og:locale" content="es_CO" />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 {computedCanonical && <meta property="og:url" content={computedCanonical} />}
-{ogImage && <meta property="og:image" content={ogImage} />}
-{ogImage && <meta property="og:image:alt" content={title} />}
+<meta property="og:image" content={ogImageFinal} />
+<meta property="og:image:alt" content={title} />
+{publishedTime && <meta property="article:published_time" content={publishedTime} />}
 
 <!-- Twitter -->
-<meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+<meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
-{ogImage && <meta name="twitter:image" content={ogImage} />}
+<meta name="twitter:image" content={ogImageFinal} />
 
 <!-- Favicon fallback handled in Layout; additional SEO tags -->
 <meta name="generator" content={Astro.generator} />
 
-<!-- JSON-LD: EducationalOrganization -->
-<script type="application/ld+json" set:html={JSON.stringify({
-  "@context": "https://schema.org",
-  "@type": "EducationalOrganization",
-  "name": "Institución Educativa El Diamante",
-  "url": siteUrl,
-  "logo": `${siteUrl}/favicon.svg`,
-  "description": "Institución Educativa El Diamante, Santiago de Cali. Educación media técnica, convivencia y formación integral.",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Santiago de Cali",
-    "addressRegion": "Valle del Cauca",
-    "addressCountry": "CO"
-  },
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": "3.4372",
-    "longitude": "-76.5225"
-  },
-  "sameAs": []
-})} />
+<!-- JSON-LD: institución educativa (datos reales del proyecto) -->
+<script type="application/ld+json" is:inline set:html={JSON.stringify(organization)} />
+{
+  jsonLd && (
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+  )
+}

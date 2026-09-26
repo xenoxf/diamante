@@ -15,14 +15,18 @@ const defaultIconSvg = "data:image/svg+xml,%3c?xml%20version=%271.0%27%20encodin
 <div class="container">
     <ul class="list">
         {enlaces.map((enlace) => (
-            <a 
-                href={enlace.url} 
-                class="conexion"
-                target={enlace.abrirEnNuevaPestana ? '_blank' : undefined}
-                rel={enlace.externo ? 'noopener noreferrer' : undefined}
-            >
-                <img class="img" src={enlace.iconoUrl || defaultIconSvg} alt={enlace.label}>
-            </a>
+            <li>
+                <a 
+                    href={enlace.url} 
+                    class="conexion"
+                    target={enlace.abrirEnNuevaPestana ? '_blank' : undefined}
+                    rel={enlace.externo ? 'noopener noreferrer' : undefined}
+                >
+                    {/* El icono da nombre al enlace: la etiqueta del CMS es
+                        el texto alternativo y evita texto inventado. */}
+                    <img class="img" src={enlace.iconoUrl || defaultIconSvg} alt={enlace.label}>
+                </a>
+            </li>
         ))}
     </ul>
 </div>
@@ -66,6 +70,8 @@ const defaultIconSvg = "data:image/svg+xml,%3c?xml%20version=%271.0%27%20encodin
         display: flex;
         flex-wrap: wrap;
         padding: 0 1rem;
+        margin: 0;
+        list-style: none;
         justify-content: center;
         align-items: center;
         gap: 2rem 3rem;

@@ -143,8 +143,6 @@ export default function ContactForm() {
             type="text"
             required
             autoComplete="name"
-            aria-label="Nombre completo"
-            aria-required="true"
             aria-invalid={!!errors.nombre}
             aria-describedby={errors.nombre ? 'err-contact-nombre' : undefined}
             className={errors.nombre ? styles.fieldInputError : ''}
@@ -170,8 +168,6 @@ export default function ContactForm() {
             type="email"
             required
             autoComplete="email"
-            aria-label="Correo electrónico"
-            aria-required="true"
             aria-invalid={!!errors.email}
             aria-describedby={errors.email ? 'err-contact-email' : undefined}
             className={errors.email ? styles.fieldInputError : ''}
@@ -198,8 +194,6 @@ export default function ContactForm() {
           type="text"
           required
           autoComplete="off"
-          aria-label="Asunto del mensaje"
-          aria-required="true"
           aria-invalid={!!errors.asunto}
           aria-describedby={errors.asunto ? 'err-contact-asunto' : undefined}
           className={errors.asunto ? styles.fieldInputError : ''}
@@ -225,8 +219,6 @@ export default function ContactForm() {
           rows={5}
           required
           autoComplete="off"
-          aria-label="Mensaje"
-          aria-required="true"
           aria-invalid={!!errors.mensaje}
           aria-describedby={errors.mensaje ? 'err-contact-mensaje' : undefined}
           className={errors.mensaje ? styles.fieldInputError : ''}
@@ -249,9 +241,8 @@ export default function ContactForm() {
             name="consentimiento"
             type="checkbox"
             required
-            aria-label="Autorizo el tratamiento de mis datos personales"
-            aria-required="true"
             aria-invalid={!!errors.consentimiento}
+            aria-describedby={errors.consentimiento ? 'err-contact-consentimiento' : undefined}
             checked={consentimiento}
             onChange={(e) => setConsentimiento(e.target.checked)}
           />
@@ -264,7 +255,7 @@ export default function ContactForm() {
           </span>
         </label>
         {errors.consentimiento && (
-          <span role="alert" className={styles.fieldError}>
+          <span id="err-contact-consentimiento" role="alert" className={styles.fieldError}>
             {errors.consentimiento}
           </span>
         )}
@@ -275,7 +266,6 @@ export default function ContactForm() {
         type="submit"
         disabled={status === 'loading'}
         aria-busy={status === 'loading'}
-        aria-label={status === 'loading' ? 'Enviando mensaje' : 'Enviar mensaje'}
       >
         {status === 'loading' && <span className={styles.loadingSpinner} />}
         {status === 'loading' ? 'Enviando…' : 'Enviar mensaje'}

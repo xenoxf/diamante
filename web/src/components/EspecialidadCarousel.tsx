@@ -65,7 +65,7 @@ export function EspecialidadCarousel({
       <img
         className={imgClassName}
         src={list[0]}
-        alt={alt}
+        alt=""
         loading="lazy"
         decoding="async"
       />
@@ -80,7 +80,7 @@ export function EspecialidadCarousel({
       style={{ position: 'relative', overflow: 'hidden' }}
       role="region"
       aria-roledescription="carrusel"
-      aria-label={alt}
+      aria-label={`Imágenes de ${alt}`}
       onMouseEnter={() => {
         paused.current = true;
         stop();
@@ -103,7 +103,7 @@ export function EspecialidadCarousel({
           key={`${src}-${i}`}
           className={imgClassName}
           src={src}
-          alt={i === 0 ? alt : ''}
+          alt=""
           aria-hidden={i !== index}
           loading={i === 0 ? 'eager' : 'lazy'}
           decoding="async"
@@ -126,6 +126,8 @@ export function EspecialidadCarousel({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          /* por encima del enlace extendido del título de la tarjeta */
+          zIndex: 2,
         }}
       >
         <button
@@ -140,13 +142,12 @@ export function EspecialidadCarousel({
         >
           ‹
         </button>
-        <div style={{ display: 'flex', gap: 6 }} role="tablist" aria-label="Selector de imagen">
+        <div style={{ display: 'flex', gap: 6 }} aria-label="Selector de imagen">
           {list.map((_, i) => (
             <button
               key={i}
               type="button"
-              role="tab"
-              aria-selected={i === index}
+              aria-current={i === index ? 'true' : undefined}
               aria-label={`Ir a imagen ${i + 1}`}
               onClick={(e) => {
                 e.preventDefault();

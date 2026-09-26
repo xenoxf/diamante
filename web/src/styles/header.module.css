@@ -132,6 +132,24 @@
   height: 100%;
 }
 
+/* Lista de la navegación: el <ul> es transparente (sin viñetas) y sus <li>
+   ocupan el lugar exacto que ocupaban los enlaces antes de usar listas. */
+.navList {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  height: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navList>li {
+  display: flex;
+  align-items: stretch;
+}
+
 .link {
   display: inline-flex;
   align-items: center;
@@ -182,6 +200,8 @@
   border-top: 3px solid var(--primary);
   box-shadow: 0 16px 32px var(--shadow-teal);
   padding: 0.4rem 0;
+  list-style: none;
+  margin: 0;
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s linear 0.2s;
@@ -189,7 +209,7 @@
 
 .dropdown:hover .menu,
 .dropdown:focus-within .menu,
-.dropdown > button[aria-expanded='true'] + .menu {
+.dropdown>button[aria-expanded='true']+.menu {
   opacity: 1;
   visibility: visible;
   transform: translate(-50%, 0);
@@ -306,6 +326,13 @@
     left: 0;
     right: 0;
     display: none;
+  }
+
+  .header[data-open="true"] .nav {
+    display: flex;
+  }
+
+  .navList {
     flex-direction: column;
     align-items: stretch;
     /* CRÍTICO: la regla base de escritorio usa justify-content: center.
@@ -325,8 +352,8 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  .header[data-open="true"] .nav {
-    display: flex;
+  .navList>li {
+    flex-direction: column;
   }
 
   .link {
@@ -343,7 +370,7 @@
     transition: none;
   }
 
-  .dropdown > [aria-expanded='true'] > svg {
+  .dropdown>[aria-expanded='true']>svg {
     transform: rotate(180deg);
   }
 
@@ -373,7 +400,7 @@
 
   /* Solo se muestra el grupo con aria-expanded="true".
      El botón padre siempre queda visible arriba de su lista. */
-  .dropdown > button[aria-expanded='true'] + .menu {
+  .dropdown>button[aria-expanded='true']+.menu {
     display: block;
     transform: none;
     max-height: none;

@@ -35,7 +35,8 @@ try {
 <Layout>
 	<Header />
 	<div class="app">
-		<main class="inicio" id="inicio">
+		<main class="inicio" id="contenido-principal">
+			<h1 class="sr-only">Institución Educativa El Diamante</h1>
 			<CarruselEvents
 				client:visible
 				slides={heroSlides}
@@ -65,5 +66,19 @@ try {
 	.inicio {
 		width: 100%;
 		max-width: 1500px;
+	}
+
+	/* Encabezado de página solo para tecnología de asistencia:
+	   el nombre ya visible en el header no se duplica visualmente. */
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
 	}
 </style>

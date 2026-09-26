@@ -44,6 +44,17 @@
   margin: 0;
 }
 
+/* Datos de contacto de la institución. Replica el espaciado exacto que
+   tenían los hijos sueltos dentro de .column (mismo gap, sin cursiva). */
+.address {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  font-style: normal;
+  margin: 0;
+  padding: 0;
+}
+
 .text {
   font-size: 0.92rem;
   line-height: 1.6;

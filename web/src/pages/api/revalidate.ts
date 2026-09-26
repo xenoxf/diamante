@@ -162,7 +162,14 @@ export async function POST({ request }: { request: Request }) {
       needsDeploy,
       at: new Date().toISOString(),
     }),
-    { status: 200, headers: { 'Content-Type': 'application/json' } },
+    {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        // Endpoint interno: nunca debe indexarse.
+        'X-Robots-Tag': 'noindex, nofollow',
+      },
+    },
   );
 }
 
@@ -176,6 +183,6 @@ export async function GET({ request }: { request: Request }) {
     }
   }
   return new Response(JSON.stringify({ ok: true, usage: 'POST /api/revalidate?secret=TOKEN con body Strapi' }), {
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'X-Robots-Tag': 'noindex, nofollow' },
   });
 }

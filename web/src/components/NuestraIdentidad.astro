@@ -24,8 +24,10 @@ const source = readSource(cards);
     <ul class={styles.grid}>
       {cards.map((card) => (
         <li>
-          <a href={card.href} class={styles.cardLink} aria-label={card.titulo}>
-            <img class={styles.cardImg} src={card.imgPath} alt={"imagen de "+card.titulo} loading="lazy" decoding="async" />
+          {/* El enlace toma su nombre accesible del texto alternativo de la
+              imagen; no se repite con aria-label. */}
+          <a href={card.href} class={styles.cardLink}>
+            <img class={styles.cardImg} src={card.imgPath} alt={card.titulo} loading="lazy" decoding="async" />
           </a>
         </li>
       ))}

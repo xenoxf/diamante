@@ -44,76 +44,79 @@ const mapSrc = mapQueryRaw
   : "";
 ---
 
-<Layout>
+<Layout
+  title={sede ? `${sede.nombre} — Institución Educativa El Diamante` : `Sede — Institución Educativa El Diamante`}
+  description={sede ? `${sede.nombre} · ${sede.barrio} · ${sede.direccion} · ${sede.telefono}` : undefined}
+>
   <Header />
-  <main class="page">
+  <main class="page" id="contenido-principal">
     {sede ? (
       <>
         <PageHero kicker="Nuestras sedes" title={sede.nombre} />
         <div class="container">
           {bannerUrl && (
-            <p>
+            <figure>
               <img
                 class="figure-img"
                 src={bannerUrl}
-                alt={`Banner de ${sede.nombre}`}
+                alt=""
                 loading="lazy"
                 decoding="async"
               />
-            </p>
+            </figure>
           )}
           {imagenCardUrl && imagenCardUrl !== bannerUrl && (
-            <p>
+            <figure>
               <img
                 class="figure-img"
                 src={imagenCardUrl}
-                alt={`Imagen de ${sede.nombre}`}
+                alt=""
                 loading="lazy"
                 decoding="async"
               />
-            </p>
+            </figure>
           )}
 
-          <div class="data">
+          <dl class="data">
             <div>
-              <h4>Barrio</h4>
-              <p>{sede.barrio}</p>
+              <dt>Barrio</dt>
+              <dd>{sede.barrio}</dd>
             </div>
             <div>
-              <h4>Dirección</h4>
-              <p>{sede.direccion}</p>
+              <dt>Dirección</dt>
+              <dd>{sede.direccion}</dd>
             </div>
             <div>
-              <h4>Teléfono</h4>
-              <p><a href={`tel:${sede.telefono}`}>{sede.telefono}</a></p>
+              <dt>Teléfono</dt>
+              <dd><a href={`tel:${sede.telefono}`}>{sede.telefono}</a></dd>
             </div>
             <div>
-              <h4>Correo</h4>
-              <p><a href={`mailto:${sede.email}`}>{sede.email}</a></p>
+              <dt>Correo</dt>
+              <dd><a href={`mailto:${sede.email}`}>{sede.email}</a></dd>
             </div>
             <div>
-              <h4>Mapa</h4>
-              <p>{sede.mapQuery}</p>
+              <dt>Mapa</dt>
+              <dd>{sede.mapQuery}</dd>
             </div>
             {sede.horarioAtencion && (
               <div>
-                <h4>Horario de atención</h4>
-                <p>{sede.horarioAtencion}</p>
+                <dt>Horario de atención</dt>
+                <dd>{sede.horarioAtencion}</dd>
               </div>
             )}
             {imagenCardUrl && (
               <div>
-                <h4>Imagen Card</h4>
-                <p class="meta" style="word-break:break-all;">{imagenCardUrl}</p>
+                <dt>Imagen Card</dt>
+                <dd class="meta" style="word-break:break-all;">{imagenCardUrl}</dd>
               </div>
             )}
             {bannerUrl && (
               <div>
-                <h4>Banner</h4>
-                <p class="meta" style="word-break:break-all;">{bannerUrl}</p>
+                <dt>Banner</dt>
+                <dd class="meta" style="word-break:break-all;">{bannerUrl}</dd>
               </div>
             )}
-          </div>
+          </dl>
 
           <h2>Ubicación</h2>
           {mapSrc ? (

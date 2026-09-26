@@ -127,11 +127,16 @@ vienen de las variables de global.css. */
 
 .data dt {
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .data dd {
-  margin: 0;
+  margin: 0 0 1.25rem;
+  line-height: 1.8;
+}
+
+.data dd.meta {
+  margin-bottom: 0.4rem;
 }
 
 .data a {
@@ -270,4 +275,9 @@ vienen de las variables de global.css. */
   height: auto;
   border-radius: 8px;
   display: block;
+}
+
+/* Mantiene el espaciado que tenían las imágenes envueltas en <p>. */
+.page figure {
+  margin: 0 0 1.25rem;
 }

@@ -122,6 +122,33 @@ a {
   color: inherit;
 }
 
+/* Foco visible por defecto (WCAG 2.4.7). Solo se aplica a elementos que no
+   traen su propio indicador; los campos de formulario mantienen el anillo
+   visible definido en forms.module.css (borde + box-shadow). */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--primary-dark);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Contenido solo para tecnología de asistencia (nombres de contexto en
+   enlaces, encabezados de página). No visible, no duplica texto en pantalla. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 @media (max-width: 960px) {
   :root {
     --header-h: 64px;
@@ -132,5 +159,15 @@ a {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  /* Detiene animaciones de desplazamiento continuo (galería, marquesinas). */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

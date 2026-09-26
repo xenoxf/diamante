@@ -37,7 +37,7 @@ try {
    o usar directamente cfg.enlacesGobierno + navegación estructurada.
 */
 const nav: NavItem[] = [
-	{ label: 'Inicio', href: '/#' },
+	{ label: 'Inicio', href: '/' },
 	{
 		label: 'Identidad',
 		href: '/#identidad',
@@ -94,11 +94,11 @@ const nav: NavItem[] = [
 
 	<div class={styles.mainbar}>
 		<div class={styles.mainbarInner}>
-			<a href="/" class={styles.brand} aria-label="Institución Educativa El Diamante - inicio">
+			<a href="/" class={styles.brand}>
 				<img
 					class={styles.logo}
 					src="/logo_diamante.png"
-					alt="Escudo de la Institución Educativa El Diamante"
+					alt=""
 					width="56"
 					height="56"
 				/>
@@ -110,14 +110,15 @@ const nav: NavItem[] = [
           Institucion Educativa El Diamante
 				</span>		</a>
 
-			<nav class={styles.nav} aria-label="Navegación principal">
+			<nav id="nav-principal" class={styles.nav} aria-label="Navegación principal">
+			<ul class={styles.navList}>
 			{nav.map((item, idx) =>
 				item.children ? (
+					<li>
 					<div class={styles.dropdown}>
 						<button
 							type="button"
 							class={styles.link}
-							aria-haspopup="true"
 							aria-expanded="false"
 							aria-controls={`submenu-${idx}`}
 						>
@@ -126,29 +127,34 @@ const nav: NavItem[] = [
 								<path d="m6 9 6 6 6-6" />
 							</svg>
 						</button>
-						<div id={`submenu-${idx}`} class={styles.menu} role="menu" aria-label={item.label}>
+						<ul id={`submenu-${idx}`} class={styles.menu}>
 							{item.children.map((sub) => {
 								const isExternal = (sub as any).external || sub.href.startsWith('http');
 								return (
-									<a
-										href={sub.href}
-										role="menuitem"
-										class={styles.subLink}
-										target={isExternal ? '_blank' : undefined}
-										rel={isExternal ? 'noopener noreferrer' : undefined}
-									>
-										{sub.label}
-									</a>
+									<li>
+										<a
+											href={sub.href}
+											class={styles.subLink}
+											target={isExternal ? '_blank' : undefined}
+											rel={isExternal ? 'noopener noreferrer' : undefined}
+										>
+											{sub.label}
+										</a>
+									</li>
 								);
 							})}
-						</div>
+						</ul>
 					</div>
+					</li>
 				) : (
+					<li>
 					<a class={styles.link} href={item.href}>
 						{item.label}
 					</a>
+					</li>
 				),
 			)}
+			</ul>
 			</nav>
 
 			<div class={styles.actions}>
@@ -158,7 +164,7 @@ const nav: NavItem[] = [
 					type="button"
 					aria-label="Abrir menú"
 					aria-expanded="false"
-					aria-controls="site-header"
+					aria-controls="nav-principal"
 				>
 					<svg class={styles.iconOpen} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
 						<path d="M4 7h16M4 12h16M4 17h16" />
@@ -175,6 +181,7 @@ const nav: NavItem[] = [
 <script>
 	const header = document.getElementById('site-header');
 	const menuButton = document.getElementById('menu-button');
+	const navPrincipal = document.getElementById('nav-principal');
 
 	const syncScrolled = () => {
 		if (!header) return;
@@ -182,9 +189,14 @@ const nav: NavItem[] = [
 	};
 
 	const closeAllAccordions = (except: Element | null = null) => {
-		header?.querySelectorAll('nav [aria-haspopup][aria-expanded="true"]').forEach((btn) => {
+		header?.querySelectorAll('nav [aria-expanded="true"]').forEach((btn) => {
 			if (btn !== except) btn.setAttribute('aria-expanded', 'false');
 		});
+	};
+
+	const focusFirstNavItem = () => {
+		const first = navPrincipal?.querySelector('a[href], button') as HTMLElement | null;
+		first?.focus({ preventScroll: true });
 	};
 
 	const setOpen = (open: boolean) => {
@@ -194,6 +206,8 @@ const nav: NavItem[] = [
 		menuButton.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
 		if (open) {
 			document.body.style.overflow = 'hidden';
+			// El foco entra al menú recién abierto (teclado/lectores de pantalla).
+			focusFirstNavItem();
 		} else {
 			document.body.style.overflow = '';
 			closeAllAccordions();
@@ -210,7 +224,7 @@ const nav: NavItem[] = [
 
 	// Acordeón simple: cada pestaña alterna solo su submenu.
 	// Sin cierres automáticos ni animaciones para no mover el resto.
-	header?.querySelectorAll('nav [aria-haspopup]').forEach((btn) => {
+	header?.querySelectorAll('nav [aria-controls]').forEach((btn) => {
 		btn.addEventListener('click', () => {
 			const expanded = btn.getAttribute('aria-expanded') === 'true';
 			btn.setAttribute('aria-expanded', String(!expanded));
@@ -219,9 +233,13 @@ const nav: NavItem[] = [
 
 	document.addEventListener('keydown', (event) => {
 		if (event.key === 'Escape') {
-			const anyAccordion = header?.querySelector('nav [aria-haspopup][aria-expanded="true"]');
+			const anyAccordion = header?.querySelector('nav [aria-expanded="true"]');
 			if (anyAccordion) closeAllAccordions();
-			else setOpen(false);
+			else if (header?.dataset.open === 'true') {
+				setOpen(false);
+				// Escape devuelve el control al botón que abrió el menú.
+				menuButton?.focus({ preventScroll: true });
+			}
 		}
 	});
 

@@ -7,7 +7,7 @@ import Footer from '../components/Footer.astro';
 import PageHero from '../components/PageHero.astro';
 import { identidadService } from '../services/identidad.service';
 import { getStrapiMediaUrl } from '../lib/strapi';
-import { renderRichText } from '../lib/markdown';
+import { renderRichText, stripRichText } from '../lib/markdown';
 import '../styles/global.css';
 import '../styles/page.css';
 
@@ -26,21 +26,28 @@ const fallbackSrc = 'https://www.ie-eldiamantecali.edu.co/wp-content/uploads/202
 const src = organigramaSrc ?? fallbackSrc;
 ---
 
-<Layout>
+<Layout
+  title={`Organigrama — Institución Educativa El Diamante`}
+  description={
+    stripRichText(organigramaDescripcion ?? '')
+      .slice(0, 160) ||
+    'Estructura organizacional de la Institución Educativa El Diamante.'
+  }
+>
   <Header />
-  <main class="page">
+  <main class="page" id="contenido-principal">
     <PageHero kicker="Organización" title="Organigrama" />
     <div class="container">
       {organigramaDescripcion && <p set:html={renderRichText(organigramaDescripcion)}></p>}
-      <p>
+      <figure>
         <img
           class="figure-img"
           src={src}
-          alt="Organigrama institucional de la IE El Diamante"
+          alt="Organigrama institucional de la Institución Educativa El Diamante"
           loading="lazy"
           decoding="async"
         />
-      </p>
+      </figure>
     </div>
   </main>
   <Footer />
